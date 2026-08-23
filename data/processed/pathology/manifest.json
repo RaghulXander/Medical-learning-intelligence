@@ -1,0 +1,22 @@
+{
+  "dataset": "MedMCQA",
+  "source_version": "1.0.0",
+  "processed_at": "2026-08-23T17:56:47Z",
+  "pathology_questions": 15526,
+  "labeled_questions": 15221,
+  "unlabeled_questions": 305,
+  "pipeline_version": "1.0.0",
+  "files": {
+    "all": "pathology_all.jsonl",
+    "labeled": "pathology_labeled.jsonl",
+    "train": "pathology_train.jsonl",
+    "validation": "pathology_validation.jsonl",
+    "test": "pathology_test.jsonl",
+    "summary_report": "summary_report.json"
+  },
+  "metadata": {
+    "origin": "https://huggingface.co/datasets/medmcqa",
+    "license": "MIT",
+    "subject": "Pathology"
+  }
+}

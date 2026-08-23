@@ -1,0 +1,92 @@
+{
+  "dataset_name": "MedMCQA-Pathology",
+  "pipeline_version": "1.0.0",
+  "total_pathology_questions": 15526,
+  "labeled_questions_count": 15221,
+  "unlabeled_questions_count": 305,
+  "split_counts": {
+    "train": 14884,
+    "validation": 337,
+    "test": 305
+  },
+  "explanations_count": 15221,
+  "explanations_percentage": 98.04,
+  "topic_mapping_distribution": {
+    "RAW_ONLY": 7097,
+    "UNMAPPED": 8429
+  },
+  "unique_raw_topics_count": 231,
+  "top_15_raw_topics": [
+    [
+      "General pathology",
+      868
+    ],
+    [
+      "All India exam",
+      544
+    ],
+    [
+      "Haematology",
+      343
+    ],
+    [
+      "Urinary tract",
+      243
+    ],
+    [
+      "miscellaneous",
+      199
+    ],
+    [
+      "Blood",
+      185
+    ],
+    [
+      "G.I.T",
+      175
+    ],
+    [
+      "Cardiovascular system",
+      161
+    ],
+    [
+      "Genetics",
+      158
+    ],
+    [
+      "Immunity",
+      155
+    ],
+    [
+      "Cellular Pathology",
+      141
+    ],
+    [
+      "Breast",
+      133
+    ],
+    [
+      "Respiration",
+      114
+    ],
+    [
+      "Misc.",
+      110
+    ],
+    [
+      "G.I.T.",
+      103
+    ]
+  ],
+  "deduplication_summary": {
+    "total_records_processed": 15526,
+    "unique_ids": 15526,
+    "duplicate_id_count": 0,
+    "unique_content_hashes": 14147,
+    "duplicate_content_clusters_count": 1123,
+    "records_in_duplicate_content_clusters": 2502,
+    "unique_norm_stem_hashes": 13343,
+    "duplicate_stem_clusters_count": 1623,
+    "records_in_duplicate_stem_clusters": 3806
+  }
+}

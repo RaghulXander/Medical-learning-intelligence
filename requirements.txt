@@ -1,0 +1,14 @@
+# Core Database & ORM
+SQLAlchemy>=2.0.0,<3.0.0
+psycopg2-binary>=2.9.9
+python-dotenv>=1.0.0
+
+# Data Processing & Extraction
+pyarrow>=15.0.0
+pandas>=2.0.0
+requests>=2.31.0
+tqdm>=4.66.0
+
+# Validation & Types
+pydantic>=2.5.0
+typing-extensions>=4.8.0
