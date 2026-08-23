@@ -158,6 +158,31 @@ class ReportCategory(str, enum.Enum):
     INCORRECT_ANSWER = "incorrect_answer"
     INCORRECT_EXPLANATION = "incorrect_explanation"
     AMBIGUOUS_QUESTION = "ambiguous_question"
+    OUTDATED_GUIDELINE = "outdated_guideline"
+    OTHER = "other"
+
+
+class AssessmentType(str, enum.Enum):
+    MOCK = "MOCK"
+    SUBJECT = "SUBJECT"
+    TOPIC = "TOPIC"
+    SUBTOPIC = "SUBTOPIC"
+    DAILY = "DAILY"
+    CUSTOM = "CUSTOM"
+
+
+class NavigationPolicy(str, enum.Enum):
+    FREE = "FREE"
+    SECTION_LOCKED = "SECTION_LOCKED"
+    LINEAR = "LINEAR"
+
+
+class AttemptStatus(str, enum.Enum):
+    IN_PROGRESS = "IN_PROGRESS"
+    SUBMITTED = "SUBMITTED"
+    TIMED_OUT = "TIMED_OUT"
+    ABANDONED = "ABANDONED"
+
     MULTIPLE_POSSIBLE_ANSWERS = "multiple_possible_answers"
     POOR_WORDING = "poor_wording"
     WRONG_TOPIC = "wrong_topic"
@@ -529,3 +554,169 @@ class QuestionReport(Base):
 
     # Relationships
     question: Mapped["Question"] = relationship("Question", back_populates="reports")
+
+
+# -----------------------------------------------------------------------------
+# 12. Marking Scheme Model
+# -----------------------------------------------------------------------------
+class MarkingScheme(Base):
+    __tablename__ = "marking_schemes"
+
+    id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    correct_marks: Mapped[float] = mapped_column(Float, default=4.0, nullable=False)
+    penalty_marks: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    unanswered_marks: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+
+
+# -----------------------------------------------------------------------------
+# 13. Assessment Model
+# -----------------------------------------------------------------------------
+class Assessment(Base):
+    __tablename__ = "assessments"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    type: Mapped[AssessmentType] = mapped_column(
+        make_enum(AssessmentType), nullable=False, index=True
+    )
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    question_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
+    marking_scheme_id: Mapped[str] = mapped_column(
+        String(50), ForeignKey("marking_schemes.id"), nullable=False
+    )
+    navigation_policy: Mapped[NavigationPolicy] = mapped_column(
+        make_enum(NavigationPolicy), default=NavigationPolicy.FREE, nullable=False
+    )
+    blueprint: Mapped[Dict[str, Any]] = mapped_column(JSONType, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    marking_scheme: Mapped["MarkingScheme"] = relationship("MarkingScheme")
+    sections: Mapped[List["AssessmentSection"]] = relationship(
+        "AssessmentSection", back_populates="assessment", cascade="all, delete-orphan", order_by="AssessmentSection.section_order"
+    )
+    assessment_questions: Mapped[List["AssessmentQuestion"]] = relationship(
+        "AssessmentQuestion", back_populates="assessment", cascade="all, delete-orphan", order_by="AssessmentQuestion.sequence"
+    )
+    attempts: Mapped[List["AssessmentAttempt"]] = relationship(
+        "AssessmentAttempt", back_populates="assessment", cascade="all, delete-orphan"
+    )
+
+
+# -----------------------------------------------------------------------------
+# 14. Assessment Section Model
+# -----------------------------------------------------------------------------
+class AssessmentSection(Base):
+    __tablename__ = "assessment_sections"
+    __table_args__ = (
+        UniqueConstraint("assessment_id", "section_order", name="uq_assessment_section_order"),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    assessment_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("assessments.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    section_order: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    name: Mapped[str] = mapped_column(String(150), nullable=False)
+    question_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration_seconds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    navigation_policy: Mapped[NavigationPolicy] = mapped_column(
+        make_enum(NavigationPolicy), default=NavigationPolicy.FREE, nullable=False
+    )
+
+    # Relationships
+    assessment: Mapped["Assessment"] = relationship("Assessment", back_populates="sections")
+    questions: Mapped[List["AssessmentQuestion"]] = relationship("AssessmentQuestion", back_populates="section")
+
+
+# -----------------------------------------------------------------------------
+# 15. Assessment Question Snapshot Model
+# -----------------------------------------------------------------------------
+class AssessmentQuestion(Base):
+    __tablename__ = "assessment_questions"
+    __table_args__ = (
+        UniqueConstraint("assessment_id", "sequence", name="uq_assessment_question_seq"),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    assessment_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("assessments.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    section_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("assessment_sections.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    sequence: Mapped[int] = mapped_column(Integer, nullable=False)
+    snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+
+    # Relationships
+    assessment: Mapped["Assessment"] = relationship("Assessment", back_populates="assessment_questions")
+    section: Mapped[Optional["AssessmentSection"]] = relationship("AssessmentSection", back_populates="questions")
+    question: Mapped["Question"] = relationship("Question")
+
+
+# -----------------------------------------------------------------------------
+# 16. Assessment Attempt Model
+# -----------------------------------------------------------------------------
+class AssessmentAttempt(Base):
+    __tablename__ = "assessment_attempts"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    assessment_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("assessments.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    user_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    submitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[AttemptStatus] = mapped_column(
+        make_enum(AttemptStatus), default=AttemptStatus.IN_PROGRESS, nullable=False, index=True
+    )
+    score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    max_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    percentage: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    correct_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    incorrect_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    unanswered_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    time_spent_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    # Relationships
+    assessment: Mapped["Assessment"] = relationship("Assessment", back_populates="attempts")
+    user: Mapped[Optional["User"]] = relationship("User")
+    attempt_questions: Mapped[List["AttemptQuestion"]] = relationship(
+        "AttemptQuestion", back_populates="attempt", cascade="all, delete-orphan"
+    )
+
+
+# -----------------------------------------------------------------------------
+# 17. Attempt Question Response Model
+# -----------------------------------------------------------------------------
+class AttemptQuestion(Base):
+    __tablename__ = "attempt_questions"
+    __table_args__ = (
+        UniqueConstraint("attempt_id", "question_id", name="uq_attempt_question"),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    attempt_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("assessment_attempts.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    selected_answer: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    correct_answer: Mapped[str] = mapped_column(String(10), nullable=False)
+    is_correct: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    marks_awarded: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    time_spent_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    marked_for_review: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    question_snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+
+    # Relationships
+    attempt: Mapped["AssessmentAttempt"] = relationship("AssessmentAttempt", back_populates="attempt_questions")
+    question: Mapped["Question"] = relationship("Question")
+

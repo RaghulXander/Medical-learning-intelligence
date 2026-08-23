@@ -75,8 +75,12 @@ def session_scope(engine: Optional[Engine] = None) -> Generator[Session, None, N
         session.close()
 
 
-def init_db(database_url: Optional[str] = None, engine: Optional[Engine] = None) -> Engine:
+def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None) -> Engine:
     """Initializes all database tables defined in models.Base."""
+    if isinstance(engine, str) and database_url is None:
+        database_url = engine
+        engine = None
     eng = engine or get_engine(database_url)
     Base.metadata.create_all(bind=eng)
     return eng
+

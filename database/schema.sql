@@ -332,3 +332,89 @@ CREATE TABLE IF NOT EXISTS question_reports (
 CREATE INDEX IF NOT EXISTS idx_reports_question ON question_reports(question_id);
 CREATE INDEX IF NOT EXISTS idx_reports_status ON question_reports(status);
 CREATE INDEX IF NOT EXISTS idx_reports_category ON question_reports(category);
+
+-- ----------------------------------------------------------------------------
+-- 12. Assessment Engine & Marking Schemes
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS marking_schemes (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    correct_marks FLOAT NOT NULL DEFAULT 4.0,
+    penalty_marks FLOAT NOT NULL DEFAULT 1.0,
+    unanswered_marks FLOAT NOT NULL DEFAULT 0.0
+);
+
+INSERT INTO marking_schemes (id, name, correct_marks, penalty_marks, unanswered_marks) VALUES
+('NEET_4_1', 'NEET Standard (+4, -1)', 4.0, 1.0, 0.0),
+('INICET_1_033', 'INI-CET Standard (+1, -0.333)', 1.0, 0.3333, 0.0),
+('PROPORTIONAL_1_025', 'Proportional (+1, -0.25)', 1.0, 0.25, 0.0),
+('ZERO_PENALTY', 'Learning Mode (+1, 0)', 1.0, 0.0, 0.0)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS assessments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type VARCHAR(50) NOT NULL, -- 'MOCK', 'SUBJECT', 'TOPIC', 'SUBTOPIC', 'DAILY', 'CUSTOM'
+    title VARCHAR(255) NOT NULL,
+    question_count INT NOT NULL,
+    duration_seconds INT NOT NULL,
+    marking_scheme_id VARCHAR(50) NOT NULL REFERENCES marking_schemes(id),
+    navigation_policy VARCHAR(50) NOT NULL DEFAULT 'FREE', -- 'FREE', 'SECTION_LOCKED', 'LINEAR'
+    blueprint JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS assessment_sections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assessment_id UUID NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
+    section_order INT NOT NULL DEFAULT 1,
+    name VARCHAR(150) NOT NULL,
+    question_count INT NOT NULL,
+    duration_seconds INT,
+    navigation_policy VARCHAR(50) DEFAULT 'FREE',
+    CONSTRAINT uq_assessment_section_order UNIQUE (assessment_id, section_order)
+);
+
+CREATE TABLE IF NOT EXISTS assessment_questions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assessment_id UUID NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
+    section_id UUID REFERENCES assessment_sections(id) ON DELETE SET NULL,
+    question_id UUID NOT NULL REFERENCES questions(id) ON DELETE RESTRICT,
+    sequence INT NOT NULL,
+    snapshot JSONB NOT NULL,
+    CONSTRAINT uq_assessment_question_seq UNIQUE (assessment_id, sequence)
+);
+
+CREATE TABLE IF NOT EXISTS assessment_attempts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assessment_id UUID NOT NULL REFERENCES assessments(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    submitted_at TIMESTAMPTZ,
+    status VARCHAR(50) NOT NULL DEFAULT 'IN_PROGRESS', -- 'IN_PROGRESS', 'SUBMITTED', 'TIMED_OUT', 'ABANDONED'
+    score FLOAT DEFAULT 0.0,
+    max_score FLOAT DEFAULT 0.0,
+    percentage FLOAT DEFAULT 0.0,
+    correct_count INT DEFAULT 0,
+    incorrect_count INT DEFAULT 0,
+    unanswered_count INT DEFAULT 0,
+    time_spent_seconds INT DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS attempt_questions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    attempt_id UUID NOT NULL REFERENCES assessment_attempts(id) ON DELETE CASCADE,
+    question_id UUID NOT NULL REFERENCES questions(id) ON DELETE RESTRICT,
+    selected_answer VARCHAR(10),
+    correct_answer VARCHAR(10) NOT NULL,
+    is_correct BOOLEAN,
+    marks_awarded FLOAT DEFAULT 0.0,
+    time_spent_seconds INT DEFAULT 0,
+    marked_for_review BOOLEAN DEFAULT FALSE,
+    question_snapshot JSONB NOT NULL,
+    CONSTRAINT uq_attempt_question UNIQUE (attempt_id, question_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_assessment_attempts_user ON assessment_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_assessment_questions_assessment ON assessment_questions(assessment_id);
+CREATE INDEX IF NOT EXISTS idx_attempt_questions_attempt ON attempt_questions(attempt_id);
+
