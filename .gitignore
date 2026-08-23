@@ -16,11 +16,17 @@ ENV/
 *.egg-info/
 .eggs/
 
-# Node & Frontend (Next.js)
+# Node & Frontend (Next.js, Bun, Expo)
 node_modules/
 .next/
+apps/*/.next/
+apps/*/dist/
+apps/*/build/
+packages/*/dist/
 dist/
 build/
+.expo/
+apps/student-native/.expo/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

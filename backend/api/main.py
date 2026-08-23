@@ -8,9 +8,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.routes.assessments import router as assessments_router
+from backend.api.routes.questions import router as questions_router
 
 app = FastAPI(
-    title="Medical Exam AI — Core Assessment API",
+    title="Medical Exam AI — Core Assessment & Question Bank API",
     description="Universal Assessment Engine and Question Bank API for Medical Trainees.",
     version="1.0.0",
 )
@@ -26,6 +27,7 @@ app.add_middleware(
 
 # Register routes
 app.include_router(assessments_router)
+app.include_router(questions_router)
 
 
 @app.get("/api/health")

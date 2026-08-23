@@ -1,0 +1,4 @@
+[install]
+# Bun configuration for monorepo workspace resolution
+exact = false
+prefer = "offline"

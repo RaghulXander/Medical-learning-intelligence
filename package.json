@@ -1,0 +1,21 @@
+{
+  "name": "medical-learning-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scalable Medical Education, Universal Question Bank & Mock Exam Platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun --filter web dev",
+    "dev:web": "bun --filter web dev",
+    "dev:mobile": "bun --filter student-native start",
+    "build": "bun --filter \"*\" build",
+    "typecheck": "bun --filter \"*\" typecheck",
+    "lint": "bun --filter \"*\" lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
