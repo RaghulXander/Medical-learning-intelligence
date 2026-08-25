@@ -8,14 +8,27 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun --filter web dev",
+    "dev": "python dev.py",
+    "dev:all": "python dev.py",
     "dev:web": "bun --filter web dev",
+    "dev:backend": "python -m uvicorn backend.api.main:app --reload --port 8000",
     "dev:mobile": "bun --filter student-native start",
+    "dev:start": "concurrently -n \"DOCKER,BACKEND,FRONTEND\" -c \"blue,green,magenta\" \"bun run docker:up\" \"bun run dev:backend\" \"bun run dev:web\"",
     "build": "bun --filter \"*\" build",
     "typecheck": "bun --filter \"*\" typecheck",
-    "lint": "bun --filter \"*\" lint"
+    "lint": "bun --filter \"*\" lint",
+    "docker:up": "docker compose -f infrastructure/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infrastructure/docker-compose.yml down",
+    "docker:logs": "docker compose -f infrastructure/docker-compose.yml logs -f",
+    "docker:reset": "docker compose -f infrastructure/docker-compose.yml down -v && docker compose -f infrastructure/docker-compose.yml up -d",
+    "db:init": "python -c \"from database.db import init_db; init_db(); print('✓ Database initialized successfully.')\"",
+    "db:seed": "python scripts/seed_curriculum.py",
+    "db:setup": "bun run db:init && bun run db:seed",
+    "pipeline:run": "python scripts/run_pipeline.py",
+    "ingest": "python scripts/ingest_cli.py"
   },
   "devDependencies": {
+    "concurrently": "^10.0.5",
     "typescript": "^5.7.3"
   }
 }

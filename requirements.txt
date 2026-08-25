@@ -12,3 +12,7 @@ tqdm>=4.66.0
 # Validation & Types
 pydantic>=2.5.0
 typing-extensions>=4.8.0
+
+# API & Server
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
