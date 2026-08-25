@@ -224,3 +224,75 @@ def get_attempt_review(
         return AssessmentService.get_review(db=db, attempt_id=attempt_id)
     except AttemptNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.post("/preview")
+def preview_assessment(
+    req: CreateAssessmentRequest,
+    user_id: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Simulates question selection and returns topic/difficulty distributions and explainable selection reasons."""
+    try:
+        return AssessmentService.preview_assessment(
+            db=db,
+            blueprint=req.blueprint or {},
+            user_id=user_id,
+            question_count=req.question_count,
+        )
+    except QuestionCountUnavailableError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except AssessmentServiceError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/users/{user_id}/mastery")
+def get_user_mastery(
+    user_id: str,
+    db: Session = Depends(get_db),
+) -> List[Dict[str, Any]]:
+    """Returns the user's Laplace-smoothed mastery across all attempted curriculum nodes."""
+    from database.models import UserMastery
+    records = db.query(UserMastery).filter(UserMastery.user_id == user_id).all()
+    return [
+        {
+            "curriculum_node_id": r.curriculum_node_id,
+            "smoothed_accuracy": r.smoothed_accuracy,
+            "attempted_count": r.attempted_count,
+            "correct_count": r.correct_count,
+            "incorrect_count": r.incorrect_count,
+            "exposure_count": r.exposure_count,
+            "average_time_seconds": r.average_time_seconds,
+            "last_seen_at": r.last_seen_at.isoformat() if r.last_seen_at else None,
+        }
+        for r in records
+    ]
+
+
+@router.get("/users/{user_id}/history")
+def get_user_history(
+    user_id: str,
+    limit: int = Query(default=100, ge=1, le=500),
+    db: Session = Depends(get_db),
+) -> List[Dict[str, Any]]:
+    """Returns recent question interaction history for a user."""
+    from database.models import UserQuestionHistory
+    records = (
+        db.query(UserQuestionHistory)
+        .filter(UserQuestionHistory.user_id == user_id)
+        .order_by(UserQuestionHistory.answered_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return [
+        {
+            "question_id": r.question_id,
+            "attempt_id": r.attempt_id,
+            "selected_answer": r.selected_answer,
+            "is_correct": r.is_correct,
+            "marks_awarded": r.marks_awarded,
+            "time_spent_seconds": r.time_spent_seconds,
+            "answered_at": r.answered_at.isoformat(),
+        }
+        for r in records
+    ]

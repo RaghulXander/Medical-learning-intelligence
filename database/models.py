@@ -183,13 +183,41 @@ class AttemptStatus(str, enum.Enum):
     TIMED_OUT = "TIMED_OUT"
     ABANDONED = "ABANDONED"
 
-    MULTIPLE_POSSIBLE_ANSWERS = "multiple_possible_answers"
-    POOR_WORDING = "poor_wording"
-    WRONG_TOPIC = "wrong_topic"
-    WRONG_DIFFICULTY = "wrong_difficulty"
-    OUTDATED_INFORMATION = "outdated_information"
-    SOURCE_REFERENCE_PROBLEM = "source_reference_problem"
-    OTHER = "other"
+
+class EducationalLevel(str, enum.Enum):
+    MBBS = "MBBS"
+    MD = "MD"
+    DNB = "DNB"
+    DM = "DM"
+    MCH = "MCH"
+    SUPER_SPECIALTY = "SUPER_SPECIALTY"
+
+
+class ClassificationSource(str, enum.Enum):
+    MANUAL = "MANUAL"
+    CURRICULUM_INFERENCE = "CURRICULUM_INFERENCE"
+    AI_CLASSIFIED = "AI_CLASSIFIED"
+    UNKNOWN = "UNKNOWN"
+
+
+class ClassificationStatus(str, enum.Enum):
+    VERIFIED = "VERIFIED"
+    PENDING_REVIEW = "PENDING_REVIEW"
+    UNCLASSIFIED = "UNCLASSIFIED"
+
+
+class AssessmentMode(str, enum.Enum):
+    LEARNING = "LEARNING"
+    PRACTICE = "PRACTICE"
+    MOCK = "MOCK"
+    GRAND_TEST = "GRAND_TEST"
+
+
+class ConfidenceLevel(str, enum.Enum):
+    GUESS = "GUESS"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
 
 
 class ReportStatus(str, enum.Enum):
@@ -420,10 +448,25 @@ class Question(Base):
     cognitive_level: Mapped[Optional[CognitiveLevel]] = mapped_column(
         make_enum(CognitiveLevel), nullable=True
     )
+    educational_level: Mapped[Optional[EducationalLevel]] = mapped_column(
+        make_enum(EducationalLevel), nullable=True, index=True
+    )
+    target_exam_levels: Mapped[List[str]] = mapped_column(JSONType, default=list, nullable=False)
     status: Mapped[QuestionStatus] = mapped_column(
         make_enum(QuestionStatus), default=QuestionStatus.IMPORTED, nullable=False, index=True
     )
     quality_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+    # Classification & Provenance
+    classification_source: Mapped[ClassificationSource] = mapped_column(
+        make_enum(ClassificationSource), default=ClassificationSource.UNKNOWN, nullable=False, index=True
+    )
+    classification_status: Mapped[ClassificationStatus] = mapped_column(
+        make_enum(ClassificationStatus), default=ClassificationStatus.UNCLASSIFIED, nullable=False
+    )
+    classification_confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    knowledge_era: Mapped[str] = mapped_column(String(50), default="CURRENT", nullable=False)
+    source_version: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
     # Similarity & Deduplication Hashes
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
@@ -719,4 +762,72 @@ class AttemptQuestion(Base):
     # Relationships
     attempt: Mapped["AssessmentAttempt"] = relationship("AssessmentAttempt", back_populates="attempt_questions")
     question: Mapped["Question"] = relationship("Question")
+
+
+# -----------------------------------------------------------------------------
+# 18. User Question Interaction History (Raw behavioral dataset)
+# -----------------------------------------------------------------------------
+class UserQuestionHistory(Base):
+    __tablename__ = "user_question_history"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    attempt_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("assessment_attempts.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    selected_answer: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    is_correct: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, index=True)
+    marks_awarded: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    time_spent_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    confidence_level: Mapped[Optional[ConfidenceLevel]] = mapped_column(
+        make_enum(ConfidenceLevel), nullable=True
+    )
+    answered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    question: Mapped["Question"] = relationship("Question")
+    attempt: Mapped["AssessmentAttempt"] = relationship("AssessmentAttempt")
+
+
+# -----------------------------------------------------------------------------
+# 19. User Mastery Model (Unified relational learner model on CurriculumTopic)
+# -----------------------------------------------------------------------------
+class UserMastery(Base):
+    __tablename__ = "user_mastery"
+    __table_args__ = (
+        UniqueConstraint("user_id", "curriculum_node_id", name="uq_user_curriculum_mastery"),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    curriculum_node_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("curriculum_topics.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    smoothed_accuracy: Mapped[float] = mapped_column(Float, default=50.0, nullable=False, index=True)
+    attempted_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    correct_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    incorrect_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    exposure_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    average_time_seconds: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    last_seen_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    curriculum_node: Mapped["CurriculumTopic"] = relationship("CurriculumTopic")
+
 

@@ -29,6 +29,14 @@ from database.models import (
     NavigationPolicy,
     Question,
     QuestionStatus,
+    UserMastery,
+    UserQuestionHistory,
+)
+from backend.services.selection import (
+    UniversalQuestionSelector,
+    LearnerModelService,
+    InsufficientQuestionPoolError,
+    SelectionError,
 )
 
 
@@ -168,44 +176,31 @@ class AssessmentService:
         if not scheme:
             raise AssessmentServiceError(f"Marking scheme '{marking_scheme_id}' not found.")
 
-        # Build query for question sampling
-        query = select(Question).where(
-            Question.status.in_([QuestionStatus.APPROVED, QuestionStatus.IMPORTED, QuestionStatus.HUMAN_REVIEW])
-        )
+        # Execute Intelligent Question Selection (Milestone 6)
+        selector_blueprint = dict(blueprint or {})
+        selector_blueprint["question_count"] = question_count
+        if "topic_id" in blueprint and blueprint["topic_id"] and "topic_ids" not in selector_blueprint:
+            selector_blueprint["topic_ids"] = [blueprint["topic_id"]]
 
-        # Apply blueprint filters
-        if "topic_id" in blueprint and blueprint["topic_id"]:
-            query = query.where(Question.primary_topic_id == blueprint["topic_id"])
-        
-        if "difficulty" in blueprint and blueprint["difficulty"]:
-            query = query.where(Question.difficulty == blueprint["difficulty"])
-
-        if "source_exam_id" in blueprint and blueprint["source_exam_id"]:
-            query = query.where(Question.source_exam_id == blueprint["source_exam_id"])
-
-        if "exclude_question_ids" in blueprint and blueprint["exclude_question_ids"]:
-            query = query.where(~Question.id.in_(blueprint["exclude_question_ids"]))
-
-        # Execute candidate fetch
-        candidates = db.scalars(query).all()
-        
-        if len(candidates) < question_count:
-            # If strictly fewer questions exist, allow fallback to all available if allowable
-            if len(candidates) == 0:
-                raise QuestionCountUnavailableError(
-                    f"No questions match the requested criteria (requested {question_count}, found 0)."
-                )
-            # Use all available candidates if less than requested
-            question_count = len(candidates)
-
-        # Deterministic random sampling
-        selected_questions = random.sample(candidates, question_count)
+        try:
+            selection_result = UniversalQuestionSelector.select_questions(
+                db=db,
+                blueprint=selector_blueprint,
+                user_id=None,
+                default_count=question_count,
+            )
+            selected_questions = selection_result.selected_questions
+            reasons_map = selection_result.selection_reasons_map
+            scores_map = selection_result.priority_scores_map
+        except InsufficientQuestionPoolError as e:
+            # Re-raise as QuestionCountUnavailableError for backward compatibility
+            raise QuestionCountUnavailableError(str(e)) from e
 
         # Create Assessment record
         assessment = Assessment(
             title=title,
             type=assessment_type,
-            question_count=question_count,
+            question_count=len(selected_questions),
             duration_seconds=duration_seconds,
             marking_scheme_id=marking_scheme_id,
             navigation_policy=navigation_policy,
@@ -264,8 +259,9 @@ class AssessmentService:
                 "difficulty": q.difficulty.value if q.difficulty else "medium",
                 "source_exam_id": q.source_exam_id,
                 "external_source": q.external_source,
+                "selection_reasons": reasons_map.get(q.id, ["EXAM_BLUEPRINT_CORE"]),
+                "priority_score": scores_map.get(q.id, 0.0),
             }
-
 
             aq = AssessmentQuestion(
                 assessment_id=assessment.id,
@@ -279,6 +275,48 @@ class AssessmentService:
         db.commit()
         db.refresh(assessment)
         return assessment
+
+    @staticmethod
+    def preview_assessment(
+        db: Session,
+        blueprint: Dict[str, Any],
+        user_id: Optional[str] = None,
+        question_count: int = 10,
+    ) -> Dict[str, Any]:
+        """
+        Simulates question selection for a blueprint without creating an assessment record.
+        Returns topic/difficulty breakdown, metadata confidence metrics, and selection reasons.
+        """
+        selector_blueprint = dict(blueprint or {})
+        selector_blueprint["question_count"] = question_count
+        if "topic_id" in blueprint and blueprint["topic_id"] and "topic_ids" not in selector_blueprint:
+            selector_blueprint["topic_ids"] = [blueprint["topic_id"]]
+
+        result = UniversalQuestionSelector.select_questions(
+            db=db,
+            blueprint=selector_blueprint,
+            user_id=user_id,
+            default_count=question_count,
+        )
+
+        sample_reasons = {}
+        for q in result.selected_questions[:5]:
+            sample_reasons[q.id] = {
+                "stem_preview": q.stem[:80] + "..." if len(q.stem) > 80 else q.stem,
+                "topic": q.primary_topic_id,
+                "reasons": result.selection_reasons_map.get(q.id, []),
+                "priority_score": result.priority_scores_map.get(q.id, 0.0),
+            }
+
+        return {
+            "selected_question_count": len(result.selected_questions),
+            "total_eligible_pool_count": result.total_eligible_count,
+            "topic_breakdown": result.topic_breakdown,
+            "difficulty_breakdown": result.difficulty_breakdown,
+            "educational_level_breakdown": result.educational_level_breakdown,
+            "sample_selection_reasons": sample_reasons,
+            "warnings": result.warnings,
+        }
 
     @staticmethod
     def start_attempt(
@@ -570,6 +608,10 @@ class AssessmentService:
         attempt.correct_count = correct_count
         attempt.incorrect_count = incorrect_count
         attempt.unanswered_count = unanswered_count
+
+        # Record learner interaction history and update topic mastery (Milestone 6)
+        if attempt.user_id:
+            LearnerModelService.record_attempt_history(db, attempt)
 
         db.commit()
         return AssessmentService.get_results(db, attempt_id)

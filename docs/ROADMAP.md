@@ -9,9 +9,10 @@
 | **M3: Domain Decoupling** | Day 6 | 3-tier architecture: Canonical Medical Taxonomy (`primary_topic_id`), Course Curriculum (`course_curriculum_mappings`), and Question Provenance (`source_exam_id`). | **COMPLETED** |
 | **M4: Repository Stabilization** | Day 7 | Monorepo structure (`apps/web`, `apps/student-native`, `packages/shared`, `packages/api-client`), Git hygiene, `.gitignore` zero secrets/data leakage. | **COMPLETED** |
 | **M5: Universal Assessment Engine** | Days 8–9 | Universal Assessment Engine, +4/-1 NEET scoring, Prometric 5-state palette, distractor strike tool, font zoom, 1-click remediation, mobile WebView embedding. | **COMPLETED** |
-| **M6: AI Question Generation & PubMedBERT** | Days 10–11 | Python FastAPI ML service for PubMedBERT (`jamezoon/medmcqa-pubmedbert-mcqa`) MCQA evaluation signal & RAG question blueprints. | *Upcoming* |
-| **M7: Feedback & Resident Analytics** | Days 12–13 | User question error reporting, admin editorial desk, and spaced repetition analytics. | *Upcoming* |
-| **M8: Image Pathology & Multimodal PLIP** | Days 14–15 | Image-based histopathology MCQs and PLIP vision integration. | *Upcoming* |
+| **M6: Question Selection & Learner Model** | Days 10–11 | Intelligent Question Selection Engine, Hard Eligibility Precedence, Cascading Fallbacks, Laplace-smoothed UserMastery, Discrete Recency Penalties, Deterministic Seeded Selection. | **COMPLETED** |
+| **M7: AI Question Generation & PubMedBERT** | Days 12–13 | Python FastAPI ML service for PubMedBERT (`jamezoon/medmcqa-pubmedbert-mcqa`) MCQA evaluation signal & RAG question blueprints. | *Upcoming* |
+| **M8: Feedback & Resident Analytics** | Days 14–15 | User question error reporting, admin editorial desk, and spaced repetition analytics. | *Upcoming* |
+| **M9: Image Pathology & Multimodal PLIP** | Phase 2 | Image-based histopathology MCQs and PLIP vision integration. | *Upcoming* |
 
 ---
 
