@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     'Scalable Medical Education, Universal Question Bank & Mock Exam Platform for NEET-PG, NEET-SS Oncopathology, and INI-CET.',
 };
 
+import Script from 'next/script';
+
 export default function RootLayout({
   children,
 }: {
@@ -17,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
+      </head>
       <body className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased">
         <AuthProvider>
           <Navbar />

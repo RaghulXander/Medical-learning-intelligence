@@ -21,10 +21,32 @@ export interface CurriculumTopic {
   question_count?: number;
 }
 
-export interface Course {
+export interface SpecialityNode {
   id: string;
   name: string;
-  code: string; // e.g. "NEET_PG", "NEET_SS_ONCOPATH", "INI_CET", "MBBS_PATH"
-  level: 'undergraduate' | 'postgraduate' | 'super_specialty';
+  is_default?: boolean;
   description?: string;
+}
+
+export interface ExaminationNode {
+  id: string;
+  title: string;
+  badge: string;
+  category: 'super_specialty' | 'postgraduate' | 'undergraduate' | 'fellowship';
+  description: string;
+  has_specialities: boolean;
+  default_speciality?: string;
+  specialities: SpecialityNode[];
+}
+
+export interface ExperienceStageNode {
+  id: string;
+  label: string;
+}
+
+export interface MedicalTaxonomyMetadata {
+  examinations: ExaminationNode[];
+  experience_stages: ExperienceStageNode[];
+  target_years: number[];
+  metadata_version: string;
 }

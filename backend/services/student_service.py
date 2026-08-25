@@ -38,6 +38,144 @@ class StudentService:
     """
 
     # -------------------------------------------------------------------------
+    # 0. Static / Dynamic Curriculum & Examination Taxonomies
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def get_taxonomies(db: Optional[Session] = None) -> Dict[str, Any]:
+        """
+        Returns structured examinations, specialities (with leaf nodes),
+        residency stages, and target attempt years for dynamic data-driven UI.
+        """
+        return {
+            "examinations": [
+                {
+                    "id": "NEET_SS",
+                    "title": "NEET-SS / DrNB Super-Specialty",
+                    "badge": "Super-Specialty",
+                    "category": "super_specialty",
+                    "description": "High-yield oncology, sub-specialty IHC algorithms, flow cytometry & molecular diagnostics.",
+                    "has_specialities": True,
+                    "specialities": [
+                        {
+                            "id": "Oncopathology",
+                            "name": "Oncopathology & Tumor Markers",
+                            "is_default": True,
+                            "description": "Solid tumors, WHO classifications, theranostic IHC & molecular biomarkers.",
+                        },
+                        {
+                            "id": "Hematopathology",
+                            "name": "Hematopathology & Flow Cytometry",
+                            "description": "Leukemias, lymphomas, bone marrow pathology & immunophenotyping.",
+                        },
+                        {
+                            "id": "Neuropathology",
+                            "name": "Neuropathology & CNS Tumors",
+                            "description": "CNS neoplasia, WHO CNS5 molecular entities, neuro-degenerative pathology.",
+                        },
+                        {
+                            "id": "Nephropathology",
+                            "name": "Nephropathology & Renal Biopsies",
+                            "description": "Glomerular diseases, transplant pathology, immunofluorescence.",
+                        },
+                        {
+                            "id": "Cytopathology",
+                            "name": "Cytopathology & FNAC",
+                            "description": "Bethesda systems, Paris system, Milan system, serous effusions.",
+                        },
+                        {
+                            "id": "Molecular Diagnostics",
+                            "name": "Molecular Diagnostics & Precision Oncology",
+                            "description": "NGS mutation panels, FISH translocations, liquid biopsies.",
+                        },
+                    ],
+                },
+                {
+                    "id": "MD_PATH",
+                    "title": "MD / MS / DNB Residency Exit Exam",
+                    "badge": "Residency Exit",
+                    "category": "postgraduate",
+                    "description": "Comprehensive postgraduate surgical pathology, hematology, autopsy & clinical pathology.",
+                    "has_specialities": True,
+                    "specialities": [
+                        {
+                            "id": "General & Surgical Pathology",
+                            "name": "General & Surgical Pathology",
+                            "is_default": True,
+                            "description": "Core systemic surgical pathology, grossing protocols, diagnostic IHC.",
+                        },
+                        {
+                            "id": "Hematopathology",
+                            "name": "Clinical Hematology & Transfusion Medicine",
+                            "description": "Coagulation, blood banking, flow cytometry, hemoglobinopathies.",
+                        },
+                        {
+                            "id": "Cytopathology",
+                            "name": "Diagnostic Cytology & Exfoliative Smears",
+                            "description": "Pap smears, thyroid FNA, fluid cytology, cell blocks.",
+                        },
+                        {
+                            "id": "Chemical Pathology",
+                            "name": "Clinical Biochemistry & Lab Management",
+                            "description": "QC charts, automated analyzers, reference ranges.",
+                        },
+                    ],
+                },
+                {
+                    "id": "NEET_PG",
+                    "title": "NEET-PG / INI-CET Entrance",
+                    "badge": "Postgraduate Entrance",
+                    "category": "postgraduate",
+                    "description": "Comprehensive clinical vignettes across 19 subjects with deep pathology & medicine core.",
+                    "has_specialities": False,
+                    "default_speciality": "General Medicine & Pathology Core",
+                    "specialities": [],
+                },
+                {
+                    "id": "MBBS",
+                    "title": "MBBS Professional University Exam",
+                    "badge": "Undergraduate",
+                    "category": "undergraduate",
+                    "description": "Undergraduate disease mechanisms, systemic pathology & clinical vignettes.",
+                    "has_specialities": False,
+                    "default_speciality": "2nd Professional Pathology",
+                    "specialities": [],
+                },
+                {
+                    "id": "FELLOWSHIP",
+                    "title": "Post-Doctoral Clinical Fellowship",
+                    "badge": "Sub-Specialty Board",
+                    "category": "fellowship",
+                    "description": "Advanced subspecialty certification in oncopathology, hematopathology, or neuropathology.",
+                    "has_specialities": True,
+                    "specialities": [
+                        {
+                            "id": "Oncopathology Fellowship",
+                            "name": "Oncopathology Fellowship (Tata / AIIMS Pattern)",
+                            "is_default": True,
+                        },
+                        {
+                            "id": "Hematopathology Fellowship",
+                            "name": "Hematopathology & Flow Cytometry Fellowship",
+                        },
+                        {
+                            "id": "Dermatopathology Fellowship",
+                            "name": "Dermatopathology & Skin Biopsy Fellowship",
+                        },
+                    ],
+                },
+            ],
+            "experience_stages": [
+                {"id": "MBBS", "label": "MBBS Student / Intern"},
+                {"id": "JR", "label": "Junior Resident (MD / MS / DNB Trainee)"},
+                {"id": "SR", "label": "Senior Resident (Post-MD / Post-MS)"},
+                {"id": "FELLOW", "label": "Post-Doctoral Fellow"},
+                {"id": "CONSULTANT", "label": "Practicing Specialist / Consultant"},
+            ],
+            "target_years": [2026, 2027, 2028],
+            "metadata_version": "1.1.0",
+        }
+
+    # -------------------------------------------------------------------------
     # 1. Adaptive Onboarding
     # -------------------------------------------------------------------------
     @staticmethod

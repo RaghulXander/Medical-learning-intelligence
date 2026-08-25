@@ -224,6 +224,12 @@ def seed_curriculum(engine) -> None:
                 user = User(**user_data)
                 session.add(user)
                 logger.info(f"Seeded user: {user_data['email']} ({user_data['role'].value})")
+            else:
+                if user_data["email"] in ("raghuldpi95@gmail.com", "raghuljayan@gmail.com"):
+                    existing.role = UserRole.SUPER_ADMIN
+                    existing.is_email_verified = True
+                    existing.is_active = True
+                    logger.info(f"Preserved SUPER_ADMIN: {user_data['email']}")
 
         # 2. Seed Sources
         existing_sources = {s.short_name: s for s in session.query(Source).all()}

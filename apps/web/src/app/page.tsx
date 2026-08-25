@@ -49,7 +49,7 @@ export default function LandingPage() {
       });
 
       const attempt = await assessmentsApi.startAttempt(res.assessment_id, user ? user.id : undefined);
-      router.push(`/student/exam?attempt_id=${attempt.attempt_id}`);
+      router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err) {
       console.error('Failed to launch diagnostic:', err);
       router.push('/student');

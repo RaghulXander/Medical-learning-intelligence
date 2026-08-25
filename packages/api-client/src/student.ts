@@ -12,10 +12,17 @@ import {
   ExamReadinessResponse,
   MistakeReviewResponse,
   UserProfile,
+  MedicalTaxonomyMetadata,
 } from '@medical/shared';
 
 export class StudentApi {
   constructor(private client: MedicalApiClient = defaultClient) {}
+
+  public async getTaxonomies(): Promise<MedicalTaxonomyMetadata> {
+    return this.client.request<MedicalTaxonomyMetadata>('/api/student/taxonomies', {
+      method: 'GET',
+    });
+  }
 
   public async updateOnboarding(payload: {
     target_exam?: string;

@@ -43,6 +43,12 @@ class DraftSyncRequest(BaseModel):
 # -----------------------------------------------------------------------------
 # Endpoints
 # -----------------------------------------------------------------------------
+@router.get("/taxonomies")
+def get_curriculum_taxonomies(db: Session = Depends(get_db)):
+    """Returns static/dynamic medical examination and subspecialty taxonomy trees."""
+    return StudentService.get_taxonomies(db)
+
+
 @router.patch("/onboarding")
 def update_onboarding(
     req: OnboardingUpdateRequest,

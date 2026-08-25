@@ -45,86 +45,43 @@ export default function StudentHubPage() {
     async function loadData() {
       try {
         setLoading(true);
-        const [presetsData, quizData, contData, readyData] = await Promise.allSettled([
-          assessmentsApi.listPresets(),
-          studentApi.getDailyQuiz(),
-          studentApi.getContinueLearning(),
-          studentApi.getExamReadiness(),
-        ]);
-
-        if (presetsData.status === 'fulfilled') {
-          setPresets(presetsData.value);
-        } else {
-          // Fallback presets
-          setPresets([
-            {
-              id: 'neet-ss-mock',
-              title: 'NEET-SS Grand Mock Examination',
-              type: 'MOCK',
-              question_count: 150,
-              duration_seconds: 9000,
-              marking_scheme_id: 'NEET_4_1',
-              description: '150-MCQ Super-Specialty simulation with Part A General Pathology & Part B Oncopathology Core (+4 / -1).',
-              tags: ['NEET-SS', 'Oncopathology', 'Super-Specialty'],
-              depth_level: 'super_specialty',
-            },
-            {
-              id: 'neet-pg-mock',
-              title: 'NEET-PG Comprehensive Mock',
-              type: 'MOCK',
-              question_count: 200,
-              duration_seconds: 12600,
-              marking_scheme_id: 'NEET_4_1',
-              description: 'Full 200-question mock simulating NEET-PG standard exam conditions with high-yield clinical vignettes.',
-              tags: ['NEET-PG', 'Clinical', 'High Yield'],
-              depth_level: 'postgraduate',
-            },
-            {
-              id: 'inicet-mock',
-              title: 'INI-CET Clinical Mock Test',
-              type: 'MOCK',
-              question_count: 200,
-              duration_seconds: 10800,
-              marking_scheme_id: 'INICET_1_033',
-              description: '200-question multi-disciplinary vignette mock with AIIMS / INI-CET scoring rules (+1 / -0.33).',
-              tags: ['INI-CET', 'AIIMS Style', 'Negative 0.33'],
-              depth_level: 'postgraduate',
-            },
-            {
-              id: 'pathology-subject-mastery',
-              title: 'Pathology Subject Mastery Test',
-              type: 'SUBJECT',
-              question_count: 100,
-              duration_seconds: 6000,
-              marking_scheme_id: 'NEET_4_1',
-              description: '100 high-yield questions spanning General, Hematopathology, Systemic, and Diagnostic IHC.',
-              tags: ['Subject Mastery', 'Clinical Focus'],
-            },
-          ]);
+        // Presets are public
+        const presetsRes = await assessmentsApi.listPresets().catch(() => null);
+        if (presetsRes) {
+          setPresets(presetsRes);
         }
 
-        if (quizData.status === 'fulfilled') setDailyQuiz(quizData.value);
-        if (contData.status === 'fulfilled') setContinueData(contData.value);
-        if (readyData.status === 'fulfilled') setReadiness(readyData.value);
+        // Only query authenticated endpoints if user is signed in
+        if (user) {
+          const [quizData, contData, readyData] = await Promise.allSettled([
+            studentApi.getDailyQuiz(),
+            studentApi.getContinueLearning(),
+            studentApi.getExamReadiness(),
+          ]);
+
+          if (quizData.status === 'fulfilled') setDailyQuiz(quizData.value);
+          if (contData.status === 'fulfilled') setContinueData(contData.value);
+          if (readyData.status === 'fulfilled') setReadiness(readyData.value);
+        }
       } catch (err: any) {
-        console.error('Failed to load student hub data:', err);
+        console.warn('Student hub data loading notice:', err);
       } finally {
         setLoading(false);
       }
     }
 
     loadData();
-  }, []);
+  }, [user]);
 
   const handleLaunchPreset = async (presetId: string) => {
     setLaunchingId(presetId);
     setError(null);
     try {
       const attempt = await assessmentsApi.launchPreset(presetId, user ? user.id : undefined);
-      router.push(`/student/exam?attempt_id=${attempt.attempt_id}`);
+      router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err: any) {
       console.error('Failed to launch preset:', err);
-      setError(err?.message || 'Failed to start exam. Please try again.');
+      setError(err?.message || 'Failed to start test. Please try again.');
       setLaunchingId(null);
     }
   };
@@ -143,7 +100,7 @@ export default function StudentHubPage() {
         },
       });
       const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user ? user.id : undefined);
-      router.push(`/student/exam?attempt_id=${attempt.attempt_id}`);
+      router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err) {
       console.error('Failed to launch topic drill:', err);
       setLaunchingId(null);

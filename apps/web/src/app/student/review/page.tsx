@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth-context';
 import { studentApi, assessmentsApi } from '@medical/api-client';
 import { MistakeReviewResponse } from '@medical/shared';
+import { AuthModal } from '@/components/auth/auth-modal';
 
 export default function MistakeReviewVaultPage() {
   const router = useRouter();
@@ -26,9 +27,14 @@ export default function MistakeReviewVaultPage() {
   const [repeatedOnly, setRepeatedOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [remediating, setRemediating] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadMistakes() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const data = await studentApi.getMistakes({
@@ -36,14 +42,14 @@ export default function MistakeReviewVaultPage() {
         });
         setMistakesData(data);
       } catch (err) {
-        console.error('Failed to load mistakes:', err);
+        console.warn('Failed to load mistakes:', err);
       } finally {
         setLoading(false);
       }
     }
 
     loadMistakes();
-  }, [repeatedOnly]);
+  }, [user, repeatedOnly]);
 
   const handleLaunchRemediation = async () => {
     if (!mistakesData || mistakesData.mistakes.length === 0) return;
@@ -62,7 +68,7 @@ export default function MistakeReviewVaultPage() {
       });
 
       const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user ? user.id : undefined);
-      router.push(`/student/exam?attempt_id=${attempt.attempt_id}`);
+      router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err) {
       console.error('Failed to launch mistake remediation:', err);
       setRemediating(false);
@@ -135,7 +141,21 @@ export default function MistakeReviewVaultPage() {
       </div>
 
       {/* Mistakes List */}
-      {loading ? (
+      {!user ? (
+        <Card className="glass-card p-12 text-center border-white/10 space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center mx-auto text-sky-400">
+            <BookOpen className="h-7 w-7" />
+          </div>
+          <h3 className="text-xl font-bold text-white">Sign in to Access Your Mistake Vault</h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            The Smart Mistake Vault tracks your incorrect diagnostic attempts and creates adaptive spaced-repetition drills to remediate weak spots.
+          </p>
+          <Button variant="gradient" onClick={() => setAuthModalOpen(true)} className="font-bold">
+            Sign In / Create Account
+          </Button>
+          <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+        </Card>
+      ) : loading ? (
         <div className="py-16 text-center">
           <div className="animate-spin h-8 w-8 border-3 border-sky-500 border-t-transparent rounded-full mx-auto mb-3" />
           <p className="text-xs text-slate-400">Querying error history & reference citations...</p>

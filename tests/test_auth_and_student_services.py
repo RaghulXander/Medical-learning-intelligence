@@ -166,6 +166,18 @@ class TestAuthAndStudentServices(unittest.TestCase):
         user = self.db.query(User).filter(User.email == "resident@hospital.org").first()
         self.assertEqual(user.google_id, "google-sub-2002")
 
+    def test_google_auth_direct_email_and_dev_token(self):
+        """Tests that signing in with direct email string or google-dev token works seamlessly."""
+        # 1. Direct email
+        res1 = AuthService.authenticate_google(self.db, "raghuldpi95@gmail.com")
+        self.assertEqual(res1["user"]["email"], "raghuldpi95@gmail.com")
+        self.assertEqual(res1["user"]["role"], "SUPER_ADMIN")
+
+        # 2. google-dev format
+        res2 = AuthService.authenticate_google(self.db, "google-dev:raghuljayan@gmail.com:sub-333:Dr. Raghul Jayan")
+        self.assertEqual(res2["user"]["email"], "raghuljayan@gmail.com")
+        self.assertEqual(res2["user"]["role"], "SUPER_ADMIN")
+
     def test_email_password_registration_and_login(self):
         """Tests standard email/password registration, password verification, and login."""
         reg = AuthService.register_email_password(
@@ -479,6 +491,24 @@ class TestAuthAndStudentServices(unittest.TestCase):
 
         self.assertTrue(sync_res["success"])
         self.assertEqual(sync_res["synced_count"], 3)
+
+    def test_get_taxonomies(self):
+        """Tests that the taxonomies service returns the structured examination and leaf subspecialties hierarchy."""
+        tax = StudentService.get_taxonomies(self.db)
+        self.assertIn("examinations", tax)
+        self.assertIn("experience_stages", tax)
+        self.assertIn("target_years", tax)
+        self.assertGreaterEqual(len(tax["examinations"]), 4)
+
+        # Verify NEET_SS has specialities
+        neet_ss = next(e for e in tax["examinations"] if e["id"] == "NEET_SS")
+        self.assertTrue(neet_ss["has_specialities"])
+        self.assertGreaterEqual(len(neet_ss["specialities"]), 3)
+
+        # Verify MBBS and NEET_PG are single leaf without subspecialties
+        mbbs = next(e for e in tax["examinations"] if e["id"] == "MBBS")
+        self.assertFalse(mbbs["has_specialities"])
+        self.assertEqual(mbbs["specialities"], [])
 
 
 if __name__ == "__main__":
