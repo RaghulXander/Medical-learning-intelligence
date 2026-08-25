@@ -1,83 +1,117 @@
 'use client';
 
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronRightIcon } from 'lucide-react';
+import * as React from 'react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-function Accordion({
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+interface AccordionContextType {
+  openItems: string[];
+  toggleItem: (value: string) => void;
 }
 
-function AccordionItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
-  return (
-    <AccordionPrimitive.Item
-      data-slot="accordion-item"
-      className={cn(`
-        border-b
-        last:border-b-0
-      `, className)}
-      {...props}
-    />
-  );
+const AccordionContext = React.createContext<AccordionContextType>({
+  openItems: [],
+  toggleItem: () => {},
+});
+
+export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
+  type?: 'single' | 'multiple';
+  defaultValue?: string | string[];
 }
 
-function AccordionTrigger({
+export function Accordion({
+  type = 'single',
+  defaultValue,
   className,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: AccordionProps) {
+  const [openItems, setOpenItems] = React.useState<string[]>(() => {
+    if (!defaultValue) return [];
+    return Array.isArray(defaultValue) ? defaultValue : [defaultValue];
+  });
+
+  const toggleItem = React.useCallback(
+    (value: string) => {
+      setOpenItems((prev) => {
+        if (type === 'single') {
+          return prev.includes(value) ? [] : [value];
+        }
+        return prev.includes(value) ? prev.filter((i) => i !== value) : [...prev, value];
+      });
+    },
+    [type]
+  );
+
   return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          `
-            flex flex-1 items-start justify-between gap-4 rounded-md py-5
-            text-left text-lg font-medium transition-all outline-none
-            hover:cursor-pointer
-            focus-visible:border-ring focus-visible:ring-[3px]
-            focus-visible:ring-ring/50
-            disabled:pointer-events-none disabled:opacity-50
-            [&[data-state=open]>svg]:rotate-90
-          `,
-          className,
-        )}
-        {...props}
-      >
+    <AccordionContext.Provider value={{ openItems, toggleItem }}>
+      <div className={cn('space-y-1', className)} {...props}>
         {children}
-        <ChevronRightIcon className="
-          pointer-events-none size-4 shrink-0 translate-y-0.5
-          text-muted-foreground transition-transform duration-200
-        "
-        />
-      </AccordionPrimitive.Trigger>
-    </AccordionPrimitive.Header>
+      </div>
+    </AccordionContext.Provider>
   );
 }
 
-function AccordionContent({
+export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string;
+}
+
+const AccordionItemContext = React.createContext<{ value: string }>({ value: '' });
+
+export function AccordionItem({ value, className, children, ...props }: AccordionItemProps) {
+  return (
+    <AccordionItemContext.Provider value={{ value }}>
+      <div className={cn('border-b border-white/[0.08] last:border-b-0', className)} {...props}>
+        {children}
+      </div>
+    </AccordionItemContext.Provider>
+  );
+}
+
+export function AccordionTrigger({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const { value } = React.useContext(AccordionItemContext);
+  const { openItems, toggleItem } = React.useContext(AccordionContext);
+  const isOpen = openItems.includes(value);
+
   return (
-    <AccordionPrimitive.Content
-      data-slot="accordion-content"
-      className="
-        overflow-hidden text-muted-foreground
-        data-[state=closed]:animate-accordion-up
-        data-[state=open]:animate-accordion-down
-      "
+    <button
+      type="button"
+      onClick={() => toggleItem(value)}
+      className={cn(
+        'flex w-full items-center justify-between py-4 text-left font-medium text-white transition-all hover:text-sky-400',
+        className
+      )}
       {...props}
     >
-      <div className={cn('pt-0 pb-4', className)}>{children}</div>
-    </AccordionPrimitive.Content>
+      <span>{children}</span>
+      <ChevronDown
+        className={cn(
+          'h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200',
+          isOpen && 'rotate-180 text-sky-400'
+        )}
+      />
+    </button>
   );
 }
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
+export function AccordionContent({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  const { value } = React.useContext(AccordionItemContext);
+  const { openItems } = React.useContext(AccordionContext);
+  const isOpen = openItems.includes(value);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className={cn('pb-4 text-sm text-slate-300 animate-in fade-in-50', className)} {...props}>
+      {children}
+    </div>
+  );
+}

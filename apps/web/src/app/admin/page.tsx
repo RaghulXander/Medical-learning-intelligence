@@ -4,20 +4,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   CheckCircle2,
-  XCircle,
   AlertCircle,
-  Layers,
   Eye,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
-  Filter,
   RefreshCw,
-  BookOpen,
   LayoutGrid,
   Columns,
   ImageOff,
-  ArrowRight,
   FileCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

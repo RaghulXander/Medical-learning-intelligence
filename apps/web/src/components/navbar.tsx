@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Stethoscope, BookOpen, Layers, ShieldCheck, Award } from 'lucide-react';
+import { Stethoscope, BookOpen, ShieldCheck, Award } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 

@@ -12,6 +12,7 @@ import {
   SubmitAttemptPayload,
   AttemptResults,
   AttemptReview,
+  AttemptStateResponse,
 } from '@medical/shared';
 import { MedicalApiClient, defaultClient } from './client';
 
@@ -62,19 +63,8 @@ export class AssessmentsApi {
   /**
    * Get current state of an in-progress attempt
    */
-  async getAttemptState(attemptId: string): Promise<{
-    attempt_id: string;
-    assessment_id: string;
-    status: string;
-    started_at: string;
-    duration_seconds: number;
-    total_questions: number;
-    navigation_policy: string;
-    questions: any[];
-    responses: any[];
-    elapsed_seconds: number;
-  }> {
-    return this.client.request(`/api/assessments/attempts/${attemptId}`);
+  async getAttemptState(attemptId: string): Promise<AttemptStateResponse> {
+    return this.client.request<AttemptStateResponse>(`/api/assessments/attempts/${attemptId}`);
   }
 
   /**
@@ -83,7 +73,13 @@ export class AssessmentsApi {
   async recordHeartbeat(
     attemptId: string,
     payload: HeartbeatPayload
-  ): Promise<{ status: string; synced_count: number }> {
+  ): Promise<{
+    status: string;
+    attempt_id: string;
+    time_spent_seconds: number;
+    answered_count: number;
+    unanswered_count: number;
+  }> {
     return this.client.request(`/api/assessments/attempts/${attemptId}/heartbeat`, {
       method: 'PATCH',
       body: JSON.stringify(payload),
@@ -96,17 +92,8 @@ export class AssessmentsApi {
   async submitAttempt(
     attemptId: string,
     payload?: SubmitAttemptPayload
-  ): Promise<{
-    status: string;
-    attempt_id: string;
-    score: number;
-    max_score: number;
-    percentage: number;
-    correct_count: number;
-    incorrect_count: number;
-    unanswered_count: number;
-  }> {
-    return this.client.request(`/api/assessments/attempts/${attemptId}/submit`, {
+  ): Promise<AttemptResults> {
+    return this.client.request<AttemptResults>(`/api/assessments/attempts/${attemptId}/submit`, {
       method: 'POST',
       body: JSON.stringify(payload || {}),
     });

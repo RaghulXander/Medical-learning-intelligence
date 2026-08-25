@@ -1,14 +1,21 @@
 /**
  * packages/shared/src/types/assessment.ts
  *
- * Types for Universal Assessment Engine, Mock Exams, Runner State & Scoring.
+ * Universal Assessment Engine, Mock Exams, Runner State & Diagnostic Scoring Contracts.
  */
 
 import { QuestionOption } from './question';
 
-export type AssessmentType = 'MOCK' | 'TOPIC_TEST' | 'DAILY_DOSE' | 'GRAND_TEST' | 'CUSTOM';
-export type NavigationPolicy = 'FREE' | 'SECTION_TIMED' | 'FORWARD_ONLY';
-export type AttemptStatus = 'IN_PROGRESS' | 'SUBMITTED' | 'EXPIRED' | 'ABANDONED';
+export type AssessmentType = 'MOCK' | 'SUBJECT' | 'TOPIC' | 'SUBTOPIC' | 'DAILY' | 'CUSTOM';
+export type NavigationPolicy = 'FREE' | 'SECTION_LOCKED' | 'LINEAR';
+export type AttemptStatus = 'IN_PROGRESS' | 'SUBMITTED' | 'TIMED_OUT' | 'ABANDONED';
+
+export type PrometricQuestionState =
+  | 'UNVISITED'
+  | 'UNANSWERED'
+  | 'ANSWERED'
+  | 'MARKED_FOR_REVIEW'
+  | 'ANSWERED_AND_MARKED';
 
 export interface AssessmentPreset {
   id: string;
@@ -17,8 +24,15 @@ export interface AssessmentPreset {
   question_count: number;
   duration_seconds: number;
   marking_scheme_id: string;
+  navigation_policy?: NavigationPolicy;
   description: string;
-  tags: string[];
+  tags?: string[];
+  depth_level?: string;
+  sections?: Array<{
+    name: string;
+    question_count: number;
+    duration_seconds?: number;
+  }>;
 }
 
 export interface SectionConfig {
@@ -30,22 +44,25 @@ export interface SectionConfig {
 
 export interface CreateAssessmentPayload {
   title: string;
-  type: AssessmentType;
-  question_count: number;
-  duration_seconds: number;
-  marking_scheme_id: string;
-  navigation_policy?: NavigationPolicy;
+  type?: string;
+  question_count?: number;
+  duration_seconds?: number;
+  marking_scheme_id?: string;
+  navigation_policy?: string;
   blueprint?: Record<string, any>;
   sections?: SectionConfig[];
 }
 
 export interface SanitizedQuestion {
+  sequence: number;
   question_id: string;
-  item_order: number;
+  section_id?: string | null;
   section_name?: string;
   stem: string;
-  options: QuestionOption[];
-  question_type: string;
+  options: Record<string, string> | QuestionOption[];
+  selected_answer?: string | null;
+  marked_for_review?: boolean;
+  status?: PrometricQuestionState | string;
   topic_name?: string;
   difficulty?: string;
 }
@@ -61,9 +78,31 @@ export interface StartAttemptResponse {
   questions: SanitizedQuestion[];
 }
 
+export interface AttemptSectionInfo {
+  id: string;
+  section_order: number;
+  name: string;
+  question_count: number;
+}
+
+export interface AttemptStateResponse {
+  attempt_id: string;
+  assessment_id: string;
+  title: string;
+  type: string;
+  status: AttemptStatus;
+  total_questions: number;
+  duration_seconds: number;
+  time_spent_seconds: number;
+  remaining_seconds: number;
+  navigation_policy: string;
+  sections: AttemptSectionInfo[];
+  questions: SanitizedQuestion[];
+}
+
 export interface HeartbeatQuestionResponse {
   question_id: string;
-  selected_answer: string | null;
+  selected_answer?: string | null;
   marked_for_review?: boolean;
   time_spent_seconds?: number;
 }
@@ -78,9 +117,8 @@ export interface SubmitAttemptPayload {
   final_elapsed_seconds?: number;
 }
 
-export interface TopicBreakdown {
-  topic_id: string;
-  topic_name: string;
+export interface TopicStatBreakdown {
+  topic: string;
   total: number;
   correct: number;
   incorrect: number;
@@ -88,23 +126,43 @@ export interface TopicBreakdown {
   accuracy: number;
 }
 
+export interface DifficultyStatBreakdown {
+  difficulty: string;
+  total: number;
+  correct: number;
+  incorrect: number;
+  unanswered: number;
+}
+
+export interface MarkingSchemeInfo {
+  name: string;
+  correct_marks: number;
+  penalty_marks: number;
+}
+
 export interface AttemptResults {
   attempt_id: string;
   assessment_id: string;
+  title: string;
   status: AttemptStatus;
-  started_at: string;
-  submitted_at: string;
-  total_questions: number;
-  answered_questions: number;
-  correct_count: number;
-  incorrect_count: number;
-  unanswered_count: number;
+  started_at: string | null;
+  submitted_at: string | null;
   score: number;
   max_score: number;
   percentage: number;
-  time_spent_seconds: number;
+  correct_count: number;
+  incorrect_count: number;
+  unanswered_count: number;
+  attempted_count: number;
   accuracy: number;
-  topic_breakdown: TopicBreakdown[];
+  attempt_rate: number;
+  negative_marks_lost: number;
+  time_spent_seconds: number;
+  avg_seconds_per_question: number;
+  marking_scheme: MarkingSchemeInfo;
+  topic_breakdown: TopicStatBreakdown[];
+  difficulty_breakdown: DifficultyStatBreakdown[];
+  weak_topics: string[];
 }
 
 export interface ReviewEvidenceItem {
@@ -118,19 +176,22 @@ export interface ReviewEvidenceItem {
 }
 
 export interface ReviewQuestionItem {
+  sequence: number;
   question_id: string;
-  item_order: number;
   stem: string;
-  options: QuestionOption[];
-  user_selected_answer: string | null;
+  options: Record<string, string> | QuestionOption[];
+  selected_answer: string | null;
   correct_answer: string;
-  is_correct: boolean;
-  is_marked_for_review: boolean;
+  is_correct: boolean | null;
+  marks_awarded: number;
   time_spent_seconds: number;
+  marked_for_review: boolean;
   explanation?: string;
-  topic_name?: string;
+  primary_topic_id?: string;
   difficulty?: string;
-  citations: ReviewEvidenceItem[];
+  source_exam_id?: string;
+  external_source?: string;
+  citations?: ReviewEvidenceItem[];
 }
 
 export interface AttemptReview {
@@ -140,5 +201,8 @@ export interface AttemptReview {
   score: number;
   max_score: number;
   percentage: number;
-  questions: ReviewQuestionItem[];
+  correct_count: number;
+  incorrect_count: number;
+  unanswered_count: number;
+  review_questions: ReviewQuestionItem[];
 }
