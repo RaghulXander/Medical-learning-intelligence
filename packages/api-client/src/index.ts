@@ -7,3 +7,6 @@
 export * from './client';
 export * from './assessments';
 export * from './questions';
+export * from './auth';
+export * from './student';
+export * from './admin';

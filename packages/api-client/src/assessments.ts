@@ -109,6 +109,18 @@ export class AssessmentsApi {
   }
 
   /**
+   * Launch a 1-click preset exam attempt directly
+   */
+  async launchPreset(presetId: string, userId?: string): Promise<StartAttemptResponse> {
+    const assessment = await this.createAssessment({
+      title: `${presetId.toUpperCase()} Assessment`,
+      preset_id: presetId,
+      type: 'MOCK',
+    });
+    return this.startAttempt(assessment.assessment_id, userId);
+  }
+
+  /**
    * Get complete question-by-question review with explanations & citations
    */
   async getReview(attemptId: string): Promise<AttemptReview> {

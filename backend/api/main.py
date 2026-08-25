@@ -9,6 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.routes.assessments import router as assessments_router
 from backend.api.routes.questions import router as questions_router
+from backend.api.routes.auth import router as auth_router
+from backend.api.routes.student import router as student_router
+from backend.api.routes.admin import router as admin_router
 
 app = FastAPI(
     title="Medical Exam AI — Core Assessment & Question Bank API",
@@ -26,6 +29,9 @@ app.add_middleware(
 )
 
 # Register routes
+app.include_router(auth_router)
+app.include_router(student_router)
+app.include_router(admin_router)
 app.include_router(assessments_router)
 app.include_router(questions_router)
 

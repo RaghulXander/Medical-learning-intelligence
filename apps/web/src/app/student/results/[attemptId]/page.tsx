@@ -14,6 +14,7 @@ import {
   Zap,
   CheckCircle2,
   XCircle,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -22,16 +23,20 @@ import { Progress } from '@/components/ui/progress';
 import { assessmentsApi } from '@medical/api-client';
 import { AttemptResults } from '@medical/shared';
 import { formatTime } from '@/lib/utils';
+import { useAuth } from '@/lib/auth-context';
+import { AuthModal } from '@/components/auth/auth-modal';
 
 export default function ExamResultsPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const attemptId = params?.attemptId as string;
 
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<AttemptResults | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [remediating, setRemediating] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     async function loadResults() {
@@ -142,6 +147,43 @@ export default function ExamResultsPage() {
       </div>
 
       <div className="container max-w-5xl mx-auto px-4 sm:px-8 pt-6 sm:pt-8 space-y-6">
+        {/* Guest Conversion Funnel Banner (if not logged in) */}
+        {!user && (
+          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-sky-950/70 via-indigo-950/50 to-slate-900/90 border border-sky-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xl shadow-sky-500/10 animate-fade-in">
+            <div className="flex items-start gap-3.5">
+              <div className="h-11 w-11 rounded-2xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center flex-shrink-0 text-sky-400">
+                <Sparkles className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="verified" className="text-[10px]">Guest Session</Badge>
+                  <h3 className="text-base font-extrabold text-white">Save Your Diagnostic Score & Progress</h3>
+                </div>
+                <p className="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                  Sign in with Google or Email to save your scorecard, track long-term mastery, and unlock personalized weak-topic remediation drills!
+                </p>
+              </div>
+            </div>
+
+            <Button
+              variant="gradient"
+              onClick={() => setAuthOpen(true)}
+              className="rounded-2xl font-bold text-xs gap-2 px-6 py-5 shadow-lg shadow-sky-500/25 shrink-0"
+            >
+              <span>Sign In & Save Result</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        <AuthModal
+          isOpen={authOpen}
+          initialMode="register"
+          onClose={() => setAuthOpen(false)}
+          onSuccess={() => {
+            setAuthOpen(false);
+          }}
+        />
         {/* 1-Click Remediation Banner if Weak Topics Identified */}
         {hasWeakTopics && (
           <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-purple-950/60 via-indigo-950/40 to-slate-900/80 border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl shadow-purple-500/5 animate-in fade-in">
@@ -316,7 +358,7 @@ export default function ExamResultsPage() {
           <div>
             <h4 className="text-base font-extrabold text-white">Deep Question Review</h4>
             <p className="text-xs text-slate-400 mt-0.5">
-              Inspect ground truth rationale and authoritative textbook citations (Robbins, WHO Blue Books).
+              Inspect ground truth rationale and authoritative peer-reviewed reference citations.
             </p>
           </div>
 

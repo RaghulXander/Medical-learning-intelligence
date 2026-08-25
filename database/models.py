@@ -78,10 +78,11 @@ def make_enum(enum_cls):
 # Python Enums
 # -----------------------------------------------------------------------------
 class UserRole(str, enum.Enum):
+    SUPER_ADMIN = "SUPER_ADMIN"
     ADMIN = "ADMIN"
-    USER = "USER"
     REVIEWER = "REVIEWER"
     EDUCATOR = "EDUCATOR"
+    USER = "USER"
 
 
 class CurriculumLevel(str, enum.Enum):
@@ -238,6 +239,17 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(make_enum(UserRole), default=UserRole.USER, nullable=False)
     password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    google_id: Mapped[Optional[str]] = mapped_column(String(100), unique=True, nullable=True, index=True)
+    avatar_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    is_email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    target_exam: Mapped[Optional[str]] = mapped_column(String(50), default="NEET_SS", nullable=True, index=True)
+    target_year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    medical_college: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    residency_stage: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    primary_speciality: Mapped[Optional[str]] = mapped_column(String(100), default="Pathology", nullable=True)
+    current_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    longest_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_active_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
@@ -714,6 +726,9 @@ class AssessmentAttempt(Base):
     user_id: Mapped[Optional[str]] = mapped_column(
         GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
     )
+    guest_session_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("guest_sessions.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     submitted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[AttemptStatus] = mapped_column(
@@ -730,6 +745,7 @@ class AssessmentAttempt(Base):
     # Relationships
     assessment: Mapped["Assessment"] = relationship("Assessment", back_populates="attempts")
     user: Mapped[Optional["User"]] = relationship("User")
+    guest_session: Mapped[Optional["GuestSession"]] = relationship("GuestSession", back_populates="attempts")
     attempt_questions: Mapped[List["AttemptQuestion"]] = relationship(
         "AttemptQuestion", back_populates="attempt", cascade="all, delete-orphan"
     )
@@ -829,5 +845,91 @@ class UserMastery(Base):
     # Relationships
     user: Mapped["User"] = relationship("User")
     curriculum_node: Mapped["CurriculumTopic"] = relationship("CurriculumTopic")
+
+
+# -----------------------------------------------------------------------------
+# 20. Guest Session Model (Anonymous Diagnostic Funnel)
+# -----------------------------------------------------------------------------
+class GuestSession(Base):
+    __tablename__ = "guest_sessions"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    session_token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    converted_user_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    merged_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    converted_user: Mapped[Optional["User"]] = relationship("User")
+    attempts: Mapped[List["AssessmentAttempt"]] = relationship("AssessmentAttempt", back_populates="guest_session")
+
+
+# -----------------------------------------------------------------------------
+# 21. User Session Model (Refresh Token & Multi-Device Audit)
+# -----------------------------------------------------------------------------
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    refresh_token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    device_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    is_revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    last_used_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+
+
+# -----------------------------------------------------------------------------
+# 22. Auth Audit Log Model
+# -----------------------------------------------------------------------------
+class AuthAuditLog(Base):
+    __tablename__ = "auth_audit_logs"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    event_type: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    user: Mapped[Optional["User"]] = relationship("User")
+
+
+# -----------------------------------------------------------------------------
+# 23. Admin Audit Log Model
+# -----------------------------------------------------------------------------
+class AdminAuditLog(Base):
+    __tablename__ = "admin_audit_logs"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    admin_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    action: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    entity_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    entity_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    changes: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSONType, nullable=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    # Relationships
+    admin: Mapped["User"] = relationship("User")
 
 

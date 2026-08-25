@@ -1,50 +1,78 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   Search,
   CheckCircle2,
   AlertCircle,
-  Eye,
   ChevronLeft,
   ChevronRight,
   RefreshCw,
   LayoutGrid,
   Columns,
-  ImageOff,
   FileCheck,
+  ShieldCheck,
+  ShieldAlert,
+  Users,
+  Crown,
+  Lock,
+  BarChart3,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { questionsApi, TopicCountItem } from '@medical/api-client';
-import { Question, QuestionStatus } from '@medical/shared';
+import { questionsApi, adminApi, TopicCountItem } from '@medical/api-client';
+import { Question, AdminUserListItem, UserRole } from '@medical/shared';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/lib/auth-context';
+import { AuthModal } from '@/components/auth/auth-modal';
 
-export default function AdminQuestionBankPage() {
+export default function AdminDashboardPage() {
+  const { user, isLoading: authLoading } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  // Active Admin Tab: 'QUESTIONS' | 'USERS' | 'STATS'
+  const [activeTab, setActiveTab] = useState<'QUESTIONS' | 'USERS' | 'STATS'>('QUESTIONS');
+
+  // ---------------------------------------------------------------------------
+  // TAB 1: Questions State
+  // ---------------------------------------------------------------------------
   const [questions, setQuestions] = useState<Question[]>([]);
   const [topics, setTopics] = useState<TopicCountItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-
-  // View Mode: 'SPLIT' (Review & Next mode) vs 'TABLE'
   const [viewMode, setViewMode] = useState<'SPLIT' | 'TABLE'>('SPLIT');
   const [selectedIndex, setSelectedIndex] = useState(0);
-
-  // Filters & Pagination State
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  const [difficultyFilter, setDifficultyFilter] = useState<string>('ALL');
   const [page, setPage] = useState(1);
   const pageSize = 25;
 
-  const [selectedModalQuestion, setSelectedModalQuestion] = useState<Question | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // ---------------------------------------------------------------------------
+  // TAB 2: Users & RBAC State
+  // ---------------------------------------------------------------------------
+  const [usersList, setUsersList] = useState<AdminUserListItem[]>([]);
+  const [usersTotal, setUsersTotal] = useState(0);
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersSearch, setUsersSearch] = useState('');
+  const [debouncedUserSearch, setDebouncedUserSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>('ALL');
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [roleUpdatingUserId, setRoleUpdatingUserId] = useState<string | null>(null);
+  const [userActionMsg, setUserActionMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  // Debounce search input
+  // ---------------------------------------------------------------------------
+  // TAB 3: System Statistics State
+  // ---------------------------------------------------------------------------
+  const [statsData, setStatsData] = useState<any>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  // Debounce search inputs
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(searchTerm);
@@ -53,6 +81,14 @@ export default function AdminQuestionBankPage() {
     }, 350);
     return () => clearTimeout(handler);
   }, [searchTerm]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedUserSearch(usersSearch);
+      setUsersPage(1);
+    }, 350);
+    return () => clearTimeout(handler);
+  }, [usersSearch]);
 
   // Load available topics on mount
   useEffect(() => {
@@ -67,16 +103,14 @@ export default function AdminQuestionBankPage() {
     loadTopics();
   }, []);
 
-  // Fetch questions on filter or page change
+  // Fetch questions
   const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
       const res = await questionsApi.listQuestions({
         search: debouncedSearch || undefined,
         topic: selectedTopic !== 'ALL' ? selectedTopic : undefined,
         status: statusFilter !== 'ALL' ? statusFilter : undefined,
-        difficulty: difficultyFilter !== 'ALL' ? difficultyFilter : undefined,
         limit: pageSize,
         offset: (page - 1) * pageSize,
       });
@@ -86,635 +120,789 @@ export default function AdminQuestionBankPage() {
       setSelectedIndex(0);
     } catch (err: any) {
       console.error('Failed to fetch questions:', err);
-      setError(err?.message || 'Failed to connect to backend database.');
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, selectedTopic, statusFilter, difficultyFilter, page]);
+  }, [debouncedSearch, selectedTopic, statusFilter, page]);
 
   useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]);
+    if (activeTab === 'QUESTIONS') {
+      fetchQuestions();
+    }
+  }, [fetchQuestions, activeTab]);
 
-  const handleUpdateStatus = async (
-    questionId: string,
-    newStatus: QuestionStatus,
-    advanceNext: boolean = false
-  ) => {
+  // Fetch users for RBAC management
+  const fetchUsers = useCallback(async () => {
+    try {
+      setUsersLoading(true);
+      setUserActionMsg(null);
+      const res = await adminApi.listUsers({
+        search: debouncedUserSearch || undefined,
+        role: roleFilter !== 'ALL' ? roleFilter : undefined,
+        page: usersPage,
+        limit: 20,
+      });
+      setUsersList(res.items || []);
+      setUsersTotal(res.total || 0);
+    } catch (err: any) {
+      console.error('Failed to fetch users list:', err);
+    } finally {
+      setUsersLoading(false);
+    }
+  }, [debouncedUserSearch, roleFilter, usersPage]);
+
+  useEffect(() => {
+    if (activeTab === 'USERS') {
+      fetchUsers();
+    }
+  }, [fetchUsers, activeTab]);
+
+  // Fetch statistics
+  useEffect(() => {
+    if (activeTab === 'STATS') {
+      setStatsLoading(true);
+      adminApi
+        .getStats()
+        .then(setStatsData)
+        .catch(console.error)
+        .finally(() => setStatsLoading(false));
+    }
+  }, [activeTab]);
+
+  const handleUpdateStatus = async (questionId: string, newStatus: string) => {
     try {
       setUpdatingId(questionId);
-      await questionsApi.updateStatus(questionId, newStatus);
-
-      // Update local state
+      await questionsApi.updateStatus(questionId, newStatus as any);
       setQuestions((prev) =>
-        prev.map((q) => (q.id === questionId ? { ...q, status: newStatus } : q))
+        prev.map((q) => (q.id === questionId ? { ...q, status: newStatus as any } : q))
       );
-      if (selectedModalQuestion?.id === questionId) {
-        setSelectedModalQuestion((prev) => (prev ? { ...prev, status: newStatus } : null));
-      }
-
-      // If in review mode, advance to next question smoothly
-      if (advanceNext && selectedIndex < questions.length - 1) {
-        setSelectedIndex((idx) => idx + 1);
-      }
     } catch (err: any) {
-      console.error('Failed to update status:', err);
-      alert('Status update error: ' + (err?.message || 'Please retry.'));
+      alert('Failed to update status: ' + (err?.message || 'Unknown error'));
     } finally {
       setUpdatingId(null);
     }
   };
 
-  const currentQ = questions[selectedIndex] || null;
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-
-  // Helper to detect if question mentions an image in stem
-  const isImageReferencedInText = (stemText: string) => {
-    const keywords = ['image', 'picture', 'photograph', 'shown below', 'given below', 'arrow mark', 'slide shown'];
-    const lower = stemText.toLowerCase();
-    return keywords.some((kw) => lower.includes(kw));
+  const handleUpdateRole = async (targetUserId: string, newRole: string) => {
+    try {
+      setRoleUpdatingUserId(targetUserId);
+      setUserActionMsg(null);
+      await adminApi.updateUserRole(targetUserId, newRole);
+      setUsersList((prev) =>
+        prev.map((u) => (u.id === targetUserId ? { ...u, role: newRole as UserRole } : u))
+      );
+      setUserActionMsg({ text: `User role successfully updated to ${newRole}`, type: 'success' });
+      setTimeout(() => setUserActionMsg(null), 3000);
+    } catch (err: any) {
+      setUserActionMsg({
+        text: err?.message || 'Failed to update role. Insufficient permissions.',
+        type: 'error',
+      });
+    } finally {
+      setRoleUpdatingUserId(null);
+    }
   };
 
-  return (
-    <div className="container max-w-7xl px-4 sm:px-8 py-8">
-      {/* Admin Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08] mb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">
-              Admin & Editorial Curation Desk
-            </span>
+  // ---------------------------------------------------------------------------
+  // RBAC Authentication Guard
+  // ---------------------------------------------------------------------------
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isAdmin = user?.role === 'ADMIN' || isSuperAdmin;
+
+  if (authLoading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
+        <div className="animate-spin h-10 w-10 border-3 border-sky-500 border-t-transparent rounded-full mb-3" />
+        <h3 className="text-base font-bold text-white">Verifying Admin Access Permissions...</h3>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center p-4">
+        <Card className="glass-card max-w-md p-8 text-center border-white/10 space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mx-auto text-sky-400">
+            <Lock className="h-7 w-7" />
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Question Bank Review & Inspector
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Inspect questions with full options, ground truth explanations, and authoritative citations.
+          <h2 className="text-xl font-bold text-white">Admin Privileges Required</h2>
+          <p className="text-xs text-slate-400">
+            Access to the Question Bank, Editorial Review, and User Governance is restricted to verified Administrators.
+          </p>
+          <Button variant="gradient" onClick={() => setAuthModalOpen(true)} className="w-full gap-2 font-bold">
+            <ShieldCheck className="h-4 w-4" />
+            <span>Sign In to Admin Portal</span>
+          </Button>
+        </Card>
+        <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center p-4">
+        <Card className="glass-card max-w-md p-8 text-center border-rose-500/30 bg-rose-950/20 space-y-4">
+          <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+            <ShieldAlert className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-bold text-white">Access Forbidden (403)</h2>
+          <p className="text-xs text-slate-300">
+            Your account ({user.email}) is currently assigned the role <Badge variant="destructive">{user.role}</Badge>.
+          </p>
+          <p className="text-xs text-slate-400">
+            Contact a Super Administrator (<strong className="text-white">raghuldpi95@gmail.com</strong>) to request administrative privileges.
+          </p>
+          <Link href="/student" className="inline-block w-full">
+            <Button variant="outline" className="w-full border-white/10 text-xs">
+              Return to Student Hub
+            </Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
+  const selectedQuestion = questions[selectedIndex];
+
+  return (
+    <div className="container px-4 sm:px-8 py-6 max-w-7xl mx-auto space-y-6">
+      {/* Admin Top Header & Tab Navigation */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">
+              Administration & Governance Center
+            </h1>
+            {isSuperAdmin ? (
+              <Badge variant="verified" className="bg-purple-500/20 text-purple-300 border-purple-500/40 text-xs flex items-center gap-1">
+                <Crown className="h-3 w-3 text-purple-400" />
+                <span>Super Administrator</span>
+              </Badge>
+            ) : (
+              <Badge variant="verified" className="text-xs">
+                Admin
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-slate-400">
+            Curate ground truth question banks, manage role-based permissions, and inspect platform metrics.
           </p>
         </div>
 
-        {/* View Mode Toggle & Total Counter */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
-            <button
-              onClick={() => setViewMode('SPLIT')}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer',
-                viewMode === 'SPLIT'
-                  ? 'bg-sky-500 text-white shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-white'
-              )}
-            >
-              <Columns className="h-3.5 w-3.5" />
-              <span>Inspector Mode</span>
-            </button>
-            <button
-              onClick={() => setViewMode('TABLE')}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer',
-                viewMode === 'TABLE'
-                  ? 'bg-sky-500 text-white shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-white'
-              )}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-              <span>Table View</span>
-            </button>
-          </div>
-
-          <div className="px-4 py-2 rounded-xl glass-card text-center border-sky-500/30">
-            <div className="text-xs text-slate-400 font-medium">Matching Bank</div>
-            <div className="text-lg font-bold text-white">
-              {loading ? '...' : totalCount.toLocaleString()} <span className="text-xs font-normal text-muted-foreground">MCQs</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive flex items-center justify-between text-sm">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
-          <Button variant="outline" size="sm" onClick={() => fetchQuestions()}>
-            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-            Retry
-          </Button>
-        </div>
-      )}
-
-      {/* Filter and Search Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 p-4 rounded-2xl glass-card">
-        {/* Search */}
-        <div className="relative md:col-span-2">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search stem, keywords, or ID..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.1] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
-          />
-        </div>
-
-        {/* Topic Selector */}
-        <div>
-          <select
-            value={selectedTopic}
-            onChange={(e) => {
-              setSelectedTopic(e.target.value);
-              setPage(1);
-            }}
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/[0.1] text-sm text-white focus:outline-none focus:border-sky-500 transition-colors cursor-pointer"
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-2 p-1 rounded-xl bg-white/[0.04] border border-white/10">
+          <button
+            type="button"
+            onClick={() => setActiveTab('QUESTIONS')}
+            className={cn(
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+              activeTab === 'QUESTIONS'
+                ? 'bg-sky-500 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            )}
           >
-            <option value="ALL">All Pathology Topics ({topics.reduce((acc, t) => acc + t.count, 0)})</option>
-            {topics.map((t) => (
-              <option key={t.name} value={t.name}>
-                {t.name} ({t.count})
-              </option>
-            ))}
-          </select>
-        </div>
+            <FileCheck className="h-4 w-4" />
+            <span>Question Bank</span>
+          </button>
 
-        {/* Difficulty Selector */}
-        <div>
-          <select
-            value={difficultyFilter}
-            onChange={(e) => {
-              setDifficultyFilter(e.target.value);
-              setPage(1);
-            }}
-            className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-white/[0.1] text-sm text-white focus:outline-none focus:border-sky-500 transition-colors cursor-pointer"
+          <button
+            type="button"
+            onClick={() => setActiveTab('USERS')}
+            className={cn(
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+              activeTab === 'USERS'
+                ? 'bg-sky-500 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            )}
           >
-            <option value="ALL">All Difficulties</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
+            <Users className="h-4 w-4" />
+            <span>User Governance</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('STATS')}
+            className={cn(
+              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
+              activeTab === 'STATS'
+                ? 'bg-sky-500 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            )}
+          >
+            <BarChart3 className="h-4 w-4" />
+            <span>Overview Stats</span>
+          </button>
         </div>
       </div>
 
-      {/* Status Filter Tabs & Pagination Header */}
-      <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-        <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs">
-          {(['ALL', 'IMPORTED', 'HUMAN_REVIEW', 'APPROVED', 'REJECTED'] as const).map((st) => (
-            <button
-              key={st}
-              onClick={() => {
-                setStatusFilter(st);
-                setPage(1);
-              }}
-              className={cn(
-                'px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer',
-                statusFilter === st
-                  ? 'bg-sky-500 text-white shadow-sm font-semibold'
-                  : 'text-slate-400 hover:text-white'
-              )}
-            >
-              {st}
-            </button>
-          ))}
-        </div>
-
-        {/* Pagination Controls */}
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span>
-            Page <strong className="text-white">{page}</strong> of <strong className="text-white">{totalPages}</strong>
-          </span>
-          <div className="flex items-center gap-1 ml-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 border-white/10"
-              disabled={page <= 1 || loading}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 border-white/10"
-              disabled={page >= totalPages || loading}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------------------- */}
-      {/* MODE 1: SPLIT-PANE INSPECTOR MODE (High-Throughput Review) */}
-      {/* ------------------------------------------------------------------- */}
-      {viewMode === 'SPLIT' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
-          {/* Left 4 Columns: Compact Question List */}
-          <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-slate-900/40 p-4 max-h-[750px] overflow-y-auto">
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-slate-400 px-2 pb-2 border-b border-white/[0.06] flex items-center justify-between">
-                <span>Questions in Batch</span>
-                <span>{questions.length} Items</span>
+      {/* ======================================================================= */}
+      {/* TAB 1: QUESTION BANK MANAGEMENT */}
+      {/* ======================================================================= */}
+      {activeTab === 'QUESTIONS' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Controls Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-white/10 bg-slate-900/60">
+            <div className="flex flex-wrap items-center gap-3 flex-1">
+              <div className="relative min-w-[220px] max-w-sm flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search question stem, keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                />
               </div>
 
-              {loading ? (
-                <div className="py-20 text-center text-slate-400">
-                  <div className="animate-spin h-7 w-7 border-2 border-sky-500 border-t-transparent rounded-full mx-auto mb-2" />
-                  <span className="text-xs">Loading batch...</span>
-                </div>
-              ) : questions.length === 0 ? (
-                <div className="py-20 text-center text-slate-400 text-xs">
-                  No questions match current filter.
-                </div>
-              ) : (
-                questions.map((q, idx) => {
-                  const isSelected = idx === selectedIndex;
-                  const hasImageRef = isImageReferencedInText(q.stem);
+              <select
+                value={selectedTopic}
+                onChange={(e) => {
+                  setSelectedTopic(e.target.value);
+                  setPage(1);
+                }}
+                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 max-w-[200px]"
+              >
+                <option value="ALL">All Topics</option>
+                {topics.map((t) => (
+                  <option key={t.name} value={t.name}>
+                    {t.name} ({t.count})
+                  </option>
+                ))}
+              </select>
 
-                  return (
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500"
+              >
+                <option value="ALL">All Statuses</option>
+                <option value="IMPORTED">IMPORTED</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="AI_REVIEW">AI_REVIEW</option>
+                <option value="REJECTED">REJECTED</option>
+                <option value="REPORTED">REPORTED</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('SPLIT')}
+                  className={cn(
+                    'p-1.5 rounded-lg text-xs transition-colors',
+                    viewMode === 'SPLIT' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'
+                  )}
+                  title="Split Review Mode"
+                >
+                  <Columns className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('TABLE')}
+                  className={cn(
+                    'p-1.5 rounded-lg text-xs transition-colors',
+                    viewMode === 'TABLE' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'
+                  )}
+                  title="Full Table View"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchQuestions}
+                className="h-9 border-white/10 text-xs gap-1 text-slate-300"
+              >
+                <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
+                <span>Refresh</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* SPLIT VIEW REVIEW MODE */}
+          {viewMode === 'SPLIT' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
+              {/* Left Question List */}
+              <div className="lg:col-span-5 space-y-2 max-h-[750px] overflow-y-auto pr-1">
+                <div className="flex items-center justify-between text-xs text-slate-400 pb-2">
+                  <span>
+                    Showing {questions.length} of {totalCount} Questions
+                  </span>
+                  <span>Page {page}</span>
+                </div>
+
+                {loading ? (
+                  <div className="p-8 text-center text-xs text-slate-400">Loading questions...</div>
+                ) : questions.length === 0 ? (
+                  <div className="p-8 text-center text-xs text-slate-400">No questions found matching criteria.</div>
+                ) : (
+                  questions.map((q, idx) => (
                     <div
                       key={q.id}
                       onClick={() => setSelectedIndex(idx)}
                       className={cn(
-                        'p-3.5 rounded-xl border text-left cursor-pointer transition-all',
-                        isSelected
-                          ? 'bg-sky-500/15 border-sky-400/80 shadow-md shadow-sky-500/10 ring-1 ring-sky-400/50'
-                          : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05] hover:border-white/15'
+                        'p-3.5 rounded-xl border text-left cursor-pointer transition-all space-y-1.5',
+                        selectedIndex === idx
+                          ? 'border-sky-500 bg-sky-500/10 shadow-md'
+                          : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
                       )}
                     >
-                      <div className="flex items-center justify-between gap-2 mb-1.5">
-                        <span className="text-[11px] font-mono text-slate-400">
-                          #{(page - 1) * pageSize + idx + 1}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          {hasImageRef && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                              <ImageOff className="h-2.5 w-2.5" />
-                              <span>Image Ref</span>
-                            </span>
-                          )}
-                          <Badge
-                            variant={
-                              q.status === 'APPROVED'
-                                ? 'success'
-                                : q.status === 'HUMAN_REVIEW'
-                                ? 'warning'
-                                : q.status === 'REJECTED'
-                                ? 'destructive'
-                                : 'outline'
-                            }
-                            className="text-[10px] px-1.5 py-0"
-                          >
-                            {q.status}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="text-xs font-medium text-white line-clamp-2 leading-relaxed mb-1.5">
-                        {q.stem}
-                      </div>
-
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-white/[0.04]">
-                        <span className="truncate max-w-[180px]">{q.topic_name_normalized}</span>
-                        <span className="font-semibold text-emerald-400">Ans: {q.correct_option || '?'}</span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* Right 7 Columns: Active Question Inspection Workbench */}
-          <div className="lg:col-span-7">
-            {currentQ ? (
-              <Card className="glass-card p-6 sm:p-8 h-full flex flex-col justify-between">
-                <div className="space-y-6">
-                  {/* Top Bar with Navigation & Meta */}
-                  <div className="flex items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant="secondary" className="text-xs">
-                        {currentQ.topic_name_normalized}
-                      </Badge>
-                      <Badge
-                        variant={
-                          currentQ.status === 'APPROVED'
-                            ? 'success'
-                            : currentQ.status === 'HUMAN_REVIEW'
-                            ? 'warning'
-                            : currentQ.status === 'REJECTED'
-                            ? 'destructive'
-                            : 'outline'
-                        }
-                        className="text-xs font-semibold"
-                      >
-                        {currentQ.status}
-                      </Badge>
-                      <span className="text-xs text-slate-500 font-mono">{currentQ.external_source_id}</span>
-                    </div>
-
-                    {/* Prev / Next Buttons */}
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={selectedIndex === 0}
-                        onClick={() => setSelectedIndex((idx) => Math.max(0, idx - 1))}
-                        className="h-8 text-xs border-white/10"
-                      >
-                        <ChevronLeft className="h-3.5 w-3.5 mr-1" />
-                        <span>Prev</span>
-                      </Button>
-                      <span className="text-xs font-mono text-slate-400 px-1">
-                        {selectedIndex + 1} / {questions.length}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={selectedIndex === questions.length - 1}
-                        onClick={() => setSelectedIndex((idx) => Math.min(questions.length - 1, idx + 1))}
-                        className="h-8 text-xs border-white/10"
-                      >
-                        <span>Next</span>
-                        <ChevronRight className="h-3.5 w-3.5 ml-1" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Missing Image Alert Banner if referenced */}
-                  {isImageReferencedInText(currentQ.stem) && (
-                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5">
-                      <ImageOff className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold">Image Attachment Notice:</span> This question text mentions an image/picture (&quot;shown below&quot;) from the raw past paper scrape, but the raw MedMCQA dataset did not include image binaries. If the picture is mandatory to answer, flag or reject the question.
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Question Stem */}
-                  <div>
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                      Question Stem
-                    </label>
-                    <div className="text-base sm:text-lg font-medium text-white leading-relaxed whitespace-pre-wrap bg-white/[0.02] p-4 rounded-xl border border-white/[0.06]">
-                      {currentQ.stem}
-                    </div>
-                  </div>
-
-                  {/* Options List */}
-                  <div>
-                    <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                      Options & Ground Truth
-                    </label>
-                    <div className="space-y-2.5">
-                      {currentQ.options.map((opt) => {
-                        const isCorrect = opt.key === currentQ.correct_option;
-                        return (
-                          <div
-                            key={opt.key}
-                            className={cn(
-                              'p-3.5 rounded-xl border text-sm flex items-start gap-3 transition-colors',
-                              isCorrect
-                                ? 'border-emerald-500/50 bg-emerald-500/15 text-white font-medium shadow-sm'
-                                : 'border-white/10 text-slate-300 bg-white/[0.02]'
-                            )}
-                          >
-                            <span
-                              className={cn(
-                                'h-6 w-6 rounded-md flex items-center justify-center font-bold text-xs flex-shrink-0',
-                                isCorrect ? 'bg-emerald-500 text-white' : 'bg-white/10 text-slate-300'
-                              )}
-                            >
-                              {opt.key}
-                            </span>
-                            <span className="flex-1 pt-0.5">{opt.text}</span>
-                            {isCorrect && (
-                              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
-                                GROUND TRUTH
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Explanation */}
-                  {currentQ.explanation && (
-                    <div>
-                      <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                        Clinical & Pathological Explanation
-                      </label>
-                      <div className="text-slate-200 text-xs sm:text-sm bg-sky-950/30 p-4 rounded-xl border border-sky-500/20 leading-relaxed whitespace-pre-wrap">
-                        {currentQ.explanation}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Citations */}
-                  {currentQ.citations && currentQ.citations.length > 0 && (
-                    <div>
-                      <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-                        Authoritative Evidence Citations
-                      </label>
-                      <div className="space-y-2">
-                        {currentQ.citations.map((c, i) => (
-                          <div key={i} className="text-xs p-3 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                            <div className="flex items-center justify-between mb-1 font-bold text-white">
-                              <span>{c.source_title}</span>
-                              <Badge variant={c.verification_status === 'HUMAN_VERIFIED' ? 'verified' : 'suggested'}>
-                                {c.verification_status}
-                              </Badge>
-                            </div>
-                            {c.chapter && <div className="text-slate-300">Chapter: {c.chapter}</div>}
-                            {c.page_range && <div className="text-slate-400">Pages: {c.page_range}</div>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom One-Click Editorial Action Buttons */}
-                <div className="pt-6 mt-8 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-xs text-slate-400">
-                    Action will update status and advance to next question
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      disabled={updatingId === currentQ.id}
-                      onClick={() => handleUpdateStatus(currentQ.id, 'REJECTED', true)}
-                      className="bg-red-600/80 hover:bg-red-600 text-xs"
-                    >
-                      Reject & Next
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={updatingId === currentQ.id}
-                      onClick={() => handleUpdateStatus(currentQ.id, 'HUMAN_REVIEW', true)}
-                      className="border-amber-500/40 text-amber-300 hover:bg-amber-500/10 text-xs"
-                    >
-                      Flag for Faculty Review
-                    </Button>
-
-                    <Button
-                      variant="gradient"
-                      size="sm"
-                      disabled={updatingId === currentQ.id}
-                      onClick={() => handleUpdateStatus(currentQ.id, 'APPROVED', true)}
-                      className="text-xs gap-1.5"
-                    >
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      <span>Approve & Next</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ) : (
-              <div className="h-full glass-card p-12 text-center flex flex-col items-center justify-center text-slate-400">
-                <FileCheck className="h-12 w-12 text-slate-600 mb-3" />
-                <h3 className="text-base font-bold text-white">Select a Question to Inspect</h3>
-                <p className="text-xs mt-1">Choose any question from the left batch to inspect details and edit status.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ------------------------------------------------------------------- */}
-      {/* MODE 2: TABLE VIEW */}
-      {/* ------------------------------------------------------------------- */}
-      {viewMode === 'TABLE' && (
-        <div className="rounded-2xl border border-white/[0.08] overflow-hidden bg-slate-900/40 backdrop-blur-md mb-6">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.03] text-xs text-slate-400 uppercase tracking-wider border-b border-white/[0.08]">
-                <tr>
-                  <th className="px-6 py-4 font-semibold">Question Stem</th>
-                  <th className="px-6 py-4 font-semibold">Topic / Taxonomy</th>
-                  <th className="px-6 py-4 font-semibold">Ans</th>
-                  <th className="px-6 py-4 font-semibold">Difficulty</th>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                  <th className="px-6 py-4 font-semibold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.06]">
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
-                      <div className="animate-spin h-8 w-8 border-3 border-sky-500 border-t-transparent rounded-full mx-auto mb-3" />
-                      <span>Loading questions from PostgreSQL...</span>
-                    </td>
-                  </tr>
-                ) : questions.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
-                      No questions found matching the selected filters.
-                    </td>
-                  </tr>
-                ) : (
-                  questions.map((q, idx) => (
-                    <tr key={q.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-6 py-4 max-w-md">
-                        <div className="font-medium text-white line-clamp-2 leading-relaxed">{q.stem}</div>
-                        <div className="text-[11px] text-slate-500 mt-1 font-mono flex items-center gap-2">
-                          <span>{q.external_source_id}</span>
-                          {isImageReferencedInText(q.stem) && (
-                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                              Image Ref
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant="secondary" className="text-xs">
-                          {q.topic_name_normalized}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="h-6 w-6 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold inline-flex items-center justify-center">
-                          {q.correct_option || '?'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="capitalize text-xs font-semibold text-slate-300">
-                          {q.difficulty}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="font-mono text-slate-400 truncate max-w-[120px]">{q.id}</span>
                         <Badge
                           variant={
                             q.status === 'APPROVED'
-                              ? 'success'
-                              : q.status === 'HUMAN_REVIEW'
-                              ? 'warning'
+                              ? 'verified'
                               : q.status === 'REJECTED'
                               ? 'destructive'
-                              : 'outline'
+                              : 'secondary'
                           }
-                          className="text-xs"
+                          className="text-[9px] px-1.5 py-0"
+                        >
+                          {q.status}
+                        </Badge>
+                      </div>
+                      <p className="text-xs font-semibold text-white line-clamp-2">{q.stem}</p>
+                      <div className="flex items-center justify-between text-[10px] text-slate-400">
+                        <span className="truncate max-w-[140px]">{q.primary_topic_id || 'General'}</span>
+                        <span className="uppercase">{q.difficulty || 'medium'}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page <= 1}
+                    onClick={() => setPage(page - 1)}
+                    className="h-8 text-xs border-white/10"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" /> Previous
+                  </Button>
+                  <span className="text-xs text-slate-400">Page {page}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={questions.length < pageSize}
+                    onClick={() => setPage(page + 1)}
+                    className="h-8 text-xs border-white/10"
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Deep Review Pane */}
+              <div className="lg:col-span-7">
+                {selectedQuestion ? (
+                  <Card className="glass-card p-6 border-white/10 space-y-6 sticky top-24 bg-slate-900/85">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="outline" className="text-[10px] font-mono">
+                            {selectedQuestion.id}
+                          </Badge>
+                          <Badge variant="verified" className="text-[10px]">
+                            {selectedQuestion.status}
+                          </Badge>
+                        </div>
+                        <h3 className="text-sm font-bold text-white">{selectedQuestion.primary_topic_id}</h3>
+                      </div>
+
+                      {/* Review Action Buttons */}
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="gradient"
+                          size="sm"
+                          disabled={updatingId === selectedQuestion.id || selectedQuestion.status === 'APPROVED'}
+                          onClick={() => handleUpdateStatus(selectedQuestion.id, 'APPROVED')}
+                          className="text-xs font-bold gap-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>Approve</span>
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={updatingId === selectedQuestion.id || selectedQuestion.status === 'REJECTED'}
+                          onClick={() => handleUpdateStatus(selectedQuestion.id, 'REJECTED')}
+                          className="text-xs font-bold gap-1 border-rose-500/30 text-rose-300 hover:bg-rose-500/10"
+                        >
+                          <span>Reject</span>
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Question Stem */}
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-400 mb-1">Question Stem:</h4>
+                      <p className="text-sm font-bold text-white leading-relaxed p-3.5 rounded-xl bg-slate-950/70 border border-white/5">
+                        {selectedQuestion.stem}
+                      </p>
+                    </div>
+
+                    {/* Options */}
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-400 mb-2">Options:</h4>
+                      <div className="space-y-2">
+                        {Array.isArray(selectedQuestion.options)
+                          ? selectedQuestion.options.map((opt: any) => {
+                              const isCorrect = opt.key === selectedQuestion.correct_option;
+                              return (
+                                <div
+                                  key={opt.key}
+                                  className={cn(
+                                    'p-3 rounded-xl border text-xs flex items-center gap-3',
+                                    isCorrect
+                                      ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold'
+                                      : 'bg-white/[0.02] border-white/5 text-slate-300'
+                                  )}
+                                >
+                                  <span className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center font-bold text-[10px]">
+                                    {opt.key}
+                                  </span>
+                                  <span className="flex-1">{opt.text}</span>
+                                  {isCorrect && <Check className="h-4 w-4 text-emerald-400" />}
+                                </div>
+                              );
+                            })
+                          : Object.entries(selectedQuestion.options || {}).map(([k, text]) => {
+                              const isCorrect = k === selectedQuestion.correct_option;
+                              return (
+                                <div
+                                  key={k}
+                                  className={cn(
+                                    'p-3 rounded-xl border text-xs flex items-center gap-3',
+                                    isCorrect
+                                      ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold'
+                                      : 'bg-white/[0.02] border-white/5 text-slate-300'
+                                  )}
+                                >
+                                  <span className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center font-bold text-[10px]">
+                                    {k}
+                                  </span>
+                                  <span className="flex-1">{String(text)}</span>
+                                  {isCorrect && <Check className="h-4 w-4 text-emerald-400" />}
+                                </div>
+                              );
+                            })}
+                      </div>
+                    </div>
+
+                    {/* Explanation */}
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-400 mb-1">Clinical Explanation & Rationale:</h4>
+                      <p className="text-xs text-slate-300 leading-relaxed p-3.5 rounded-xl bg-slate-950/70 border border-white/5">
+                        {selectedQuestion.explanation || 'No detailed rationale attached.'}
+                      </p>
+                    </div>
+                  </Card>
+                ) : (
+                  <div className="p-12 text-center text-xs text-slate-400">Select a question to inspect.</div>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* FULL TABLE VIEW */
+            <div className="p-4 rounded-2xl glass-card border border-white/10 overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="border-b border-white/10 text-slate-400 uppercase text-[10px]">
+                  <tr>
+                    <th className="py-2.5 px-3">ID</th>
+                    <th className="py-2.5 px-3">Stem Preview</th>
+                    <th className="py-2.5 px-3">Topic</th>
+                    <th className="py-2.5 px-3">Status</th>
+                    <th className="py-2.5 px-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {questions.map((q) => (
+                    <tr key={q.id} className="hover:bg-white/[0.03] transition-colors">
+                      <td className="py-3 px-3 font-mono text-[10px] text-slate-400 truncate max-w-[90px]">{q.id}</td>
+                      <td className="py-3 px-3 font-medium text-white max-w-md truncate">{q.stem}</td>
+                      <td className="py-3 px-3 truncate max-w-[140px]">{q.primary_topic_id || 'General'}</td>
+                      <td className="py-3 px-3">
+                        <Badge
+                          variant={
+                            q.status === 'APPROVED'
+                              ? 'verified'
+                              : q.status === 'REJECTED'
+                              ? 'destructive'
+                              : 'secondary'
+                          }
+                          className="text-[10px]"
                         >
                           {q.status}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                      <td className="py-3 px-3 text-right space-x-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            setSelectedIndex(idx);
-                            setViewMode('SPLIT');
-                          }}
-                          className="h-8 text-xs border-white/10"
+                          onClick={() => handleUpdateStatus(q.id, 'APPROVED')}
+                          className="text-[11px] text-emerald-400 hover:bg-emerald-500/10 h-7"
                         >
-                          <Eye className="h-3.5 w-3.5 mr-1" />
-                          <span>Inspect</span>
+                          Approve
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUpdateStatus(q.id, 'REJECTED')}
+                          className="text-[11px] text-rose-400 hover:bg-rose-500/10 h-7"
+                        >
+                          Reject
                         </Button>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Pagination Footer */}
-      <div className="flex items-center justify-between text-xs text-slate-400 pt-4">
-        <div>
-          Showing {questions.length > 0 ? (page - 1) * pageSize + 1 : 0} to{' '}
-          {Math.min(page * pageSize, totalCount)} of {totalCount.toLocaleString()} questions
+      {/* ======================================================================= */}
+      {/* TAB 2: USER MANAGEMENT & RBAC GOVERNANCE */}
+      {/* ======================================================================= */}
+      {activeTab === 'USERS' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Action Notification Banner */}
+          {userActionMsg && (
+            <div
+              className={cn(
+                'p-3.5 rounded-xl border text-xs flex items-center gap-2',
+                userActionMsg.type === 'success'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                  : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+              )}
+            >
+              {userActionMsg.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-rose-400" />
+              )}
+              <span>{userActionMsg.text}</span>
+            </div>
+          )}
+
+          {/* User Controls */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-white/10 bg-slate-900/60">
+            <div className="flex flex-wrap items-center gap-3 flex-1">
+              <div className="relative min-w-[240px] max-w-sm flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search user name, doctor email..."
+                  value={usersSearch}
+                  onChange={(e) => setUsersSearch(e.target.value)}
+                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <select
+                value={roleFilter}
+                onChange={(e) => {
+                  setRoleFilter(e.target.value);
+                  setUsersPage(1);
+                }}
+                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500"
+              >
+                <option value="ALL">All Roles</option>
+                <option value="SUPER_ADMIN">Super Admins</option>
+                <option value="ADMIN">Admins</option>
+                <option value="REVIEWER">Reviewers</option>
+                <option value="EDUCATOR">Educators</option>
+                <option value="USER">Students / Users</option>
+              </select>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchUsers}
+              className="h-9 border-white/10 text-xs gap-1 text-slate-300"
+            >
+              <RefreshCw className={cn('h-3.5 w-3.5', usersLoading && 'animate-spin')} />
+              <span>Refresh Users</span>
+            </Button>
+          </div>
+
+          {/* Users Table */}
+          <Card className="glass-card p-4 sm:p-6 border-white/10 overflow-x-auto">
+            <div className="flex items-center justify-between text-xs text-slate-400 pb-3 mb-2 border-b border-white/10">
+              <span>
+                Registered Users: <strong className="text-white">{usersTotal}</strong>
+              </span>
+              <span>
+                Signed in as: <strong className="text-white">{user.email}</strong> ({user.role})
+              </span>
+            </div>
+
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="border-b border-white/10 text-slate-400 uppercase text-[10px]">
+                <tr>
+                  <th className="py-2.5 px-3">User & Email</th>
+                  <th className="py-2.5 px-3">Target Exam</th>
+                  <th className="py-2.5 px-3">Stage / College</th>
+                  <th className="py-2.5 px-3">Attempts</th>
+                  <th className="py-2.5 px-3">Current Role</th>
+                  <th className="py-2.5 px-3 text-right">Assign Role</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {usersList.map((u) => {
+                  const isProtectedSuperAdmin = u.is_protected;
+
+                  return (
+                    <tr key={u.id} className="hover:bg-white/[0.03] transition-colors">
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <div className="font-bold text-white flex items-center gap-1.5">
+                              <span>{u.name}</span>
+                              {isProtectedSuperAdmin && (
+                                <Badge variant="verified" className="text-[9px] bg-purple-500/20 text-purple-300 border-purple-500/40">
+                                  🛡️ Permanent Super Admin
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-[11px] text-slate-400">{u.email}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <Badge variant="outline" className="text-[10px]">
+                          {u.target_exam || 'NEET_SS'}
+                        </Badge>
+                      </td>
+
+                      <td className="py-3 px-3 text-[11px] text-slate-400">
+                        {u.residency_stage ? `${u.residency_stage}` : 'Resident'}
+                        {u.medical_college ? ` • ${u.medical_college}` : ''}
+                      </td>
+
+                      <td className="py-3 px-3 font-semibold text-white">
+                        {u.total_attempts} Tests
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <span
+                          className={cn(
+                            'text-[10px] px-2 py-0.5 rounded-full font-bold uppercase',
+                            u.role === 'SUPER_ADMIN'
+                              ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                              : u.role === 'ADMIN'
+                              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                              : u.role === 'REVIEWER'
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              : 'bg-white/10 text-slate-300'
+                          )}
+                        >
+                          {u.role}
+                        </span>
+                      </td>
+
+                      <td className="py-3 px-3 text-right">
+                        {isProtectedSuperAdmin ? (
+                          <span className="text-[10px] text-purple-400 font-semibold italic">Protected</span>
+                        ) : (
+                          <select
+                            value={u.role}
+                            disabled={roleUpdatingUserId === u.id || (!isSuperAdmin && (u.role === 'ADMIN' || u.role === 'SUPER_ADMIN'))}
+                            onChange={(e) => handleUpdateRole(u.id, e.target.value)}
+                            className="h-8 px-2.5 rounded-lg bg-slate-950/90 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
+                          >
+                            <option value="USER">USER (Student)</option>
+                            <option value="REVIEWER">REVIEWER</option>
+                            <option value="EDUCATOR">EDUCATOR</option>
+                            {isSuperAdmin && <option value="ADMIN">ADMIN</option>}
+                            {isSuperAdmin && <option value="SUPER_ADMIN">SUPER_ADMIN</option>}
+                          </select>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Card>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1 || loading}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="border-white/10"
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            <span>Previous Page</span>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages || loading}
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            className="border-white/10"
-          >
-            <span>Next Page</span>
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
+      )}
+
+      {/* ======================================================================= */}
+      {/* TAB 3: PLATFORM OVERVIEW & SYSTEM STATS */}
+      {/* ======================================================================= */}
+      {activeTab === 'STATS' && (
+        <div className="space-y-6 animate-fade-in">
+          {statsLoading || !statsData ? (
+            <div className="p-12 text-center text-xs text-slate-400">Loading system metrics...</div>
+          ) : (
+            <div className="space-y-6">
+              {/* Stat Counters */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Card className="glass-card p-6 border-white/10 text-center">
+                  <span className="text-xs text-slate-400 uppercase font-semibold">Total Registered Users</span>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-white mt-1">{statsData.total_users}</div>
+                </Card>
+
+                <Card className="glass-card p-6 border-white/10 text-center">
+                  <span className="text-xs text-slate-400 uppercase font-semibold">Total Curated Questions</span>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-sky-400 mt-1">{statsData.total_questions}</div>
+                </Card>
+
+                <Card className="glass-card p-6 border-white/10 text-center">
+                  <span className="text-xs text-slate-400 uppercase font-semibold">Diagnostic Mock Attempts</span>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 mt-1">{statsData.total_attempts}</div>
+                </Card>
+              </div>
+
+              {/* Status & Roles Breakdown */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="glass-card p-6 border-white/10 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Questions by Status</h3>
+                  <div className="space-y-2 text-xs">
+                    {Object.entries(statsData.questions_by_status || {}).map(([st, cnt]: any) => (
+                      <div key={st} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                        <span className="font-semibold text-slate-300">{st}</span>
+                        <Badge variant="outline" className="text-xs">{cnt}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+
+                <Card className="glass-card p-6 border-white/10 space-y-4">
+                  <h3 className="text-sm font-bold text-white">Users by RBAC Role</h3>
+                  <div className="space-y-2 text-xs">
+                    {Object.entries(statsData.users_by_role || {}).map(([r, cnt]: any) => (
+                      <div key={r} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                        <span className="font-semibold text-slate-300">{r}</span>
+                        <Badge variant="verified" className="text-xs">{cnt}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

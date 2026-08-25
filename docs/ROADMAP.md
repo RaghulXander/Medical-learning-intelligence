@@ -10,9 +10,11 @@
 | **M4: Repository Stabilization** | Day 7 | Monorepo structure (`apps/web`, `apps/student-native`, `packages/shared`, `packages/api-client`), Git hygiene, `.gitignore` zero secrets/data leakage. | **COMPLETED** |
 | **M5: Universal Assessment Engine** | Days 8–9 | Universal Assessment Engine, +4/-1 NEET scoring, Prometric 5-state palette, distractor strike tool, font zoom, 1-click remediation, mobile WebView embedding. | **COMPLETED** |
 | **M6: Question Selection & Learner Model** | Days 10–11 | Intelligent Question Selection Engine, Hard Eligibility Precedence, Cascading Fallbacks, Laplace-smoothed UserMastery, Discrete Recency Penalties, Deterministic Seeded Selection. | **COMPLETED** |
-| **M7: AI Question Generation & PubMedBERT** | Days 12–13 | Python FastAPI ML service for PubMedBERT (`jamezoon/medmcqa-pubmedbert-mcqa`) MCQA evaluation signal & RAG question blueprints. | *Upcoming* |
-| **M8: Feedback & Resident Analytics** | Days 14–15 | User question error reporting, admin editorial desk, and spaced repetition analytics. | *Upcoming* |
-| **M9: Image Pathology & Multimodal PLIP** | Phase 2 | Image-based histopathology MCQs and PLIP vision integration. | *Upcoming* |
+| **M7: Core Identity & Common Backend** | Days 12–13 | Google OAuth2, Argon2id/bcrypt auth, strong password generator, guest diagnostic quiz & merge engine, adaptive onboarding, daily quiz API, session management & RBAC. | **COMPLETED** |
+| **M7a: UI Enrichment & Missing Flows** | Day 13 | Next.js screens: Glassmorphic Auth Modal with live password entropy bar & 1-click strong pass, Guest Diagnostic Funnel, 3-Step Adaptive Onboarding (`/onboarding`), Enriched Student Hub with Circular Readiness Dial, and Smart Mistake Vault (`/student/review`). | **COMPLETED** |
+| **M8: Student Native App & Mobile Experience** | Days 14–15 | Marrow-grade Native Mobile App (`apps/student-native`), Student Dashboard, Daily Quiz Card, Readiness Dial, Exam Runner & Analytics. | *Current / In Progress* |
+| **M9: AI Question Generation & PubMedBERT** | Phase 2 | Python FastAPI ML service for PubMedBERT (`jamezoon/medmcqa-pubmedbert-mcqa`) MCQA evaluation signal & RAG question blueprints. | *Upcoming* |
+| **M10: Image Pathology & Multimodal PLIP** | Phase 2 | Image-based histopathology MCQs and PLIP vision integration. | *Upcoming* |
 
 ---
 

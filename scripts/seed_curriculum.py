@@ -93,6 +93,16 @@ FOUNDATIONAL_SOURCES = [
 
 INITIAL_USERS = [
     {
+        "email": "raghuldpi95@gmail.com",
+        "name": "Dr. Raghul Xander (Super Admin)",
+        "role": UserRole.SUPER_ADMIN,
+    },
+    {
+        "email": "raghuljayan@gmail.com",
+        "name": "Dr. Raghul Jayan (Super Admin)",
+        "role": UserRole.SUPER_ADMIN,
+    },
+    {
         "email": "admin@medicalexam.ai",
         "name": "Dr. Chief Pathologist (Admin)",
         "role": UserRole.ADMIN,

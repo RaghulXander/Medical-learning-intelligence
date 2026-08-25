@@ -8,11 +8,11 @@ export function Footer() {
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-sky-400" />
           <span className="font-semibold text-white">DocEdge Medical Intelligence</span>
-          <span>• 15,500+ Curated Pathology Questions</span>
+          <span>• 15,000+ Curated Medical Questions</span>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-slate-400">
           <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-          <span>Evidence-backed with Robbins, WHO Blue Books & Sternberg Diagnostic Standards.</span>
+          <span>Evidence-backed with Standard Peer-Reviewed Medical Literature & Guidelines.</span>
         </div>
       </div>
     </footer>

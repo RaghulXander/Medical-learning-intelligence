@@ -45,6 +45,7 @@ export interface SectionConfig {
 export interface CreateAssessmentPayload {
   title: string;
   type?: string;
+  preset_id?: string;
   question_count?: number;
   duration_seconds?: number;
   marking_scheme_id?: string;
