@@ -60,7 +60,10 @@ def get_settings() -> Settings:
         ),
         cors_allowed_origins=_csv(os.getenv("CORS_ALLOWED_ORIGINS", default_origins)),
         redis_url=os.getenv("REDIS_URL", "").strip(),
-        release_sha=os.getenv("RELEASE_SHA", os.getenv("COMMIT_SHA", "development")).strip(),
+        release_sha=os.getenv(
+            "RELEASE_SHA",
+            os.getenv("RENDER_GIT_COMMIT", os.getenv("COMMIT_SHA", "development")),
+        ).strip(),
     )
     settings.validate()
     return settings

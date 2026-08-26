@@ -153,6 +153,8 @@ Open the web app at `http://localhost:3000`, the API at `http://127.0.0.1:8000`,
 
 The dataset download/import is optional for booting the application but required to run question-based exams. For Windows commands, mobile networking, database verification, test/build commands, and troubleshooting, follow [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md).
 
+For the Netlify + Render staging and production workflow, follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 ---
 
 ## 5. Current Roadmap

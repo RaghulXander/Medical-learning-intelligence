@@ -46,7 +46,7 @@ export default function StudentHubPage() {
   const hasExamAccess = Boolean(
     user?.is_subscribed || (user?.role && user.role !== 'USER')
   );
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'raghuldpi95@gmail.com';
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'raghuljayan@gmail.com';
   const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
     `DocEdge exam access request - ${user?.email || 'student'}`
   )}`;

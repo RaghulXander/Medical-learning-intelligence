@@ -449,6 +449,7 @@ Alerts should be actionable. Define who responds, expected response time, and th
 
 ### M10.4 — Staging deployment
 
+- [x] Add a Render Blueprint for the initial API and PostgreSQL staging deployment.
 - [ ] Provision staging database, Redis, API, storage, and web.
 - [ ] Configure staging Google OAuth.
 - [ ] Import only approved/sanitized staging content.
