@@ -8,10 +8,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "python dev.py",
-    "dev:all": "python dev.py",
+    "dev": "bun scripts/run_python.mjs dev.py",
+    "dev:all": "bun scripts/run_python.mjs dev.py",
     "dev:web": "bun --filter web dev",
-    "dev:backend": "python -m uvicorn backend.api.main:app --reload --port 8000",
+    "dev:backend": "bun scripts/run_python.mjs -m uvicorn backend.api.main:app --reload --port 8000",
     "dev:mobile": "bun --filter mobile start",
     "dev:mobile:web": "bun --filter mobile web",
     "dev:start": "concurrently -n \"DOCKER,BACKEND,FRONTEND\" -c \"blue,green,magenta\" \"bun run docker:up\" \"bun run dev:backend\" \"bun run dev:web\"",
@@ -22,11 +22,11 @@
     "docker:down": "docker compose -f infrastructure/docker-compose.yml down",
     "docker:logs": "docker compose -f infrastructure/docker-compose.yml logs -f",
     "docker:reset": "docker compose -f infrastructure/docker-compose.yml down -v && docker compose -f infrastructure/docker-compose.yml up -d",
-    "db:init": "python -c \"from database.db import init_db; init_db(); print('✓ Database initialized successfully.')\"",
-    "db:seed": "python scripts/seed_curriculum.py",
+    "db:init": "bun scripts/run_python.mjs -c \"from database.db import init_db; init_db(); print('✓ Database initialized successfully.')\"",
+    "db:seed": "bun scripts/run_python.mjs scripts/seed_curriculum.py",
     "db:setup": "bun run db:init && bun run db:seed",
-    "pipeline:run": "python scripts/run_pipeline.py",
-    "ingest": "python scripts/ingest_cli.py"
+    "pipeline:run": "bun scripts/run_python.mjs scripts/run_pipeline.py",
+    "ingest": "bun scripts/run_python.mjs scripts/ingest_cli.py"
   },
   "devDependencies": {
     "concurrently": "^10.0.5",

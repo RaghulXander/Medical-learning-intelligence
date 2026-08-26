@@ -55,7 +55,7 @@ export default function MockBuilderScreen() {
         blueprint,
       });
 
-      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user?.id);
+      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
       router.replace(`/exam/${attempt.attempt_id}` as any);
     } catch (err) {
       console.error('Failed to create custom test:', err);

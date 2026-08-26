@@ -47,15 +47,11 @@ export class AssessmentsApi {
   /**
    * Start an assessment attempt (returns sanitized questions)
    */
-  async startAttempt(
-    assessmentId: string,
-    userId?: string
-  ): Promise<StartAttemptResponse> {
+  async startAttempt(assessmentId: string): Promise<StartAttemptResponse> {
     return this.client.request<StartAttemptResponse>(
       `/api/assessments/${assessmentId}/start`,
       {
         method: 'POST',
-        body: JSON.stringify({ user_id: userId }),
       }
     );
   }
@@ -111,13 +107,13 @@ export class AssessmentsApi {
   /**
    * Launch a 1-click preset exam attempt directly
    */
-  async launchPreset(presetId: string, userId?: string): Promise<StartAttemptResponse> {
+  async launchPreset(presetId: string): Promise<StartAttemptResponse> {
     const assessment = await this.createAssessment({
       title: `${presetId.toUpperCase()} Assessment`,
       preset_id: presetId,
       type: 'MOCK',
     });
-    return this.startAttempt(assessment.assessment_id, userId);
+    return this.startAttempt(assessment.assessment_id);
   }
 
   /**

@@ -78,6 +78,81 @@ def session_scope(engine: Optional[Engine] = None) -> Generator[Session, None, N
 from sqlalchemy import text
 
 
+def _ensure_missing_question_columns(engine: Engine) -> None:
+    """Adds any newly introduced columns to existing questions tables."""
+    with engine.connect() as conn:
+        if engine.url.drivername.startswith("sqlite"):
+            try:
+                rows = conn.exec_driver_sql("PRAGMA table_info(questions)").fetchall()
+            except Exception:
+                return
+            existing_columns = {row[1] for row in rows}
+            column_specs = {
+                "source_exam_id": "TEXT",
+                "topic_name_original": "TEXT",
+                "topic_name_normalized": "TEXT",
+                "topic_mapping_status": "TEXT",
+                "primary_topic_id": "TEXT",
+                "learning_objective": "TEXT",
+                "correct_index": "INTEGER",
+                "is_labeled": "BOOLEAN",
+                "difficulty": "TEXT",
+                "educational_level": "TEXT",
+                "target_exam_levels": "TEXT DEFAULT '[]'",
+                "classification_source": "TEXT",
+                "classification_status": "TEXT",
+                "classification_confidence": "REAL",
+                "knowledge_era": "TEXT",
+                "source_version": "TEXT",
+                "exact_stem_hash": "TEXT",
+                "norm_stem_hash": "TEXT",
+                "duplicate_signals": "TEXT",
+                "created_by": "TEXT",
+                "updated_at": "DATETIME",
+            }
+            for column_name, column_type in column_specs.items():
+                if column_name not in existing_columns:
+                    conn.exec_driver_sql(f"ALTER TABLE questions ADD COLUMN {column_name} {column_type};")
+            conn.commit()
+            return
+
+        try:
+            existing_rows = conn.exec_driver_sql(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_schema = current_schema() AND table_name = 'questions'"
+            ).fetchall()
+        except Exception:
+            return
+        existing_columns = {row[0] for row in existing_rows}
+        column_specs = {
+            "source_exam_id": "VARCHAR(100)",
+            "topic_name_original": "VARCHAR(255)",
+            "topic_name_normalized": "VARCHAR(255)",
+            "topic_mapping_status": "VARCHAR(32)",
+            "primary_topic_id": "UUID",
+            "learning_objective": "TEXT",
+            "correct_index": "INTEGER DEFAULT -1",
+            "is_labeled": "BOOLEAN DEFAULT TRUE",
+            "difficulty": "VARCHAR(20)",
+            "educational_level": "VARCHAR(32)",
+            "target_exam_levels": "JSONB DEFAULT '[]'::jsonb",
+            "classification_source": "VARCHAR(32)",
+            "classification_status": "VARCHAR(32)",
+            "classification_confidence": "FLOAT DEFAULT 1.0",
+            "knowledge_era": "VARCHAR(50) DEFAULT 'CURRENT'",
+            "source_version": "VARCHAR(100)",
+            "exact_stem_hash": "VARCHAR(64)",
+            "norm_stem_hash": "VARCHAR(64)",
+            "duplicate_signals": "JSONB",
+            "created_by": "VARCHAR(100) DEFAULT 'system_import'",
+            "updated_at": "TIMESTAMPTZ",
+        }
+        for column_name, column_type in column_specs.items():
+            if column_name not in existing_columns:
+                conn.execute(text(f"ALTER TABLE questions ADD COLUMN IF NOT EXISTS {column_name} {column_type};"))
+        conn.commit()
+
+
 def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None) -> Engine:
     """Initializes all database tables and ensures newly added schema columns exist."""
     if isinstance(engine, str) and database_url is None:
@@ -118,6 +193,12 @@ def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None)
                 except Exception:
                     pass
 
+    # `create_all()` never adds fields to an existing table. Keep this explicit
+    # compatibility upgrade until M9 replaces runtime synchronization with Alembic.
+    # Do not swallow failures: continuing with a partially upgraded schema makes
+    # the eventual importer error much harder to diagnose.
+    _ensure_missing_question_columns(eng)
+
     # Ensure permanent Super Admin users are guaranteed in database table
     try:
         import uuid
@@ -156,4 +237,3 @@ def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None)
         pass
 
     return eng
-

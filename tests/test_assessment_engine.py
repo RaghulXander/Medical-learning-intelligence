@@ -25,7 +25,12 @@ from database.models import (
     Question,
     QuestionStatus,
     QuestionType,
+    User,
+    UserRole,
 )
+from fastapi import HTTPException
+from backend.api.dependencies import RequestPrincipal
+from backend.api.routes.assessments import _require_attempt_owner
 from backend.services.assessment_service import (
     AssessmentService,
     AttemptAlreadySubmittedError,
@@ -128,6 +133,41 @@ class TestUniversalAssessmentEngine(unittest.TestCase):
         self.assertEqual(len(aq.snapshot["options"]), 4)
         self.assertIn("correct_option", aq.snapshot)
         self.assertIn("explanation", aq.snapshot)
+
+    def test_attempt_ownership_rejects_another_student(self):
+        owner = User(id="owner-user", email="owner@example.com", name="Owner", role=UserRole.USER)
+        intruder = User(id="intruder-user", email="intruder@example.com", name="Intruder", role=UserRole.USER)
+        self.db.add_all([owner, intruder])
+        self.db.commit()
+
+        assessment = AssessmentService.create_assessment(
+            db=self.db,
+            title="Ownership Test",
+            assessment_type=AssessmentType.TOPIC,
+            question_count=1,
+            duration_seconds=60,
+            marking_scheme_id="NEET_4_1",
+        )
+        attempt, _ = AssessmentService.start_attempt(
+            db=self.db,
+            assessment_id=assessment.id,
+            user_id=owner.id,
+        )
+
+        resolved = _require_attempt_owner(
+            self.db,
+            attempt.id,
+            RequestPrincipal(user=owner),
+        )
+        self.assertEqual(resolved.id, attempt.id)
+
+        with self.assertRaises(HTTPException) as raised:
+            _require_attempt_owner(
+                self.db,
+                attempt.id,
+                RequestPrincipal(user=intruder),
+            )
+        self.assertEqual(raised.exception.status_code, 404)
 
     def test_multi_section_partitioning(self):
         """Verifies multi-section tests correctly partition question allocations."""

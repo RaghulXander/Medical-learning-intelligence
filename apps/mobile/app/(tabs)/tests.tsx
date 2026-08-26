@@ -41,7 +41,7 @@ export default function TestsScreen() {
   const handleLaunchPreset = async (presetId: string) => {
     setLoadingId(presetId);
     try {
-      const attempt = await assessmentsApi.launchPreset(presetId, user?.id);
+      const attempt = await assessmentsApi.launchPreset(presetId);
       router.push(`/exam/${attempt.attempt_id}` as any);
     } catch (err) {
       console.error('Failed to launch preset:', err);

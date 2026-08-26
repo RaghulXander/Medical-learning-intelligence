@@ -12,7 +12,6 @@ import {
   User,
   X,
   AlertCircle,
-  ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth-context';
@@ -41,10 +40,6 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Google Direct Input Prompt (Fallback)
-  const [showGooglePrompt, setShowGooglePrompt] = useState(false);
-  const [googleEmailInput, setGoogleEmailInput] = useState('');
-
   // Password entropy state
   const [entropyInfo, setEntropyInfo] = useState<PasswordEntropyResult | null>(null);
 
@@ -59,7 +54,6 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
   useEffect(() => {
     setMode(initialMode);
     setError(null);
-    setShowGooglePrompt(false);
   }, [initialMode, isOpen]);
 
   // Live entropy evaluation on password change
@@ -87,6 +81,23 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
     }
   };
 
+  const completeGoogleSignIn = async (idToken: string) => {
+    try {
+      const res = await googleSignIn(idToken);
+      onClose();
+      if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
+        router.push('/onboarding');
+      } else {
+        if (onSuccess) onSuccess();
+        router.push('/student');
+      }
+    } catch (err: any) {
+      setError(err?.message || 'Google account verification failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogleOAuthPopup = () => {
     setError(null);
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -98,71 +109,42 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
 
     const google = typeof window !== 'undefined' ? (window as any).google : null;
 
-    // 1. If real Google OAuth2 Client ID is configured and Google SDK is available, launch OAuth popup
-    if (hasValidClientId && google?.accounts?.oauth2) {
-      try {
-        setLoading(true);
-        const tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: clientId,
-          scope: 'openid email profile',
-          callback: async (tokenResponse: any) => {
-            if (tokenResponse?.error) {
-              setLoading(false);
-              setError('Google authorization was cancelled or encountered an error.');
-              return;
-            }
-
-            if (tokenResponse?.access_token) {
-              try {
-                const res = await googleSignIn(tokenResponse.access_token);
-                setLoading(false);
-                onClose();
-
-                // Check profile completion requirement
-                if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
-                  router.push('/onboarding');
-                } else {
-                  if (onSuccess) onSuccess();
-                  router.push('/student');
-                }
-              } catch (err: any) {
-                setLoading(false);
-                setError(err?.message || 'Google account verification failed.');
-              }
-            }
-          },
-        });
-
-        tokenClient.requestAccessToken({ prompt: 'select_account' });
-        return;
-      } catch (err) {
-        console.warn('Google OAuth2 client error:', err);
-        setLoading(false);
-      }
+    if (!hasValidClientId) {
+      setError(
+        'Google Sign-In is not configured. Add NEXT_PUBLIC_GOOGLE_CLIENT_ID to apps/web/.env.local and restart the web server.'
+      );
+      return;
     }
-
-    // 2. Direct Google Email Entry (instant passwordless sign-in)
-    setShowGooglePrompt(true);
-  };
-
-  const handleExecuteGoogleDirectAuth = async (directEmail: string) => {
-    setLoading(true);
-    setError(null);
+    if (!google?.accounts?.id) {
+      setError('Google Sign-In is still loading. Please wait a moment and try again.');
+      return;
+    }
     try {
-      const res = await googleSignIn(directEmail.trim().toLowerCase());
-      onClose();
-
-      // Enforce mandatory profile onboarding
-      if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
-        router.push('/onboarding');
-      } else {
-        if (onSuccess) onSuccess();
-        router.push('/student');
-      }
-    } catch (err: any) {
-      setError(err?.message || 'Google Sign-In failed. Please try again.');
-    } finally {
+      setLoading(true);
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: (response: { credential?: string }) => {
+          if (!response.credential) {
+            setLoading(false);
+            setError('Google did not return an identity credential. Please try again.');
+            return;
+          }
+          void completeGoogleSignIn(response.credential);
+        },
+        cancel_on_tap_outside: false,
+      });
+      google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed?.() || notification.isSkippedMoment?.()) {
+          setLoading(false);
+          setError(
+            'Google could not display the account chooser. Allow third-party sign-in for this site or use email and password.'
+          );
+        }
+      });
+    } catch (err) {
+      console.warn('Google Identity Services error:', err);
       setLoading(false);
+      setError('Google Sign-In could not start. Please refresh the page and try again.');
     }
   };
 
@@ -211,70 +193,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
           <X className="h-5 w-5" />
         </button>
 
-        {/* ----------------------------------------------------------------- */}
-        {/* VIEW 1: Google Direct Email Sign-In Prompt */}
-        {/* ----------------------------------------------------------------- */}
-        {showGooglePrompt ? (
-          <div className="space-y-5 animate-fade-in">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowGooglePrompt(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-              <div>
-                <h3 className="text-lg font-bold text-white">Google Identity Gateway</h3>
-                <p className="text-xs text-slate-400">Enter your Google account email to sign in</p>
-              </div>
-            </div>
-
-            {error && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0 text-rose-400" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-700/60 space-y-4">
-              <div className="flex items-center gap-3 text-xs text-slate-300">
-                <div className="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Google Account Verification</div>
-                  <div className="text-[11px] text-slate-400">Fetches your verified name, email, and clinical permissions</div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-slate-300">Your Google Email</label>
-                <input
-                  type="email"
-                  placeholder="doctor@gmail.com"
-                  value={googleEmailInput}
-                  onChange={(e) => setGoogleEmailInput(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                />
-              </div>
-
-              <Button
-                type="button"
-                variant="gradient"
-                disabled={!googleEmailInput || !googleEmailInput.includes('@') || loading}
-                onClick={() => handleExecuteGoogleDirectAuth(googleEmailInput)}
-                className="w-full h-11 text-sm font-bold rounded-xl"
-              >
-                {loading ? 'Connecting with Google...' : 'Continue to Profile Setup'}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          /* ----------------------------------------------------------------- */
-          /* VIEW 2: Standard Login / Registration Form */
-          /* ----------------------------------------------------------------- */
-          <div>
+        <div>
             {/* Header */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-semibold mb-2">
@@ -562,8 +481,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                 </span>
               )}
             </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

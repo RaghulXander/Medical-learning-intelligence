@@ -67,7 +67,7 @@ export default function MistakeReviewVaultPage() {
         blueprint,
       });
 
-      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user ? user.id : undefined);
+      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
       router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err) {
       console.error('Failed to launch mistake remediation:', err);

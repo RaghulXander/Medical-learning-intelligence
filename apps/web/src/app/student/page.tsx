@@ -84,7 +84,7 @@ export default function StudentHubPage() {
     setLaunchingId(presetId);
     setError(null);
     try {
-      const attempt = await assessmentsApi.launchPreset(presetId, user ? user.id : undefined);
+      const attempt = await assessmentsApi.launchPreset(presetId);
       router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err: any) {
       console.error('Failed to launch preset:', err);
@@ -106,7 +106,7 @@ export default function StudentHubPage() {
           difficulty_distribution: { medium: 6, hard: 4 },
         },
       });
-      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user ? user.id : undefined);
+      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
       router.push(`/student/exam/${attempt.attempt_id}`);
     } catch (err) {
       console.error('Failed to launch topic drill:', err);

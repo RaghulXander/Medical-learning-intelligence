@@ -13,7 +13,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database.db import get_engine, get_session_factory
-from database.models import AssessmentType, NavigationPolicy
+from database.models import AssessmentAttempt, AssessmentType, NavigationPolicy
+from backend.api.dependencies import RequestPrincipal, require_user_or_guest
+from backend.core.authorization import Permission, has_permission
 from backend.services.assessment_service import (
     AssessmentService,
     AssessmentServiceError,
@@ -36,46 +38,78 @@ def get_db():
         db.close()
 
 
+def _require_attempt_owner(
+    db: Session,
+    attempt_id: str,
+    principal: RequestPrincipal,
+) -> AssessmentAttempt:
+    """Return an attempt only to its owner or an explicitly privileged administrator."""
+    attempt = db.get(AssessmentAttempt, attempt_id)
+    owns_attempt = bool(
+        attempt
+        and (
+            (principal.user and attempt.user_id == principal.user.id)
+            or (
+                principal.user
+                and has_permission(principal.user.role, Permission.ATTEMPTS_READ_ANY)
+            )
+            or (
+                principal.guest_session
+                and attempt.guest_session_id == principal.guest_session.id
+            )
+        )
+    )
+    if not owns_attempt:
+        # Do not reveal whether another user's attempt exists.
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Attempt not found")
+    return attempt
+
+
+def _require_requested_user(user_id: str, principal: RequestPrincipal) -> None:
+    if principal.user and (
+        principal.user.id == user_id
+        or has_permission(principal.user.role, Permission.ATTEMPTS_READ_ANY)
+    ):
+        return
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User learning data not found")
+
+
 # -----------------------------------------------------------------------------
 # Request / Response Schemas
 # -----------------------------------------------------------------------------
 class SectionConfigSchema(BaseModel):
-    name: str = Field(..., example="Part A: General Pathology")
-    question_count: int = Field(..., example=50)
-    duration_seconds: Optional[int] = Field(None, example=3000)
+    name: str = Field(..., min_length=1, max_length=150, example="Part A: General Pathology")
+    question_count: int = Field(..., ge=1, le=150, example=50)
+    duration_seconds: Optional[int] = Field(None, ge=60, le=86400, example=3000)
     navigation_policy: Optional[str] = Field("FREE", example="FREE")
 
 
 class CreateAssessmentRequest(BaseModel):
-    title: str = Field(..., example="Pathology Mock Exam")
+    title: str = Field(..., min_length=1, max_length=255, example="Pathology Mock Exam")
     type: str = Field(default="MOCK", example="MOCK")
-    question_count: int = Field(default=50, example=50)
-    duration_seconds: int = Field(default=3000, example=3000)
+    question_count: int = Field(default=50, ge=1, le=150, example=50)
+    duration_seconds: int = Field(default=3000, ge=60, le=86400, example=3000)
     marking_scheme_id: str = Field(default="NEET_4_1", example="NEET_4_1")
     navigation_policy: str = Field(default="FREE", example="FREE")
     blueprint: Optional[Dict[str, Any]] = Field(default_factory=dict)
     sections: Optional[List[SectionConfigSchema]] = None
 
 
-class StartAttemptRequest(BaseModel):
-    user_id: Optional[str] = None
-
-
 class HeartbeatQuestionResponse(BaseModel):
     question_id: str
     selected_answer: Optional[str] = None
     marked_for_review: Optional[bool] = False
-    time_spent_seconds: Optional[int] = 0
+    time_spent_seconds: Optional[int] = Field(0, ge=0, le=86400)
 
 
 class HeartbeatRequest(BaseModel):
-    responses: List[HeartbeatQuestionResponse]
-    elapsed_seconds: Optional[int] = None
+    responses: List[HeartbeatQuestionResponse] = Field(..., max_length=150)
+    elapsed_seconds: Optional[int] = Field(None, ge=0, le=86400)
 
 
 class SubmitAttemptRequest(BaseModel):
-    responses: Optional[List[HeartbeatQuestionResponse]] = None
-    final_elapsed_seconds: Optional[int] = None
+    responses: Optional[List[HeartbeatQuestionResponse]] = Field(None, max_length=150)
+    final_elapsed_seconds: Optional[int] = Field(None, ge=0, le=86400)
 
 
 # -----------------------------------------------------------------------------
@@ -91,6 +125,7 @@ def get_assessment_presets() -> List[Dict[str, Any]]:
 def create_assessment(
     req: CreateAssessmentRequest,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Generates an assessment from blueprint parameters and freezes question snapshots."""
     try:
@@ -124,16 +159,16 @@ def create_assessment(
 @router.post("/{assessment_id}/start")
 def start_assessment_attempt(
     assessment_id: str,
-    req: Optional[StartAttemptRequest] = None,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Starts an assessment attempt and returns sanitized questions (zero answer leaks)."""
-    user_id = req.user_id if req else None
     try:
         attempt, sanitized_questions = AssessmentService.start_attempt(
             db=db,
             assessment_id=assessment_id,
-            user_id=user_id,
+            user_id=principal.user.id if principal.user else None,
+            guest_session_id=principal.guest_session.id if principal.guest_session else None,
         )
         return {
             "attempt_id": attempt.id,
@@ -153,9 +188,11 @@ def start_assessment_attempt(
 def get_attempt_state(
     attempt_id: str,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Fetches current attempt state for the active runner shell."""
     try:
+        _require_attempt_owner(db, attempt_id, principal)
         return AssessmentService.get_attempt_state(db=db, attempt_id=attempt_id)
     except AttemptNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -166,9 +203,11 @@ def record_heartbeat(
     attempt_id: str,
     req: HeartbeatRequest,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Background heartbeat sync: saves answers, review marks, and elapsed time."""
     try:
+        _require_attempt_owner(db, attempt_id, principal)
         resp_dicts = [r.model_dump() for r in req.responses]
         return AssessmentService.record_heartbeat(
             db=db,
@@ -187,9 +226,11 @@ def submit_attempt(
     attempt_id: str,
     req: Optional[SubmitAttemptRequest] = None,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Submits the exam, evaluates answers against ground truth, and computes final scorecard."""
     try:
+        _require_attempt_owner(db, attempt_id, principal)
         resp_dicts = [r.model_dump() for r in req.responses] if req and req.responses else None
         elapsed = req.final_elapsed_seconds if req else None
         return AssessmentService.submit_attempt(
@@ -206,9 +247,11 @@ def submit_attempt(
 def get_attempt_results(
     attempt_id: str,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Returns diagnostic scorecard with raw marks, negative loss, and topic breakdowns."""
     try:
+        _require_attempt_owner(db, attempt_id, principal)
         return AssessmentService.get_results(db=db, attempt_id=attempt_id)
     except AttemptNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -218,9 +261,16 @@ def get_attempt_results(
 def get_attempt_review(
     attempt_id: str,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Returns full question-by-question review with ground truth, explanations, and citations."""
     try:
+        attempt = _require_attempt_owner(db, attempt_id, principal)
+        if attempt.status.value == "IN_PROGRESS":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Question review is available only after submission",
+            )
         return AssessmentService.get_review(db=db, attempt_id=attempt_id)
     except AttemptNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -229,15 +279,15 @@ def get_attempt_review(
 @router.post("/preview")
 def preview_assessment(
     req: CreateAssessmentRequest,
-    user_id: Optional[str] = Query(None),
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Simulates question selection and returns topic/difficulty distributions and explainable selection reasons."""
     try:
         return AssessmentService.preview_assessment(
             db=db,
             blueprint=req.blueprint or {},
-            user_id=user_id,
+            user_id=principal.user.id if principal.user else None,
             question_count=req.question_count,
         )
     except QuestionCountUnavailableError as e:
@@ -250,8 +300,10 @@ def preview_assessment(
 def get_user_mastery(
     user_id: str,
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> List[Dict[str, Any]]:
     """Returns the user's Laplace-smoothed mastery across all attempted curriculum nodes."""
+    _require_requested_user(user_id, principal)
     from database.models import UserMastery
     records = db.query(UserMastery).filter(UserMastery.user_id == user_id).all()
     return [
@@ -274,8 +326,10 @@ def get_user_history(
     user_id: str,
     limit: int = Query(default=100, ge=1, le=500),
     db: Session = Depends(get_db),
+    principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> List[Dict[str, Any]]:
     """Returns recent question interaction history for a user."""
+    _require_requested_user(user_id, principal)
     from database.models import UserQuestionHistory
     records = (
         db.query(UserQuestionHistory)

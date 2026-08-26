@@ -81,7 +81,7 @@ export default function HomeScreen() {
   const handleLaunchPreset = async (presetId: string) => {
     setLoadingAction(presetId);
     try {
-      const attempt = await assessmentsApi.launchPreset(presetId, user ? user.id : undefined);
+      const attempt = await assessmentsApi.launchPreset(presetId);
       router.push(`/exam/${attempt.attempt_id}` as any);
     } catch (err) {
       console.error('Failed to launch preset:', err);
@@ -99,7 +99,7 @@ export default function HomeScreen() {
         question_count: 10,
         blueprint: { topic: topicName },
       });
-      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user?.id);
+      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
       router.push(`/exam/${attempt.attempt_id}` as any);
     } catch (err) {
       console.error('Failed to launch topic drill:', err);

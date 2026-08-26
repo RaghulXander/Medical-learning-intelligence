@@ -323,6 +323,7 @@ class AssessmentService:
         db: Session,
         assessment_id: str,
         user_id: Optional[str] = None,
+        guest_session_id: Optional[str] = None,
     ) -> Tuple[AssessmentAttempt, List[Dict[str, Any]]]:
         """
         Initializes an assessment attempt session, returns sanitized questions
@@ -344,6 +345,7 @@ class AssessmentService:
         attempt = AssessmentAttempt(
             assessment_id=assessment.id,
             user_id=user_id,
+            guest_session_id=guest_session_id,
             started_at=datetime.now(timezone.utc),
             status=AttemptStatus.IN_PROGRESS,
             score=0.0,

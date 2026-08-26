@@ -218,14 +218,14 @@ CREATE TABLE IF NOT EXISTS questions (
     source_exam_id VARCHAR(100),
     speciality VARCHAR(100) NOT NULL DEFAULT 'Pathology',
     subject VARCHAR(100) NOT NULL DEFAULT 'Pathology',
-    
+
     -- Topic Decoupling
     topic_name_original VARCHAR(255),
     topic_name_normalized VARCHAR(255),
     topic_mapping_status topic_mapping_status_enum NOT NULL DEFAULT 'UNMAPPED',
     primary_topic_id UUID REFERENCES curriculum_topics(id) ON DELETE SET NULL,
     learning_objective TEXT,
-    
+
     -- Content
     question_type question_type_enum NOT NULL DEFAULT 'single_best_answer',
     stem TEXT NOT NULL,
@@ -234,19 +234,28 @@ CREATE TABLE IF NOT EXISTS questions (
     correct_index INT NOT NULL DEFAULT -1,
     is_labeled BOOLEAN NOT NULL DEFAULT TRUE,
     explanation TEXT,
-    
+
     -- Difficulty & Assessment
     difficulty difficulty_enum,
     cognitive_level cognitive_level_enum,
+    educational_level VARCHAR(32),
+    target_exam_levels JSONB NOT NULL DEFAULT '[]'::jsonb,
     status question_status_enum NOT NULL DEFAULT 'IMPORTED',
     quality_score FLOAT,
-    
+
+    -- Classification & Provenance
+    classification_source VARCHAR(32) NOT NULL DEFAULT 'UNKNOWN',
+    classification_status VARCHAR(32) NOT NULL DEFAULT 'UNCLASSIFIED',
+    classification_confidence FLOAT NOT NULL DEFAULT 1.0,
+    knowledge_era VARCHAR(50) NOT NULL DEFAULT 'CURRENT',
+    source_version VARCHAR(100),
+
     -- Deduplication & Similarity Tracking
     content_hash CHAR(64) NOT NULL,
     exact_stem_hash CHAR(64) NOT NULL,
     norm_stem_hash CHAR(64) NOT NULL,
     duplicate_signals JSONB,
-    
+
     -- Audit & Raw Metadata
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_by VARCHAR(100) NOT NULL DEFAULT 'system_import',

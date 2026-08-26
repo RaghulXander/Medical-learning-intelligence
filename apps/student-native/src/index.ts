@@ -27,11 +27,10 @@ export function getStudentReviewUrl(attemptId: string, baseUrl = DEFAULT_WEBVIEW
 }
 
 export async function launchMobileAssessment(
-  payload: CreateAssessmentPayload,
-  userId?: string
+  payload: CreateAssessmentPayload
 ): Promise<{ attempt_id: string; exam_url: string }> {
   const assessment = await assessmentsApi.createAssessment(payload);
-  const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, userId);
+  const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
   return {
     attempt_id: attempt.attempt_id,
     exam_url: getStudentExamUrl(attempt.attempt_id),

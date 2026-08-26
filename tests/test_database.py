@@ -18,7 +18,7 @@ import sys
 # Add project root to sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -174,6 +174,53 @@ class TestDatabaseLayer(unittest.TestCase):
             self.assertEqual(ev.source.short_name, "robbins_pathology")
             self.assertEqual(ev.document.title, "Chapter 6: Neoplasia")
             self.assertEqual(ev.chunk.page_number, 285)
+
+    def test_init_db_adds_missing_question_columns(self):
+        legacy_engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            echo=False,
+        )
+
+        with legacy_engine.begin() as conn:
+            conn.exec_driver_sql(
+                "CREATE TABLE questions ("
+                "id TEXT PRIMARY KEY, "
+                "external_source VARCHAR(50) NOT NULL DEFAULT 'medmcqa', "
+                "external_source_id VARCHAR(100) NOT NULL UNIQUE, "
+                "speciality VARCHAR(100) NOT NULL DEFAULT 'Pathology', "
+                "subject VARCHAR(100) NOT NULL DEFAULT 'Pathology', "
+                "topic_name_original VARCHAR(255), "
+                "topic_name_normalized VARCHAR(255), "
+                "learning_objective TEXT, "
+                "question_type VARCHAR(50) NOT NULL DEFAULT 'single_best_answer', "
+                "stem TEXT NOT NULL, "
+                "options JSON NOT NULL, "
+                "correct_option CHAR(1), "
+                "correct_index INT NOT NULL DEFAULT -1, "
+                "is_labeled BOOLEAN NOT NULL DEFAULT TRUE, "
+                "explanation TEXT, "
+                "difficulty VARCHAR(20), "
+                "cognitive_level VARCHAR(20), "
+                "status VARCHAR(50) NOT NULL DEFAULT 'IMPORTED', "
+                "quality_score FLOAT, "
+                "content_hash CHAR(64) NOT NULL, "
+                "exact_stem_hash CHAR(64) NOT NULL, "
+                "norm_stem_hash CHAR(64) NOT NULL, "
+                "metadata JSON NOT NULL DEFAULT '{}', "
+                "created_by VARCHAR(100) NOT NULL DEFAULT 'system_import', "
+                "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP "
+                ");"
+            )
+
+        init_db(engine=legacy_engine)
+
+        with legacy_engine.begin() as conn:
+            cols = [row[1] for row in conn.exec_driver_sql("PRAGMA table_info(questions)").fetchall()]
+        self.assertIn("educational_level", cols)
+        self.assertIn("target_exam_levels", cols)
 
     def test_batch_import_from_jsonl(self):
         sample_records = [

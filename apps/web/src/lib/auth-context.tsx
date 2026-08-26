@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserProfile, AuthSessionResponse } from '@medical/shared';
-import { authApi, defaultClient } from '@medical/api-client';
+import { authApi, defaultClient, setGuestTokenGetter } from '@medical/api-client';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -41,6 +41,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return null;
     };
+    setGuestTokenGetter(() =>
+      typeof window !== 'undefined' ? localStorage.getItem('docedge_guest_token') : null
+    );
 
     // Load guest token from storage if present
     if (typeof window !== 'undefined') {

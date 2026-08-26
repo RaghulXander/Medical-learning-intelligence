@@ -7,6 +7,7 @@
 export interface ApiClientConfig {
   baseUrl?: string;
   getToken?: () => string | null | Promise<string | null>;
+  getGuestToken?: () => string | null | Promise<string | null>;
 }
 
 export class ApiError extends Error {
@@ -27,6 +28,7 @@ export class ApiError extends Error {
 export class MedicalApiClient {
   private baseUrl: string;
   private getToken?: () => string | null | Promise<string | null>;
+  private getGuestToken?: () => string | null | Promise<string | null>;
 
   constructor(config?: ApiClientConfig) {
     if (config?.baseUrl !== undefined) {
@@ -36,11 +38,17 @@ export class MedicalApiClient {
       this.baseUrl = '';
     } else {
       // In Node / SSR / React Native: use local backend server URL
+      const runtimeProcess = (
+        globalThis as typeof globalThis & {
+          process?: { env?: Record<string, string | undefined> };
+        }
+      ).process;
       this.baseUrl =
-        (typeof process !== 'undefined' && (process.env?.API_URL || process.env?.NEXT_PUBLIC_API_URL)) ||
+        (runtimeProcess?.env?.API_URL || runtimeProcess?.env?.NEXT_PUBLIC_API_URL) ||
         'http://127.0.0.1:8000';
     }
     this.getToken = config?.getToken;
+    this.getGuestToken = config?.getGuestToken;
   }
 
   public setBaseUrl(url: string) {
@@ -49,6 +57,10 @@ export class MedicalApiClient {
 
   public setTokenGetter(getter?: () => string | null | Promise<string | null>) {
     this.getToken = getter;
+  }
+
+  public setGuestTokenGetter(getter?: () => string | null | Promise<string | null>) {
+    this.getGuestToken = getter;
   }
 
   public async request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -63,6 +75,12 @@ export class MedicalApiClient {
       const token = await this.getToken();
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+    if (!headers['Authorization'] && this.getGuestToken) {
+      const guestToken = await this.getGuestToken();
+      if (guestToken) {
+        headers['X-Guest-Session-Token'] = guestToken;
       }
     }
 
@@ -95,3 +113,6 @@ export function setAuthTokenGetter(getter: () => string | null | Promise<string 
   defaultClient.setTokenGetter(getter);
 }
 
+export function setGuestTokenGetter(getter: () => string | null | Promise<string | null>) {
+  defaultClient.setGuestTokenGetter(getter);
+}

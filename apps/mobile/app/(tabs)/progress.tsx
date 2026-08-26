@@ -65,7 +65,7 @@ export default function ProgressScreen() {
         question_count: 10,
         blueprint: { topic: topicName },
       });
-      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id, user?.id);
+      const attempt = await assessmentsApi.startAttempt(assessment.assessment_id);
       router.push(`/exam/${attempt.attempt_id}` as any);
     } catch (err) {
       console.error('Failed to launch drill:', err);
