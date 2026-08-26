@@ -1,5 +1,4 @@
 [build]
-  base = "/"
   command = "bun --filter @medical/shared build && bun --filter @medical/api-client build && bun --filter web build"
   publish = "apps/web/.next"
 
