@@ -7,7 +7,6 @@ services:
     dockerfilePath: ./Dockerfile.backend
     dockerCommand: sh -c "python -m alembic upgrade head && python -m uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'"
     healthCheckPath: /api/ready
-    maxShutdownDelaySeconds: 30
     autoDeploy: true
     envVars:
       - key: APP_ENV
