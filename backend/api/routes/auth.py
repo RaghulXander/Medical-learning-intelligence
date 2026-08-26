@@ -258,6 +258,7 @@ def get_me(current_user: User = Depends(get_current_user)):
         "current_streak": current_user.current_streak,
         "longest_streak": current_user.longest_streak,
         "has_password": bool(current_user.password_hash),
+        "is_subscribed": current_user.is_subscribed,
     }
 
 

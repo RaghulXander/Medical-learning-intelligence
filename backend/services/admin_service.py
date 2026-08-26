@@ -92,6 +92,7 @@ class AdminService:
                 "role": role_val,
                 "is_email_verified": u.is_email_verified,
                 "is_active": u.is_active,
+                "is_subscribed": u.is_subscribed,
                 "is_protected": is_super,
                 "target_exam": u.target_exam,
                 "residency_stage": u.residency_stage,
@@ -171,6 +172,46 @@ class AdminService:
             "user_id": target.id,
             "email": target.email,
             "new_role": target.role.value,
+        }
+
+    @staticmethod
+    def update_user_subscription(
+        db: Session,
+        target_user_id: str,
+        is_subscribed: bool,
+        actor_user_id: str,
+        ip_address: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Manually grants or revokes exam access until billing is implemented."""
+        actor = db.query(User).filter(User.id == actor_user_id).first()
+        if not actor or not (
+            is_super_admin_email(actor.email)
+            or actor.role in (UserRole.ADMIN, UserRole.SUPER_ADMIN)
+        ):
+            raise PermissionError("Unauthorized: Admin privileges required")
+
+        target = db.query(User).filter(User.id == target_user_id).first()
+        if not target:
+            raise ValueError("Target user not found")
+
+        old_value = target.is_subscribed
+        target.is_subscribed = is_subscribed
+        target.updated_at = datetime.now(timezone.utc)
+        db.add(AdminAuditLog(
+            id=str(uuid.uuid4()),
+            admin_id=actor.id,
+            action="UPDATE_USER_SUBSCRIPTION",
+            entity_type="User",
+            entity_id=target.id,
+            changes={"old_is_subscribed": old_value, "new_is_subscribed": is_subscribed},
+            ip_address=ip_address,
+        ))
+        db.commit()
+        return {
+            "success": True,
+            "user_id": target.id,
+            "email": target.email,
+            "is_subscribed": target.is_subscribed,
         }
 
     @staticmethod

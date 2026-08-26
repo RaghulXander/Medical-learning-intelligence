@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserProfile, AuthSessionResponse } from '@medical/shared';
-import { authApi, defaultClient, setGuestTokenGetter } from '@medical/api-client';
+import { authApi, setAuthTokenGetter, setGuestTokenGetter } from '@medical/api-client';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -35,12 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Initialize auth & client token provider
   useEffect(() => {
     // Register token getter on isomorphic API client
-    (defaultClient as any).getToken = () => {
-      if (typeof window !== 'undefined') {
-        return localStorage.getItem('docedge_access_token');
-      }
-      return null;
-    };
+    setAuthTokenGetter(() =>
+      typeof window !== 'undefined' ? localStorage.getItem('docedge_access_token') : null
+    );
     setGuestTokenGetter(() =>
       typeof window !== 'undefined' ? localStorage.getItem('docedge_guest_token') : null
     );
@@ -171,9 +168,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProfile = (profile: Partial<UserProfile>) => {
-    if (user) {
-      setUser({ ...user, ...profile });
-    }
+    // Use the latest context state instead of the value captured by this render.
+    // Onboarding can finish while the initial /me request is still settling.
+    setUser((currentUser) =>
+      currentUser ? { ...currentUser, ...profile } : (profile as UserProfile)
+    );
   };
 
   return (

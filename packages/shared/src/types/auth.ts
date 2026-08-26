@@ -21,6 +21,7 @@ export interface UserProfile {
   longest_streak?: number;
   is_email_verified?: boolean;
   has_password?: boolean;
+  is_subscribed: boolean;
 }
 
 export interface AdminUserListItem {
@@ -30,6 +31,7 @@ export interface AdminUserListItem {
   role: UserRole;
   is_email_verified: boolean;
   is_active: boolean;
+  is_subscribed: boolean;
   is_protected: boolean;
   target_exam?: string | null;
   residency_stage?: string | null;

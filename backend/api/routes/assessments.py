@@ -74,6 +74,21 @@ def _require_requested_user(user_id: str, principal: RequestPrincipal) -> None:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User learning data not found")
 
 
+def _require_exam_access(principal: RequestPrincipal) -> None:
+    """Enforce the temporary manual entitlement before billing is available."""
+    if not principal.user:
+        # Preserve the existing limited guest diagnostic flow.
+        return
+    if principal.user.is_subscribed or has_permission(
+        principal.user.role, Permission.ATTEMPTS_READ_ANY
+    ):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Exam access requires activation. Please contact support.",
+    )
+
+
 # -----------------------------------------------------------------------------
 # Request / Response Schemas
 # -----------------------------------------------------------------------------
@@ -85,6 +100,7 @@ class SectionConfigSchema(BaseModel):
 
 
 class CreateAssessmentRequest(BaseModel):
+    preset_id: Optional[str] = Field(None, description="Canonical ID returned by /presets")
     title: str = Field(..., min_length=1, max_length=255, example="Pathology Mock Exam")
     type: str = Field(default="MOCK", example="MOCK")
     question_count: int = Field(default=50, ge=1, le=150, example=50)
@@ -128,17 +144,26 @@ def create_assessment(
     principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Generates an assessment from blueprint parameters and freezes question snapshots."""
+    _require_exam_access(principal)
     try:
-        sec_cfgs = [s.model_dump() for s in req.sections] if req.sections else None
+        preset = AssessmentService.get_preset(req.preset_id) if req.preset_id else None
+        blueprint = dict(req.blueprint or {})
+        if preset and preset.get("depth_level"):
+            blueprint.setdefault("educational_levels", [preset["depth_level"]])
+        sec_cfgs = (
+            preset.get("sections")
+            if preset and preset.get("sections")
+            else [s.model_dump() for s in req.sections] if req.sections else None
+        )
         assessment = AssessmentService.create_assessment(
             db=db,
-            title=req.title,
-            assessment_type=AssessmentType(req.type),
-            question_count=req.question_count,
-            duration_seconds=req.duration_seconds,
-            marking_scheme_id=req.marking_scheme_id,
-            navigation_policy=NavigationPolicy(req.navigation_policy),
-            blueprint=req.blueprint,
+            title=preset["title"] if preset else req.title,
+            assessment_type=AssessmentType(preset["type"] if preset else req.type),
+            question_count=preset["question_count"] if preset else req.question_count,
+            duration_seconds=preset["duration_seconds"] if preset else req.duration_seconds,
+            marking_scheme_id=preset["marking_scheme_id"] if preset else req.marking_scheme_id,
+            navigation_policy=NavigationPolicy(preset["navigation_policy"] if preset else req.navigation_policy),
+            blueprint=blueprint,
             sections_config=sec_cfgs,
         )
         return {
@@ -163,6 +188,7 @@ def start_assessment_attempt(
     principal: RequestPrincipal = Depends(require_user_or_guest),
 ) -> Dict[str, Any]:
     """Starts an assessment attempt and returns sanitized questions (zero answer leaks)."""
+    _require_exam_access(principal)
     try:
         attempt, sanitized_questions = AssessmentService.start_attempt(
             db=db,

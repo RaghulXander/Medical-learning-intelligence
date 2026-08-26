@@ -38,6 +38,16 @@ export class AdminApi {
     });
   }
 
+  public async updateUserSubscription(
+    userId: string,
+    isSubscribed: boolean
+  ): Promise<{ success: boolean; user_id: string; email: string; is_subscribed: boolean }> {
+    return this.client.request(`/api/admin/users/${userId}/subscription`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_subscribed: isSubscribed }),
+    });
+  }
+
   public async getStats(): Promise<{
     total_users: number;
     total_questions: number;

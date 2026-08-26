@@ -136,11 +136,11 @@ ASSESSMENT_PRESETS = [
         "id": "daily-dose",
         "title": "Daily Rapid Fire (Daily Dose)",
         "type": AssessmentType.DAILY.value,
-        "question_count": 10,
-        "duration_seconds": 600,  # 10 mins
+        "question_count": 5,
+        "duration_seconds": 300,  # 5 mins
         "marking_scheme_id": "NEET_4_1",
         "navigation_policy": NavigationPolicy.FREE.value,
-        "description": "10 daily high-yield questions to maintain consistency and recall.",
+        "description": "5 daily high-yield questions to maintain consistency and recall.",
     },
 ]
 
@@ -152,6 +152,14 @@ class AssessmentService:
     def list_presets() -> List[Dict[str, Any]]:
         """Returns standard predefined 1-click assessment presets."""
         return ASSESSMENT_PRESETS
+
+    @staticmethod
+    def get_preset(preset_id: str) -> Dict[str, Any]:
+        """Resolve a canonical preset or fail instead of silently using defaults."""
+        preset = next((item for item in ASSESSMENT_PRESETS if item["id"] == preset_id), None)
+        if not preset:
+            raise AssessmentServiceError(f"Unknown assessment preset '{preset_id}'.")
+        return preset
 
     @staticmethod
     def create_assessment(

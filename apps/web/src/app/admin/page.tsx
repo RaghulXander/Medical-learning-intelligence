@@ -64,6 +64,7 @@ export default function AdminDashboardPage() {
   const [roleFilter, setRoleFilter] = useState<string>('ALL');
   const [usersLoading, setUsersLoading] = useState(false);
   const [roleUpdatingUserId, setRoleUpdatingUserId] = useState<string | null>(null);
+  const [subscriptionUpdatingUserId, setSubscriptionUpdatingUserId] = useState<string | null>(null);
   const [userActionMsg, setUserActionMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   // ---------------------------------------------------------------------------
@@ -200,6 +201,25 @@ export default function AdminDashboardPage() {
       });
     } finally {
       setRoleUpdatingUserId(null);
+    }
+  };
+
+  const handleUpdateSubscription = async (targetUserId: string, isSubscribed: boolean) => {
+    try {
+      setSubscriptionUpdatingUserId(targetUserId);
+      setUserActionMsg(null);
+      await adminApi.updateUserSubscription(targetUserId, isSubscribed);
+      setUsersList((prev) =>
+        prev.map((u) => (u.id === targetUserId ? { ...u, is_subscribed: isSubscribed } : u))
+      );
+      setUserActionMsg({
+        text: isSubscribed ? 'Exam access granted successfully' : 'Exam access revoked successfully',
+        type: 'success',
+      });
+    } catch (err: any) {
+      setUserActionMsg({ text: err?.message || 'Failed to update exam access', type: 'error' });
+    } finally {
+      setSubscriptionUpdatingUserId(null);
     }
   };
 
@@ -758,6 +778,7 @@ export default function AdminDashboardPage() {
               <thead className="border-b border-white/10 text-slate-400 uppercase text-[10px]">
                 <tr>
                   <th className="py-2.5 px-3">User & Email</th>
+                  <th className="py-2.5 px-3">Exam Access</th>
                   <th className="py-2.5 px-3">Target Exam</th>
                   <th className="py-2.5 px-3">Stage / College</th>
                   <th className="py-2.5 px-3">Attempts</th>
@@ -785,6 +806,26 @@ export default function AdminDashboardPage() {
                             <span className="text-[11px] text-slate-400">{u.email}</span>
                           </div>
                         </div>
+                      </td>
+
+                      <td className="py-3 px-3">
+                        <button
+                          type="button"
+                          disabled={subscriptionUpdatingUserId === u.id}
+                          onClick={() => handleUpdateSubscription(u.id, !u.is_subscribed)}
+                          className={cn(
+                            'text-[10px] px-2.5 py-1 rounded-full font-bold border transition-colors disabled:opacity-50',
+                            u.is_subscribed
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
+                          )}
+                        >
+                          {subscriptionUpdatingUserId === u.id
+                            ? 'Updating...'
+                            : u.is_subscribed
+                            ? 'Subscribed'
+                            : 'Grant Access'}
+                        </button>
                       </td>
 
                       <td className="py-3 px-3">

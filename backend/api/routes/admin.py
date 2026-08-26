@@ -31,6 +31,10 @@ class UpdateRoleRequest(BaseModel):
     role: str = Field(..., description="Target role: SUPER_ADMIN, ADMIN, REVIEWER, EDUCATOR, USER")
 
 
+class UpdateSubscriptionRequest(BaseModel):
+    is_subscribed: bool
+
+
 @router.get("/users")
 def list_users(
     search: Optional[str] = Query(None, description="Search by name or email"),
@@ -82,3 +86,26 @@ def get_admin_stats(
 ):
     """Returns high-level statistics for the admin dashboard."""
     return AdminService.get_admin_stats(db=db)
+
+
+@router.patch("/users/{user_id}/subscription")
+def update_user_subscription(
+    user_id: str,
+    req: UpdateSubscriptionRequest,
+    request: Request,
+    current_admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    """Manually grants or revokes a user's exam entitlement."""
+    try:
+        return AdminService.update_user_subscription(
+            db=db,
+            target_user_id=user_id,
+            is_subscribed=req.is_subscribed,
+            actor_user_id=current_admin.id,
+            ip_address=request.client.host if request.client else None,
+        )
+    except PermissionError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))

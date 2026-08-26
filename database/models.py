@@ -251,6 +251,8 @@ class User(Base):
     longest_streak: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     last_active_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # Manual entitlement until the Milestone 50 billing/subscription system.
+    is_subscribed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -931,5 +933,4 @@ class AdminAuditLog(Base):
 
     # Relationships
     admin: Mapped["User"] = relationship("User")
-
 

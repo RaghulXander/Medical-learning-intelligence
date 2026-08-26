@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
   GraduationCap,
@@ -98,7 +99,7 @@ const DEFAULT_EXAMINATIONS: ExaminationNode[] = [
 
 export default function OnboardingWizardPage() {
   const router = useRouter();
-  const { user, updateProfile } = useAuth();
+  const { user, isLoading: authLoading, updateProfile } = useAuth();
 
   const [taxonomy, setTaxonomy] = useState<MedicalTaxonomyMetadata | null>(null);
   const [step, setStep] = useState(1);
@@ -108,6 +109,14 @@ export default function OnboardingWizardPage() {
   const [residencyStage, setResidencyStage] = useState(user?.residency_stage || 'JR');
   const [medicalCollege, setMedicalCollege] = useState(user?.medical_college || '');
   const [loading, setLoading] = useState(false);
+
+  // Onboarding updates an authenticated user record. Do not leave a stale
+  // wizard visible after a missing/expired session is detected.
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/');
+    }
+  }, [authLoading, user, router]);
 
   const examinations: ExaminationNode[] = taxonomy?.examinations || DEFAULT_EXAMINATIONS;
   const selectedExamNode: ExaminationNode =
@@ -158,6 +167,10 @@ export default function OnboardingWizardPage() {
   };
 
   const handleFinish = async () => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
     setLoading(true);
     try {
       const updated = await studentApi.updateOnboarding({
@@ -167,11 +180,12 @@ export default function OnboardingWizardPage() {
         medical_college: medicalCollege,
         primary_speciality: primarySpeciality,
       });
-      updateProfile(updated);
-      router.push('/student');
+      // Commit the completed profile before mounting the dashboard. Otherwise
+      // its profile guard can observe stale auth state and redirect back here.
+      flushSync(() => updateProfile(updated));
+      router.replace('/student');
     } catch (err) {
       console.error('Failed to complete onboarding:', err);
-      router.push('/student');
     } finally {
       setLoading(false);
     }
@@ -411,6 +425,7 @@ export default function OnboardingWizardPage() {
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
               <Button
+                type="button"
                 variant="gradient"
                 disabled={loading}
                 onClick={handleFinish}

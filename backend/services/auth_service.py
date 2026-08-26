@@ -203,6 +203,7 @@ class AuthService:
                 "target_exam": user.target_exam,
                 "residency_stage": user.residency_stage,
                 "has_password": bool(user.password_hash),
+                "is_subscribed": user.is_subscribed,
             },
         }
 
@@ -271,6 +272,7 @@ class AuthService:
                 "target_exam": user.target_exam,
                 "residency_stage": user.residency_stage,
                 "has_password": True,
+                "is_subscribed": user.is_subscribed,
             },
         }
 
@@ -330,6 +332,7 @@ class AuthService:
                 "target_exam": user.target_exam,
                 "residency_stage": user.residency_stage,
                 "has_password": True,
+                "is_subscribed": user.is_subscribed,
             },
         }
 

@@ -175,6 +175,7 @@ def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None)
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS current_streak INTEGER DEFAULT 0;",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS longest_streak INTEGER DEFAULT 0;",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_active_date DATE;",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_subscribed BOOLEAN DEFAULT FALSE NOT NULL;",
     ]
 
     if not is_sqlite:

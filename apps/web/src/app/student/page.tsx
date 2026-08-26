@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -15,6 +15,8 @@ import {
   ArrowRight,
   RotateCcw,
   ShieldAlert,
+  Lock,
+  Mail,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -31,7 +33,7 @@ import {
 
 export default function StudentHubPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
 
   const [presets, setPresets] = useState<AssessmentPreset[]>([]);
   const [dailyQuiz, setDailyQuiz] = useState<DailyQuizResponse | null>(null);
@@ -40,6 +42,14 @@ export default function StudentHubPage() {
   const [loading, setLoading] = useState(true);
   const [launchingId, setLaunchingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const loadedForUserRef = useRef<string | null>(null);
+  const hasExamAccess = Boolean(
+    user?.is_subscribed || (user?.role && user.role !== 'USER')
+  );
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'raghuldpi95@gmail.com';
+  const contactHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
+    `DocEdge exam access request - ${user?.email || 'student'}`
+  )}`;
 
   // Enforce profile completion before entering student dashboard
   useEffect(() => {
@@ -49,6 +59,9 @@ export default function StudentHubPage() {
   }, [user, router]);
 
   useEffect(() => {
+    if (authLoading || !user || loadedForUserRef.current === user.id) return;
+    loadedForUserRef.current = user.id;
+
     async function loadData() {
       try {
         setLoading(true);
@@ -59,7 +72,7 @@ export default function StudentHubPage() {
         }
 
         // Only query authenticated endpoints if user is signed in
-        if (user) {
+        if (hasExamAccess) {
           const [quizData, contData, readyData] = await Promise.allSettled([
             studentApi.getDailyQuiz(),
             studentApi.getContinueLearning(),
@@ -78,9 +91,13 @@ export default function StudentHubPage() {
     }
 
     loadData();
-  }, [user]);
+  }, [authLoading, user, hasExamAccess]);
 
   const handleLaunchPreset = async (presetId: string) => {
+    if (!hasExamAccess) {
+      setError('Exam access requires a subscription. Please contact us and an administrator will activate your account.');
+      return;
+    }
     setLaunchingId(presetId);
     setError(null);
     try {
@@ -94,6 +111,10 @@ export default function StudentHubPage() {
   };
 
   const handleLaunchTopicDrill = async (topicId: string, topicName: string) => {
+    if (!hasExamAccess) {
+      setError('Topic drills require a subscription. Please contact us to activate your account.');
+      return;
+    }
     setLaunchingId(topicId);
     try {
       const assessment = await assessmentsApi.createAssessment({
@@ -199,15 +220,34 @@ export default function StudentHubPage() {
                 <span>Change Target</span>
               </Button>
             </Link>
-            <Link href="/student/new">
+            <Link href={hasExamAccess ? '/student/new' : contactHref}>
               <Button variant="gradient" size="sm" className="text-xs font-bold gap-1.5 shadow-md shadow-sky-500/20">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Custom Blueprint</span>
+                {hasExamAccess ? <Sparkles className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
+                <span>{hasExamAccess ? 'Custom Blueprint' : 'Contact for Access'}</span>
               </Button>
             </Link>
           </div>
         </div>
       </div>
+
+      {!hasExamAccess && (
+        <div className="p-5 rounded-2xl border border-amber-500/30 bg-amber-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <Lock className="h-5 w-5 text-amber-300 mt-0.5 shrink-0" />
+            <div>
+              <h2 className="text-sm font-bold text-white">Free account — explore the available tests</h2>
+              <p className="text-xs text-slate-300 mt-1">
+                Online payments are coming in Milestone 50. For now, contact us and an administrator will manually activate your exam access.
+              </p>
+            </div>
+          </div>
+          <a href={contactHref} className="shrink-0">
+            <Button variant="gradient" size="sm" className="gap-2 text-xs font-bold">
+              <Mail className="h-3.5 w-3.5" /> Contact Us
+            </Button>
+          </a>
+        </div>
+      )}
 
       {/* 2. Top Grid: Daily Quiz + Exam Readiness Dial + Weak Topics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -249,7 +289,7 @@ export default function StudentHubPage() {
               className="gap-1.5 text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
             >
               <Play className="h-3.5 w-3.5 fill-current" />
-              <span>Start Daily Quiz</span>
+              <span>{hasExamAccess ? 'Start Daily Quiz' : 'Contact for Access'}</span>
             </Button>
           </div>
         </Card>
@@ -350,7 +390,7 @@ export default function StudentHubPage() {
                     disabled={launchingId === topic.curriculum_node_id}
                     className="text-[10px] text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-1"
                   >
-                    Drill <ArrowRight className="h-2.5 w-2.5" />
+                    {hasExamAccess ? 'Drill' : 'Locked'} <ArrowRight className="h-2.5 w-2.5" />
                   </button>
                 </div>
               ))}
@@ -467,7 +507,7 @@ export default function StudentHubPage() {
                     className="gap-1.5 text-xs font-bold shadow-sm"
                   >
                     <Play className="h-3.5 w-3.5 fill-current" />
-                    <span>{isLaunching ? 'Loading...' : 'Launch Test'}</span>
+                    <span>{isLaunching ? 'Loading...' : hasExamAccess ? 'Launch Test' : 'Contact for Access'}</span>
                   </Button>
                 </div>
               </Card>
