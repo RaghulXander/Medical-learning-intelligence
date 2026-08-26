@@ -13,8 +13,12 @@
 | **M7: Core Identity & Common Backend** | Days 12–13 | Google OAuth2, Argon2id/bcrypt auth, strong password generator, guest diagnostic quiz & merge engine, adaptive onboarding, daily quiz API, session management & RBAC. | **COMPLETED** |
 | **M7a: UI Enrichment & Missing Flows** | Day 13 | Next.js screens: Glassmorphic Auth Modal with live password entropy bar & 1-click strong pass, Guest Diagnostic Funnel, 3-Step Adaptive Onboarding (`/onboarding`), Enriched Student Hub with Circular Readiness Dial, and Smart Mistake Vault (`/student/review`). | **COMPLETED** |
 | **M8: Student Native App & Mobile Experience** | Days 14–15 | Marrow-grade Native Mobile App (`apps/student-native`), Student Dashboard, Daily Quiz Card, Readiness Dial, Exam Runner & Analytics. | *Current / In Progress* |
-| **M9: AI Question Generation & PubMedBERT** | Phase 2 | Python FastAPI ML service for PubMedBERT (`jamezoon/medmcqa-pubmedbert-mcqa`) MCQA evaluation signal & RAG question blueprints. | *Upcoming* |
-| **M10: Image Pathology & Multimodal PLIP** | Phase 2 | Image-based histopathology MCQs and PLIP vision integration. | *Upcoming* |
+| **M9: Security & Entitlements** | Release Foundation | Authentication hardening, authorization/ownership, course entitlements, audit trails, and migration preparation. | *In Progress* |
+| **M10: Productionization** | Release Foundation | Netlify web deployment, production API and managed data services, migrations, CI/CD, observability, backups, and Expo native publishing. | *In Progress* |
+| **M11: Architecture Documentation** | Team Scale | Architecture/developer documentation system and multi-developer onboarding. | *Planned* |
+| **M12: Ontology, AI Review & Code Review** | Quality | Consolidated topic ontology; AI-assisted approve/reject/retire workflow with feedback; Python, React, React Native, and shared-component review. | *Planned* |
+| **M13: Landing Page CMS** | Product Operations | Widget-based landing-page sections with show/hide, ordering, and configurable content. | *Planned* |
+| **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 
 ---
 

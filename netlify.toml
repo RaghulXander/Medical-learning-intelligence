@@ -1,0 +1,17 @@
+[build]
+  base = "/"
+  command = "bun --filter @medical/shared build && bun --filter @medical/api-client build && bun --filter web build"
+  publish = "apps/web/.next"
+
+[build.environment]
+  BUN_VERSION = "1.3.14"
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_APP_ENV = "preview"
+
+[context.production.environment]
+  NEXT_PUBLIC_APP_ENV = "production"

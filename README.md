@@ -125,7 +125,7 @@ medical-learning-intelligence/
 
 ## 4. Quickstart & Local Development
 
-Prerequisites: Docker Desktop, Python 3.11/3.12, and Bun 1.4+.
+Prerequisites: Docker Desktop, Python 3.11/3.12, and Bun 1.3.14+.
 
 ```bash
 # Configure and install
@@ -159,7 +159,7 @@ The dataset download/import is optional for booting the application but required
 
 - Milestones 1–8: data pipeline, PostgreSQL model, curriculum, assessment engine, selection, identity, web experience, and Expo student app.
 - [Milestone 9](MileStones/MileStone9.md): security hardening, ownership, course/bundle entitlements, migrations, and reporting.
-- Milestone 10: production hosting, managed services, database release migrations, CI/CD, and native app publishing.
+- [Milestone 10](MileStones/MileStone10.md): production hosting, managed services, database release migrations, CI/CD, observability, backups, and native app publishing.
 - Milestone 11: architecture and multi-developer documentation.
 - Milestone 12: Python/React/React Native review and shared-component architecture.
 - Milestone 13: landing-page widget CMS.

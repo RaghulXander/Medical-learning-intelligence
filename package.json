@@ -25,6 +25,8 @@
     "db:init": "bun scripts/run_python.mjs -c \"from database.db import init_db; init_db(); print('✓ Database initialized successfully.')\"",
     "db:seed": "bun scripts/run_python.mjs scripts/seed_curriculum.py",
     "db:setup": "bun run db:init && bun run db:seed",
+    "db:migrate": "bun scripts/run_python.mjs -m alembic upgrade head",
+    "db:current": "bun scripts/run_python.mjs -m alembic current",
     "pipeline:run": "bun scripts/run_python.mjs scripts/run_pipeline.py",
     "ingest": "bun scripts/run_python.mjs scripts/ingest_cli.py"
   },

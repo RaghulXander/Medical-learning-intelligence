@@ -22,6 +22,8 @@ class Settings:
     jwt_secret_key: str
     google_client_ids: Tuple[str, ...]
     cors_allowed_origins: Tuple[str, ...]
+    redis_url: str
+    release_sha: str
 
     @property
     def is_production_like(self) -> bool:
@@ -57,6 +59,8 @@ def get_settings() -> Settings:
             os.getenv("GOOGLE_CLIENT_IDS", os.getenv("GOOGLE_CLIENT_ID", ""))
         ),
         cors_allowed_origins=_csv(os.getenv("CORS_ALLOWED_ORIGINS", default_origins)),
+        redis_url=os.getenv("REDIS_URL", "").strip(),
+        release_sha=os.getenv("RELEASE_SHA", os.getenv("COMMIT_SHA", "development")).strip(),
     )
     settings.validate()
     return settings
@@ -65,4 +69,3 @@ def get_settings() -> Settings:
 def reset_settings_cache() -> None:
     """Clear cached settings. Intended for tests that modify the environment."""
     get_settings.cache_clear()
-
