@@ -31,18 +31,24 @@ export class MedicalApiClient {
   private getGuestToken?: () => string | null | Promise<string | null>;
 
   constructor(config?: ApiClientConfig) {
+    const runtimeProcess = (
+      globalThis as typeof globalThis & {
+        process?: { env?: Record<string, string | undefined> };
+      }
+    ).process;
+    const expoApiUrl = runtimeProcess?.env?.EXPO_PUBLIC_API_URL;
+
     if (config?.baseUrl !== undefined) {
       this.baseUrl = config.baseUrl;
+    } else if (expoApiUrl) {
+      // Expo embeds EXPO_PUBLIC_* values in the native bundle at build time.
+      // Check this before `window`: React Native also exposes a window global.
+      this.baseUrl = expoApiUrl.replace(/\/$/, '');
     } else if (typeof window !== 'undefined') {
       // In browser: use relative path so Next.js proxy rewrite handles it smoothly with zero CORS or IPv6 issues
       this.baseUrl = '';
     } else {
       // In Node / SSR / React Native: use local backend server URL
-      const runtimeProcess = (
-        globalThis as typeof globalThis & {
-          process?: { env?: Record<string, string | undefined> };
-        }
-      ).process;
       this.baseUrl =
         (runtimeProcess?.env?.API_URL || runtimeProcess?.env?.NEXT_PUBLIC_API_URL) ||
         'http://127.0.0.1:8000';
