@@ -7,11 +7,15 @@ Main FastAPI application for Medical Exam AI.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.core.config import get_settings
+
 from backend.api.routes.assessments import router as assessments_router
 from backend.api.routes.questions import router as questions_router
 from backend.api.routes.auth import router as auth_router
 from backend.api.routes.student import router as student_router
 from backend.api.routes.admin import router as admin_router
+
+settings = get_settings()
 
 app = FastAPI(
     title="Medical Exam AI — Core Assessment & Question Bank API",
@@ -22,7 +26,7 @@ app = FastAPI(
 # CORS middleware for Next.js / React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=list(settings.cors_allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -10,7 +10,6 @@ Enterprise security utilities for Milestone 7:
 - Rate limiter for authentication brute-force prevention
 """
 
-import os
 import re
 import math
 import secrets
@@ -20,8 +19,9 @@ import hmac
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional, Tuple, List
 
+from backend.core.config import get_settings
+
 # Configuration constants
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "docedge_secret_jwt_key_development_only_2026_xander")
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 30
@@ -213,7 +213,8 @@ def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta]
     payload_b64 = b64url(json.dumps(to_encode, separators=(",", ":")).encode("utf-8"))
     
     signing_input = f"{hdr_b64}.{payload_b64}".encode("utf-8")
-    sig = hmac.new(JWT_SECRET_KEY.encode("utf-8"), signing_input, hashlib.sha256).digest()
+    secret = get_settings().jwt_secret_key
+    sig = hmac.new(secret.encode("utf-8"), signing_input, hashlib.sha256).digest()
     sig_b64 = b64url(sig)
     
     return f"{hdr_b64}.{payload_b64}.{sig_b64}"
@@ -236,7 +237,8 @@ def decode_access_token(token: str) -> Optional[Dict[str, Any]]:
         
         # Verify signature
         signing_input = f"{hdr_b64}.{payload_b64}".encode("utf-8")
-        expected_sig = hmac.new(JWT_SECRET_KEY.encode("utf-8"), signing_input, hashlib.sha256).digest()
+        secret = get_settings().jwt_secret_key
+        expected_sig = hmac.new(secret.encode("utf-8"), signing_input, hashlib.sha256).digest()
         
         # Base64 pad
         pad = "=" * ((4 - len(sig_b64) % 4) % 4)

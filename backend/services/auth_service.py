@@ -34,6 +34,7 @@ from backend.core.security import (
 )
 from backend.services.selection.learner_model import LearnerModelService
 from backend.services.admin_service import is_super_admin_email, SUPER_ADMIN_EMAILS
+from backend.core.config import get_settings
 
 
 class AuthService:
@@ -82,72 +83,47 @@ class AuthService:
     ) -> Dict[str, Any]:
         """
         Verifies a Google ID Token, links/creates a User, and issues tokens.
-        In test/dev environments, accepts mock_payload if provided.
+        Tests may inject already-verified claims with ``mock_payload`` when APP_ENV=test.
         """
         payload: Dict[str, Any] = {}
         
-        if mock_payload:
-            payload = mock_payload
-        elif id_token_str.startswith("mock-google-token:") or id_token_str.startswith("google-dev:"):
-            parts = id_token_str.split(":")
-            payload = {
-                "email": parts[1] if len(parts) > 1 else "test@gmail.com",
-                "sub": parts[2] if len(parts) > 2 else f"google-sub-{uuid.uuid4()}",
-                "name": parts[3] if len(parts) > 3 else "Google Medical User",
-                "picture": parts[4] if len(parts) > 4 else None,
-                "email_verified": True,
-            }
-        elif id_token_str.startswith("ya29."):
-            # Google OAuth2 Access Token from popup token client
-            try:
-                import urllib.request
-                import json as json_lib
-                req = urllib.request.Request(
-                    "https://www.googleapis.com/oauth2/v3/userinfo",
-                    headers={"Authorization": f"Bearer {id_token_str}", "User-Agent": "DocEdge-Auth/1.0"}
-                )
-                with urllib.request.urlopen(req, timeout=5) as response:
-                    payload = json_lib.loads(response.read().decode("utf-8"))
-            except Exception as e:
-                raise ValueError(f"Failed to fetch userinfo from Google OAuth Access Token: {str(e)}")
-        elif "@" in id_token_str and not id_token_str.startswith("eyJ"):
-            # Direct Google email passed from fast account picker
-            email_clean = id_token_str.strip().lower()
-            payload = {
-                "email": email_clean,
-                "sub": f"google-uid-{uuid.uuid5(uuid.NAMESPACE_DNS, email_clean)}",
-                "name": email_clean.split("@")[0].replace(".", " ").title(),
-                "email_verified": True,
-            }
-        else:
-            # 1. Try Google TokenInfo API (live verification & profile resolution)
-            verified_online = False
-            try:
-                import urllib.request
-                import json as json_lib
-                req_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token_str}"
-                req = urllib.request.Request(req_url, headers={"User-Agent": "DocEdge-Auth/1.0"})
-                with urllib.request.urlopen(req, timeout=4) as response:
-                    if response.status == 200:
-                        payload = json_lib.loads(response.read().decode("utf-8"))
-                        verified_online = True
-            except Exception:
-                verified_online = False
+        settings = get_settings()
 
-            # 2. Try Google Auth SDK offline verification
-            if not verified_online:
-                try:
-                    from google.oauth2 import id_token
-                    from google.auth.transport import requests
-                    payload = id_token.verify_oauth2_token(
-                        id_token_str, requests.Request(), clock_skew_in_seconds=10
-                    )
-                except Exception:
+        if mock_payload:
+            if not settings.allows_test_auth:
+                raise ValueError("Mock Google authentication is available only in the test environment")
+            payload = mock_payload
+        else:
+            if not settings.google_client_ids:
+                raise ValueError("Google sign-in is not configured")
+            try:
+                from google.oauth2 import id_token
+                from google.auth.transport import requests
+
+                verification_error = None
+                for client_id in settings.google_client_ids:
                     try:
-                        import jwt
-                        payload = jwt.decode(id_token_str, options={"verify_signature": False})
-                    except Exception as e2:
-                        raise ValueError(f"Invalid Google ID token: {str(e2)}")
+                        payload = id_token.verify_oauth2_token(
+                            id_token_str,
+                            requests.Request(),
+                            audience=client_id,
+                            clock_skew_in_seconds=10,
+                        )
+                        break
+                    except Exception as exc:
+                        verification_error = exc
+                else:
+                    raise verification_error or ValueError("Token audience was not accepted")
+            except Exception:
+                raise ValueError("Invalid Google ID token")
+
+        if payload.get("email_verified") is not True:
+            raise ValueError("Google account email is not verified")
+        if payload.get("iss") and payload.get("iss") not in {
+            "accounts.google.com",
+            "https://accounts.google.com",
+        }:
+            raise ValueError("Google ID token has an invalid issuer")
 
         email = payload.get("email", "").lower().strip()
         google_id = payload.get("sub") or payload.get("user_id")

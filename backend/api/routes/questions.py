@@ -21,7 +21,11 @@ from database.models import (
     QuestionEvidence,
     QuestionStatus,
     QuestionType,
+    User,
 )
+from backend.api.routes.auth import get_current_user
+from backend.api.dependencies import require_permission
+from backend.core.authorization import Permission
 
 router = APIRouter(prefix="/api/questions", tags=["Questions"])
 
@@ -50,7 +54,6 @@ class UpdateQuestionRequest(BaseModel):
     difficulty: Optional[str] = None
     cognitive_level: Optional[str] = None
     primary_topic_id: Optional[str] = None
-    status: Optional[str] = None
 
 
 class ReportQuestionRequest(BaseModel):
@@ -93,6 +96,7 @@ def list_questions(
     limit: int = Query(25, ge=1, le=100, description="Items per page"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_READ_EDITORIAL)),
 ) -> Dict[str, Any]:
     """Search and filter the canonical Question Bank with pagination."""
     query = db.query(Question)
@@ -187,7 +191,11 @@ def list_questions(
 
 
 @router.get("/{question_id}")
-def get_question_detail(question_id: str, db: Session = Depends(get_db)) -> Dict[str, Any]:
+def get_question_detail(
+    question_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_READ_EDITORIAL)),
+) -> Dict[str, Any]:
     """Fetch full question record by ID."""
     q = db.query(Question).filter(Question.id == question_id).first()
     if not q:
@@ -236,6 +244,7 @@ def update_question_status(
     question_id: str,
     req: UpdateQuestionStatusRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_REVIEW)),
 ) -> Dict[str, Any]:
     """Transition a question status (APPROVED, REJECTED, HUMAN_REVIEW, etc.)."""
     q = db.query(Question).filter(Question.id == question_id).first()
@@ -267,6 +276,7 @@ def update_question_content(
     question_id: str,
     req: UpdateQuestionRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_EDIT)),
 ) -> Dict[str, Any]:
     """Update question content during editorial review."""
     q = db.query(Question).filter(Question.id == question_id).first()
@@ -292,12 +302,6 @@ def update_question_content(
             pass
     if req.primary_topic_id is not None:
         q.primary_topic_id = req.primary_topic_id
-    if req.status is not None:
-        try:
-            q.status = QuestionStatus(req.status.upper())
-        except ValueError:
-            pass
-
     db.commit()
     db.refresh(q)
     return {
@@ -311,6 +315,7 @@ def update_question_content(
 def report_question(
     req: ReportQuestionRequest,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> Dict[str, Any]:
     """Report question error or ambiguity for editorial review."""
     q = db.query(Question).filter(Question.id == req.question_id).first()
@@ -325,4 +330,3 @@ def report_question(
         "status": "success",
         "message": f"Question {req.question_id} report recorded under category '{req.category}'.",
     }
-

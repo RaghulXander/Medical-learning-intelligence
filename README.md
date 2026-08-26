@@ -125,73 +125,46 @@ medical-learning-intelligence/
 
 ## 4. Quickstart & Local Development
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Python 3.11+
-- [Bun](https://bun.sh/) (`powershell -c "irm bun.sh/install.ps1 | iex"`)
+Prerequisites: Docker Desktop, Python 3.11/3.12, and Bun 1.4+.
 
-### Step 1: Start Infrastructure (PostgreSQL & Redis)
 ```bash
+# Configure and install
+cp .env.example .env
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+bun install --frozen-lockfile
+
+# Start PostgreSQL and Redis
 docker compose -f infrastructure/docker-compose.yml up -d
-```
 
-### Step 2: Seed Database & Questions
-```bash
-# Seeds courses, users, and imports the full 15,526 question bank
+# Initialize curriculum (then optionally reproduce/import MedMCQA)
+python -m scripts.seed_curriculum
+python scripts/run_pipeline.py
 python scripts/import_to_db.py
+
+# Run backend and web in separate terminals
+python -m uvicorn backend.api.main:app --reload --host 127.0.0.1 --port 8000
+bun run dev:web
 ```
 
-### Step 3: Run FastAPI Backend
-```bash
-python -m uvicorn backend.api.main:app --reload --port 8000
-```
-Backend API docs available at `http://localhost:8000/docs`.
+Open the web app at `http://localhost:3000`, the API at `http://127.0.0.1:8000`, and API documentation at `http://127.0.0.1:8000/docs`.
 
-### Step 4: Run Next.js Frontend (apps/web)
-```bash
-# From workspace root:
-bun dev:web
-
-# Or from apps/web:
-cd apps/web
-bun dev
-```
-Frontend portal available at `http://localhost:3000`.
+The dataset download/import is optional for booting the application but required to run question-based exams. For Windows commands, mobile networking, database verification, test/build commands, and troubleshooting, follow [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md).
 
 ---
 
-## 5. Next Steps & Roadmap
+## 5. Current Roadmap
 
-```mermaid
-gantt
-    title Platform Delivery Roadmap
-    dateFormat  YYYY-MM-DD
-    section Core Foundation
-    Data Pipeline & Deduplication    :done, 2026-08-20, 3d
-    PostgreSQL Schema & Seeding     :done, 2026-08-23, 2d
-    Universal Assessment Engine API :done, 2026-08-23, 1d
-    Monorepo & Next.js UI Setup     :done, 2026-08-24, 1d
-    section Next Milestones
-    Milestone 5: PubMedBERT ML Service :active, 2026-08-25, 2d
-    Milestone 6: Question Reporting Loop: 2026-08-27, 2d
-    Milestone 7: Spaced Repetition & Analytics : 2026-08-29, 2d
-    Milestone 8: React Native Mobile App (Expo) : 2026-08-31, 3d
-```
+- Milestones 1–8: data pipeline, PostgreSQL model, curriculum, assessment engine, selection, identity, web experience, and Expo student app.
+- [Milestone 9](MileStones/MileStone9.md): security hardening, ownership, course/bundle entitlements, migrations, and reporting.
+- Milestone 10: production hosting, managed services, database release migrations, CI/CD, and native app publishing.
+- Milestone 11: architecture and multi-developer documentation.
+- Milestone 12: Python/React/React Native review and shared-component architecture.
+- Milestone 13: landing-page widget CMS.
 
-### Immediate Next Steps:
-1. **Milestone 5 — PubMedBERT ML Prediction Service**:
-   - Python FastAPI service running `jamezoon/medmcqa-pubmedbert-mcqa`.
-   - Prediction endpoint returning predicted choice and model confidence probabilities.
-   - Evaluation benchmarking against the 15,526 Pathology questions.
-2. **Question Reporting & Editorial Feedback Loop**:
-   - Enable students to flag incorrect explanations, ambiguity, or poor phrasing directly from the review screen.
-   - Admin resolution desk to edit, retire, or approve corrected questions.
-3. **Spaced Repetition & Adaptive Practice**:
-   - Resident performance analytics (weakest topics, time management curves).
-   - Adaptive revision drills prioritizing previously missed questions.
-4. **Mobile Client (`apps/student-native`)**:
-   - Initialize Expo Router app for iOS & Android.
-   - Implement offline question caching (SQLite/MMKV) and push notifications for daily revision doses.
+See [docs/ROADMAP.md](docs/ROADMAP.md) and the specifications in [`MileStones/`](MileStones/) for detailed scope.
 
 ---
 

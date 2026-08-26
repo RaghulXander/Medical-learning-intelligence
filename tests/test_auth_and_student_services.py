@@ -16,6 +16,7 @@ Comprehensive test suite for Milestone 7:
 - Resilient draft answer synchronization
 """
 
+import os
 import uuid
 import unittest
 from datetime import datetime, timedelta, timezone
@@ -52,6 +53,7 @@ from backend.core.security import (
     decode_access_token,
     AuthRateLimiter,
 )
+from backend.core.config import reset_settings_cache
 from backend.services.auth_service import AuthService
 from backend.services.student_service import StudentService
 from backend.services.assessment_service import AssessmentService
@@ -67,12 +69,20 @@ class TestAuthAndStudentServices(unittest.TestCase):
         cls.SessionLocal = sessionmaker(bind=cls.engine, autoflush=False, autocommit=False)
 
     def setUp(self):
+        self.previous_app_env = os.environ.get("APP_ENV")
+        os.environ["APP_ENV"] = "test"
+        reset_settings_cache()
         self.db = self.SessionLocal()
         self._seed_data()
 
     def tearDown(self):
         self.db.rollback()
         self.db.close()
+        if self.previous_app_env is None:
+            os.environ.pop("APP_ENV", None)
+        else:
+            os.environ["APP_ENV"] = self.previous_app_env
+        reset_settings_cache()
 
     def _seed_data(self):
         # 0. Marking Schemes
@@ -134,8 +144,17 @@ class TestAuthAndStudentServices(unittest.TestCase):
 
     def test_google_auth_creates_new_user(self):
         """Tests that a Google ID token automatically provisions a new user and issues a valid session."""
-        mock_token = "mock-google-token:dr.onco@aiims.edu:google-sub-1001:Dr. Onco Resident:https://avatar.url/img.png"
-        res = AuthService.authenticate_google(self.db, mock_token)
+        res = AuthService.authenticate_google(
+            self.db,
+            "test-only-token",
+            mock_payload={
+                "email": "dr.onco@aiims.edu",
+                "sub": "google-sub-1001",
+                "name": "Dr. Onco Resident",
+                "picture": "https://avatar.url/img.png",
+                "email_verified": True,
+            },
+        )
 
         self.assertTrue(res["is_new_user"])
         self.assertIsNotNone(res["access_token"])
@@ -159,24 +178,34 @@ class TestAuthAndStudentServices(unittest.TestCase):
         )
 
         # 2. Sign in with same email via Google
-        mock_token = "mock-google-token:resident@hospital.org:google-sub-2002:Resident Doctor:https://avatar.org/pic.png"
-        res = AuthService.authenticate_google(self.db, mock_token)
+        res = AuthService.authenticate_google(
+            self.db,
+            "test-only-token",
+            mock_payload={
+                "email": "resident@hospital.org",
+                "sub": "google-sub-2002",
+                "name": "Resident Doctor",
+                "picture": "https://avatar.org/pic.png",
+                "email_verified": True,
+            },
+        )
 
         self.assertFalse(res["is_new_user"])
         user = self.db.query(User).filter(User.email == "resident@hospital.org").first()
         self.assertEqual(user.google_id, "google-sub-2002")
 
-    def test_google_auth_direct_email_and_dev_token(self):
-        """Tests that signing in with direct email string or google-dev token works seamlessly."""
-        # 1. Direct email
-        res1 = AuthService.authenticate_google(self.db, "raghuldpi95@gmail.com")
-        self.assertEqual(res1["user"]["email"], "raghuldpi95@gmail.com")
-        self.assertEqual(res1["user"]["role"], "SUPER_ADMIN")
-
-        # 2. google-dev format
-        res2 = AuthService.authenticate_google(self.db, "google-dev:raghuljayan@gmail.com:sub-333:Dr. Raghul Jayan")
-        self.assertEqual(res2["user"]["email"], "raghuljayan@gmail.com")
-        self.assertEqual(res2["user"]["role"], "SUPER_ADMIN")
+    def test_google_auth_rejects_unverified_email(self):
+        """Injected test claims still require Google email verification."""
+        with self.assertRaisesRegex(ValueError, "email is not verified"):
+            AuthService.authenticate_google(
+                self.db,
+                "test-only-token",
+                mock_payload={
+                    "email": "unverified@example.com",
+                    "sub": "google-sub-unverified",
+                    "email_verified": False,
+                },
+            )
 
     def test_email_password_registration_and_login(self):
         """Tests standard email/password registration, password verification, and login."""
