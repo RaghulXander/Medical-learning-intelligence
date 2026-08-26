@@ -1,17 +1,13 @@
 [build]
   base = "/"
   command = "bun --filter @medical/shared build && bun --filter @medical/api-client build && bun --filter web build"
-  publish = "apps/web/.next"
 
 [build.environment]
   BUN_VERSION = "1.3.14"
   NODE_VERSION = "22"
   # These values are deliberately compiled into browser-visible configuration.
   # Keep secret scanning enabled for every other environment variable.
-  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_CONTACT_EMAIL,NEXT_PUBLIC_API_URL"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_CONTACT_EMAIL,NEXT_PUBLIC_API_URL,NEXT_PUBLIC_GOOGLE_CLIENT_ID,API_URL"
 
 [context.deploy-preview.environment]
   NEXT_PUBLIC_APP_ENV = "preview"

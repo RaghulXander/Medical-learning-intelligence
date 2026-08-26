@@ -66,6 +66,8 @@ Use the real Render URL, without a trailing slash. Then choose **Deploys → Tri
 
 `NEXT_PUBLIC_API_URL` is not required for the Netlify web application. Browser requests use relative `/api` URLs and Netlify's Next.js server proxies them using the private server-side `API_URL` value.
 
+Netlify secret scanning remains enabled. The deployment allowlists only the public contact email, API origin, and Google OAuth client ID keys; database URLs, JWT secrets, OAuth client secrets, and storage credentials must never be allowlisted.
+
 ## 5. Configure Google OAuth
 
 In the Google Cloud OAuth web client, add this authorized JavaScript origin:
