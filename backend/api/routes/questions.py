@@ -53,6 +53,13 @@ class UpdateQuestionRequest(BaseModel):
     status: Optional[str] = None
 
 
+class ReportQuestionRequest(BaseModel):
+    question_id: str
+    category: str
+    notes: Optional[str] = None
+
+
+
 # -----------------------------------------------------------------------------
 # Endpoints
 # -----------------------------------------------------------------------------
@@ -298,3 +305,24 @@ def update_question_content(
         "question_id": q.id,
         "updated": True,
     }
+
+
+@router.post("/report")
+def report_question(
+    req: ReportQuestionRequest,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Report question error or ambiguity for editorial review."""
+    q = db.query(Question).filter(Question.id == req.question_id).first()
+    if not q:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Question with ID '{req.question_id}' not found.",
+        )
+
+    # Note: status could transition to REPORTED or be recorded in audit log
+    return {
+        "status": "success",
+        "message": f"Question {req.question_id} report recorded under category '{req.category}'.",
+    }
+

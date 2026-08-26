@@ -41,6 +41,13 @@ export default function StudentHubPage() {
   const [launchingId, setLaunchingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Enforce profile completion before entering student dashboard
+  useEffect(() => {
+    if (user && (!user.residency_stage || !user.target_exam)) {
+      router.push('/onboarding');
+    }
+  }, [user, router]);
+
   useEffect(() => {
     async function loadData() {
       try {

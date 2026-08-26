@@ -110,7 +110,7 @@ export function Navbar() {
                 {/* User Dropdown */}
                 {dropdownOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-56 rounded-2xl glass-card border border-white/10 p-2 shadow-2xl bg-slate-900/95 text-white z-50 animate-fade-in"
+                    className="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-700/80 p-2 shadow-2xl bg-slate-900 text-white z-50 animate-fade-in"
                     onMouseLeave={() => setDropdownOpen(false)}
                   >
                     <div className="p-2.5 border-b border-white/10 mb-1">

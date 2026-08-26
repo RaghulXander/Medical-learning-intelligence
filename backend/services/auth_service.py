@@ -97,6 +97,19 @@ class AuthService:
                 "picture": parts[4] if len(parts) > 4 else None,
                 "email_verified": True,
             }
+        elif id_token_str.startswith("ya29."):
+            # Google OAuth2 Access Token from popup token client
+            try:
+                import urllib.request
+                import json as json_lib
+                req = urllib.request.Request(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    headers={"Authorization": f"Bearer {id_token_str}", "User-Agent": "DocEdge-Auth/1.0"}
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    payload = json_lib.loads(response.read().decode("utf-8"))
+            except Exception as e:
+                raise ValueError(f"Failed to fetch userinfo from Google OAuth Access Token: {str(e)}")
         elif "@" in id_token_str and not id_token_str.startswith("eyJ"):
             # Direct Google email passed from fast account picker
             email_clean = id_token_str.strip().lower()

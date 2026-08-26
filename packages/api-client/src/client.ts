@@ -47,6 +47,10 @@ export class MedicalApiClient {
     this.baseUrl = url;
   }
 
+  public setTokenGetter(getter?: () => string | null | Promise<string | null>) {
+    this.getToken = getter;
+  }
+
   public async request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
     const headers: Record<string, string> = {
@@ -86,3 +90,8 @@ export class MedicalApiClient {
 }
 
 export const defaultClient = new MedicalApiClient();
+
+export function setAuthTokenGetter(getter: () => string | null | Promise<string | null>) {
+  defaultClient.setTokenGetter(getter);
+}
+

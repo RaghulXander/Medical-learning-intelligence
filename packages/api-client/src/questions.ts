@@ -78,17 +78,19 @@ export class QuestionsApi {
   }
 
   /**
-   * Update question content
+   * Report question ambiguity or error
    */
-  async updateQuestion(
-    questionId: string,
-    payload: Partial<Question>
-  ): Promise<{ status: string; question_id: string; updated: boolean }> {
-    return this.client.request(`/api/questions/${questionId}`, {
-      method: 'PATCH',
+  async reportQuestion(payload: {
+    question_id: string;
+    category: string;
+    notes?: string;
+  }): Promise<{ status: string; message: string }> {
+    return this.client.request('/api/questions/report', {
+      method: 'POST',
       body: JSON.stringify(payload),
     });
   }
 }
 
 export const questionsApi = new QuestionsApi();
+

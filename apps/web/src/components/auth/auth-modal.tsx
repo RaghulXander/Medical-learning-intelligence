@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Sparkles,
   Eye,
   EyeOff,
-  Copy,
-  Check,
   ShieldCheck,
   Lock,
   Mail,
@@ -31,7 +29,6 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }: AuthModalProps) {
   const router = useRouter();
   const { login, register, googleSignIn } = useAuth();
-  const googleBtnRef = useRef<HTMLDivElement>(null);
 
   const [taxonomy, setTaxonomy] = useState<MedicalTaxonomyMetadata | null>(null);
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
@@ -43,18 +40,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
-  // Google Direct Input Prompt (Fallback for environments without GIS Client ID)
+  // Google Direct Input Prompt (Fallback)
   const [showGooglePrompt, setShowGooglePrompt] = useState(false);
   const [googleEmailInput, setGoogleEmailInput] = useState('');
 
   // Password entropy state
   const [entropyInfo, setEntropyInfo] = useState<PasswordEntropyResult | null>(null);
-
-  // Post-Google Password Prompt State
-  const [showPostGoogleSetup, setShowPostGoogleSetup] = useState(false);
-  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
 
   // Fetch dynamic taxonomy metadata
   useEffect(() => {
@@ -63,62 +55,6 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
       .then((data) => setTaxonomy(data))
       .catch((err) => console.warn('AuthModal taxonomy note:', err));
   }, []);
-
-  // Initialize Google Identity Services (GIS)
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const initGsi = () => {
-      const google = (typeof window !== 'undefined' && (window as any).google);
-      if (google?.accounts?.id) {
-        try {
-          const clientId =
-            process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-            '1038472849182-medicalai.apps.googleusercontent.com';
-
-          google.accounts.id.initialize({
-            client_id: clientId,
-            callback: async (response: any) => {
-              if (response?.credential) {
-                setLoading(true);
-                setError(null);
-                try {
-                  const res = await googleSignIn(response.credential);
-                  if (res.is_new_user) {
-                    setShowPostGoogleSetup(true);
-                  } else {
-                    onClose();
-                    if (onSuccess) onSuccess();
-                  }
-                } catch (err: any) {
-                  setError(err?.message || 'Google Sign-In failed. Please try again.');
-                } finally {
-                  setLoading(false);
-                }
-              }
-            },
-            auto_select: false,
-            cancel_on_tap_outside: true,
-          });
-
-          if (googleBtnRef.current) {
-            google.accounts.id.renderButton(googleBtnRef.current, {
-              theme: 'filled_black',
-              size: 'large',
-              width: 340,
-              text: 'continue_with',
-              shape: 'pill',
-            });
-          }
-        } catch (e) {
-          console.warn('GIS initialization notice:', e);
-        }
-      }
-    };
-
-    const timer = setTimeout(initGsi, 300);
-    return () => clearTimeout(timer);
-  }, [isOpen, googleSignIn, onClose, onSuccess]);
 
   useEffect(() => {
     setMode(initialMode);
@@ -142,30 +78,71 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
       const res = await authApi.generatePassword(20);
       setPassword(res.password);
       setEntropyInfo(res.entropy);
-      setGeneratedPassword(res.password);
       setShowPassword(true);
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(res.password);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
       }
     } catch (err) {
       console.error('Failed to generate strong password:', err);
     }
   };
 
-  const handleGoogleClick = () => {
+  const handleGoogleOAuthPopup = () => {
     setError(null);
-    const google = (typeof window !== 'undefined' && (window as any).google);
-    if (google?.accounts?.id) {
-      google.accounts.id.prompt((notification: any) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          setShowGooglePrompt(true);
-        }
-      });
-    } else {
-      setShowGooglePrompt(true);
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const hasValidClientId =
+      clientId &&
+      !clientId.includes('medicalai') &&
+      !clientId.includes('xxxx') &&
+      !clientId.includes('placeholder');
+
+    const google = typeof window !== 'undefined' ? (window as any).google : null;
+
+    // 1. If real Google OAuth2 Client ID is configured and Google SDK is available, launch OAuth popup
+    if (hasValidClientId && google?.accounts?.oauth2) {
+      try {
+        setLoading(true);
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: 'openid email profile',
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse?.error) {
+              setLoading(false);
+              setError('Google authorization was cancelled or encountered an error.');
+              return;
+            }
+
+            if (tokenResponse?.access_token) {
+              try {
+                const res = await googleSignIn(tokenResponse.access_token);
+                setLoading(false);
+                onClose();
+
+                // Check profile completion requirement
+                if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
+                  router.push('/onboarding');
+                } else {
+                  if (onSuccess) onSuccess();
+                  router.push('/student');
+                }
+              } catch (err: any) {
+                setLoading(false);
+                setError(err?.message || 'Google account verification failed.');
+              }
+            }
+          },
+        });
+
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+        return;
+      } catch (err) {
+        console.warn('Google OAuth2 client error:', err);
+        setLoading(false);
+      }
     }
+
+    // 2. Direct Google Email Entry (instant passwordless sign-in)
+    setShowGooglePrompt(true);
   };
 
   const handleExecuteGoogleDirectAuth = async (directEmail: string) => {
@@ -173,11 +150,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
     setError(null);
     try {
       const res = await googleSignIn(directEmail.trim().toLowerCase());
-      if (res.is_new_user) {
-        setShowPostGoogleSetup(true);
+      onClose();
+
+      // Enforce mandatory profile onboarding
+      if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
+        router.push('/onboarding');
       } else {
-        onClose();
         if (onSuccess) onSuccess();
+        router.push('/student');
       }
     } catch (err: any) {
       setError(err?.message || 'Google Sign-In failed. Please try again.');
@@ -193,7 +173,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
 
     try {
       if (mode === 'login') {
-        await login(email, password);
+        const res = await login(email, password);
+        onClose();
+        if (!res.user?.residency_stage || !res.user?.target_exam) {
+          router.push('/onboarding');
+        } else {
+          if (onSuccess) onSuccess();
+          router.push('/student');
+        }
       } else {
         await register({
           email,
@@ -202,9 +189,10 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
           target_exam: targetExam,
           primary_speciality: primarySpeciality,
         } as any);
+        onClose();
+        // Mandatory onboarding after registration
+        router.push('/onboarding');
       }
-      onClose();
-      if (onSuccess) onSuccess();
     } catch (err: any) {
       setError(err?.message || 'Authentication failed. Please check your credentials.');
     } finally {
@@ -212,22 +200,9 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
     }
   };
 
-  const handlePostGoogleFinish = async (setPasswordFlag: boolean) => {
-    if (setPasswordFlag && generatedPassword) {
-      try {
-        await authApi.setPassword(generatedPassword);
-      } catch (err) {
-        console.warn('Set password notice:', err);
-      }
-    }
-    setShowPostGoogleSetup(false);
-    onClose();
-    router.push('/onboarding');
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md rounded-2xl glass-card border border-white/10 p-6 sm:p-8 shadow-2xl bg-slate-900/95 text-white max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-md rounded-2xl border border-slate-700/80 p-6 sm:p-8 shadow-2xl bg-slate-900 text-white max-h-[90vh] overflow-y-auto z-50">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -262,14 +237,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 space-y-4">
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-700/60 space-y-4">
               <div className="flex items-center gap-3 text-xs text-slate-300">
                 <div className="w-8 h-8 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">
                   <Mail className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="font-semibold text-white">Google Account Verification</div>
-                  <div className="text-[11px] text-slate-400">Resolves profile, email, and clinical roles securely</div>
+                  <div className="text-[11px] text-slate-400">Fetches your verified name, email, and clinical permissions</div>
                 </div>
               </div>
 
@@ -280,7 +255,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                   placeholder="doctor@gmail.com"
                   value={googleEmailInput}
                   onChange={(e) => setGoogleEmailInput(e.target.value)}
-                  className="w-full h-11 px-3.5 rounded-xl bg-slate-950/80 border border-white/10 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                  className="w-full h-11 px-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-sky-500"
                 />
               </div>
 
@@ -291,75 +266,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                 onClick={() => handleExecuteGoogleDirectAuth(googleEmailInput)}
                 className="w-full h-11 text-sm font-bold rounded-xl"
               >
-                {loading ? 'Verifying with Google...' : 'Continue with Google Account'}
-              </Button>
-            </div>
-          </div>
-        ) : showPostGoogleSetup ? (
-          /* ----------------------------------------------------------------- */
-          /* VIEW 2: Post-Google Password Prompt */
-          /* ----------------------------------------------------------------- */
-          <div className="space-y-6 animate-fade-in">
-            <div className="text-center">
-              <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-3">
-                <ShieldCheck className="h-6 w-6 text-emerald-400" />
-              </div>
-              <h2 className="text-xl font-bold">Google Account Linked!</h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Would you like to set a secure password for direct mobile & web credentials?
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-300">Suggested Strong Password:</span>
-                <button
-                  type="button"
-                  onClick={handleSuggestPassword}
-                  className="text-xs text-sky-400 hover:text-sky-300 flex items-center gap-1 font-medium"
-                >
-                  <Sparkles className="h-3 w-3" /> Regenerate
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950/80 border border-white/10 font-mono text-xs text-sky-300">
-                <span className="flex-1 truncate">{generatedPassword || 'vX8#mK9$qL2@pZ4!_2026'}</span>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                      await navigator.clipboard.writeText(generatedPassword || 'vX8#mK9$qL2@pZ4!_2026');
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }
-                  }}
-                  className="p-1 text-slate-400 hover:text-white"
-                >
-                  {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                variant="gradient"
-                className="flex-1 text-sm h-10 font-bold"
-                onClick={() => handlePostGoogleFinish(true)}
-              >
-                Save & Continue
-              </Button>
-              <Button
-                variant="outline"
-                className="text-sm h-10 border-white/10 bg-white/5 hover:bg-white/10 text-slate-300"
-                onClick={() => handlePostGoogleFinish(false)}
-              >
-                Skip for now
+                {loading ? 'Connecting with Google...' : 'Continue to Profile Setup'}
               </Button>
             </div>
           </div>
         ) : (
           /* ----------------------------------------------------------------- */
-          /* VIEW 3: Standard Login / Registration Form */
+          /* VIEW 2: Standard Login / Registration Form */
           /* ----------------------------------------------------------------- */
           <div>
             {/* Header */}
@@ -378,14 +291,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
               </p>
             </div>
 
-            {/* Google Identity Services Container / Button */}
+            {/* Google OAuth Popup Button */}
             <div className="space-y-3">
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleGoogleClick}
+                onClick={handleGoogleOAuthPopup}
                 disabled={loading}
-                className="w-full h-11 border-white/15 bg-white/5 hover:bg-white/10 text-white font-medium flex items-center justify-center gap-3 rounded-xl transition-all shadow-sm"
+                className="w-full h-11 border-slate-700 bg-slate-800 hover:bg-slate-700/80 text-white font-medium flex items-center justify-center gap-3 rounded-xl transition-all shadow-sm"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -407,16 +320,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                 </svg>
                 <span>Continue with Google</span>
               </Button>
-
-              <div ref={googleBtnRef} className="hidden" />
             </div>
 
             <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10" />
+                <div className="w-full border-t border-slate-700/60" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-slate-900 px-3 text-slate-500 font-medium uppercase tracking-wider">
+                <span className="bg-slate-900 px-3 text-slate-400 font-medium uppercase tracking-wider">
                   or email & password
                 </span>
               </div>
@@ -443,7 +354,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                       placeholder="Dr. Raghul Xander"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full h-10 pl-9 pr-3 rounded-lg bg-slate-950/70 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
+                      className="w-full h-10 pl-9 pr-3 rounded-lg bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -459,7 +370,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                     placeholder="doctor@hospital.org"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-10 pl-9 pr-3 rounded-lg bg-slate-950/70 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
+                    className="w-full h-10 pl-9 pr-3 rounded-lg bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
                   />
                 </div>
               </div>
@@ -486,7 +397,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-10 pl-9 pr-10 rounded-lg bg-slate-950/70 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
+                    className="w-full h-10 pl-9 pr-10 rounded-lg bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-colors"
                   />
                   <button
                     type="button"
@@ -567,7 +478,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                           }
                         }
                       }}
-                      className="w-full h-10 px-3 rounded-lg bg-slate-950/70 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
+                      className="w-full h-10 px-3 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
                     >
                       {(taxonomy?.examinations || [
                         { id: 'NEET_SS', title: 'NEET-SS / DrNB Super-Specialty' },
@@ -589,7 +500,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                       <select
                         value={primarySpeciality}
                         onChange={(e) => setPrimarySpeciality(e.target.value)}
-                        className="w-full h-10 px-3 rounded-lg bg-slate-950/70 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
+                        className="w-full h-10 px-3 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
                       >
                         {(
                           taxonomy?.examinations.find((e) => e.id === targetExam)?.specialities || [
@@ -615,7 +526,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
                 disabled={loading}
                 className="w-full h-10 text-sm font-semibold rounded-xl mt-4"
               >
-                {loading ? 'Authenticating...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+                {loading ? 'Authenticating...' : mode === 'login' ? 'Sign In' : 'Create Account & Start Onboarding'}
               </Button>
             </form>
 
