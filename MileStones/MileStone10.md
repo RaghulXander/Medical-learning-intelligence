@@ -136,7 +136,6 @@ Required controls:
 ### Required web variables
 
 ```text
-NEXT_PUBLIC_API_URL=https://api.example.com
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...
 NEXT_PUBLIC_CONTACT_EMAIL=...
 NEXT_PUBLIC_APP_ENV=production

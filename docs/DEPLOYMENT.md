@@ -58,12 +58,13 @@ In **Site configuration → Environment variables**, set:
 
 ```text
 API_URL=https://docedge-api.onrender.com
-NEXT_PUBLIC_API_URL=https://docedge-api.onrender.com
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=<production Google web client ID>
 NEXT_PUBLIC_CONTACT_EMAIL=raghuljayan@gmail.com
 ```
 
 Use the real Render URL, without a trailing slash. Then choose **Deploys → Trigger deploy → Clear cache and deploy site**.
+
+`NEXT_PUBLIC_API_URL` is not required for the Netlify web application. Browser requests use relative `/api` URLs and Netlify's Next.js server proxies them using the private server-side `API_URL` value.
 
 ## 5. Configure Google OAuth
 
