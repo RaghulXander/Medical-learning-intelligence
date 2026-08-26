@@ -27,6 +27,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "5.15.13",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20.17.19",
     "@types/react": "~19.1.10",

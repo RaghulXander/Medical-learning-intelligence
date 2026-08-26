@@ -74,6 +74,7 @@
         "zod": "^3.24.2",
       },
       "devDependencies": {
+        "@netlify/plugin-nextjs": "5.15.13",
         "@types/canvas-confetti": "^1.9.0",
         "@types/node": "^20.17.19",
         "@types/react": "~19.1.10",
@@ -393,6 +394,8 @@
     "@medical/api-client": ["@medical/api-client@workspace:packages/api-client"],
 
     "@medical/shared": ["@medical/shared@workspace:packages/shared"],
+
+    "@netlify/plugin-nextjs": ["@netlify/plugin-nextjs@5.15.13", "", {}, "sha512-gBmWtgG13ZW4ytNMCvacfwZemtdtV/Ekc+6RBYvI5fndjmDvKxgFHylsw7oli+PHMGAtNqaJrN8QccGnDReu6A=="],
 
     "@next/env": ["@next/env@14.2.35", "", {}, "sha512-DuhvCtj4t9Gwrx80dmz2F4t/zKQ4ktN8WrMwOuVzkJfBilwAwGr6v16M5eI8yCuZ63H9TTuEU09Iu2HqkzFPVQ=="],
 

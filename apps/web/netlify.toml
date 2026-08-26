@@ -9,6 +9,9 @@
   # Keep secret scanning enabled for every other environment variable.
   SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_CONTACT_EMAIL,NEXT_PUBLIC_API_URL,NEXT_PUBLIC_GOOGLE_CLIENT_ID,API_URL"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [context.deploy-preview.environment]
   NEXT_PUBLIC_APP_ENV = "preview"
 
