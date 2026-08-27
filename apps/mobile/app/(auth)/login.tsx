@@ -4,7 +4,7 @@
  * Doctor sign-in screen with email credentials and Google identity options.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -17,9 +17,13 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 import { Stethoscope, Lock, Mail, AlertCircle, Sparkles } from 'lucide-react-native';
 import { useAuth } from '../../lib/auth/auth-context';
 import { Button } from '../../components/ui/Button';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -29,6 +33,44 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const handledGoogleResponse = useRef<unknown>(null);
+
+  const googleAndroidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID;
+  const googleIosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+  const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+  const [googleRequest, googleResponse, promptGoogleAsync] = Google.useIdTokenAuthRequest({
+    androidClientId: googleAndroidClientId,
+    iosClientId: googleIosClientId,
+    webClientId: googleWebClientId,
+    selectAccount: true,
+  });
+
+  useEffect(() => {
+    if (!googleResponse || handledGoogleResponse.current === googleResponse) return;
+    handledGoogleResponse.current = googleResponse;
+
+    if (googleResponse.type !== 'success') {
+      setLoading(false);
+      if (googleResponse.type === 'error') {
+        setError(googleResponse.error?.message || 'Google Sign-In failed.');
+      }
+      return;
+    }
+
+    const idToken =
+      googleResponse.params.id_token || googleResponse.authentication?.idToken;
+    if (!idToken) {
+      setError('Google did not return an ID token. Check the mobile OAuth client configuration.');
+      setLoading(false);
+      return;
+    }
+
+    googleSignIn(idToken)
+      .catch((err: any) => {
+        setError(err?.message || 'Google Sign-In failed.');
+      })
+      .finally(() => setLoading(false));
+  }, [googleResponse, googleSignIn]);
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -49,15 +91,16 @@ export default function LoginScreen() {
   };
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
     setError(null);
+    if (!googleRequest) {
+      setError('Google Sign-In is not configured for this build.');
+      return;
+    }
+    setLoading(true);
     try {
-      // Direct mobile Google OAuth trigger
-      const testEmail = email.includes('@') ? email.trim() : 'student@docedge.ai';
-      await googleSignIn(testEmail);
+      await promptGoogleAsync();
     } catch (err: any) {
       setError(err?.message || 'Google Sign-In failed.');
-    } finally {
       setLoading(false);
     }
   };
@@ -141,7 +184,7 @@ export default function LoginScreen() {
               title="Sign in with Google"
               variant="outline"
               size="md"
-              disabled={loading}
+              disabled={loading || !googleRequest}
               onPress={handleGoogleSignIn}
               icon={<Sparkles size={16} color="#38bdf8" />}
             />
