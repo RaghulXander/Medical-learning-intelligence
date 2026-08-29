@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "screenKey": "home",
+  "minimumAppVersion": "1.0.0",
+  "cacheTtlSeconds": 900,
+  "widgets": [
+    {
+      "id": "daily-goal",
+      "type": "goal_progress",
+      "enabled": true,
+      "order": 10,
+      "audience": "AUTHENTICATED",
+      "platforms": ["ALL"],
+      "rolloutPercentage": 100,
+      "props": {
+        "title": "Daily Preparation Target",
+        "dailyGoal": 20,
+        "actionLabel": "Start Daily Quiz"
+      }
+    },
+    {
+      "id": "continue-learning",
+      "type": "continue_learning",
+      "enabled": true,
+      "order": 20,
+      "audience": "SUBSCRIBED",
+      "platforms": ["ALL"],
+      "rolloutPercentage": 100,
+      "props": {
+        "title": "Unfinished Assessment",
+        "actionLabel": "Resume Exam Now"
+      }
+    },
+    {
+      "id": "focus-area",
+      "type": "focus_area",
+      "enabled": true,
+      "order": 30,
+      "audience": "SUBSCRIBED",
+      "platforms": ["ALL"],
+      "rolloutPercentage": 100,
+      "props": {
+        "title": "High-Yield Weak Topic",
+        "actionLabel": "Practice Weak Area"
+      }
+    },
+    {
+      "id": "custom-mock",
+      "type": "custom_mock",
+      "enabled": true,
+      "order": 40,
+      "audience": "SUBSCRIBED",
+      "platforms": ["ALL"],
+      "rolloutPercentage": 100,
+      "props": {
+        "title": "Custom QBank & Mock Test",
+        "description": "Build custom tests by topic, difficulty, or 150-Q grand mock"
+      }
+    },
+    {
+      "id": "quick-tests",
+      "type": "quick_presets",
+      "enabled": true,
+      "order": 50,
+      "audience": "ALL",
+      "platforms": ["ALL"],
+      "rolloutPercentage": 100,
+      "props": {
+        "title": "High-Yield Test Modules",
+        "viewAllLabel": "View All",
+        "limit": 3
+      }
+    }
+  ]
+}

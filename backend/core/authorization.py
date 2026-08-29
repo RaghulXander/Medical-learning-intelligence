@@ -20,6 +20,13 @@ class Permission(str, Enum):
     USERS_MANAGE_ROLES = "users.manage_roles"
     ENTITLEMENTS_MANAGE = "entitlements.manage"
     ATTEMPTS_READ_ANY = "attempts.read_any"
+    CONTENT_READ = "content.read"
+    CONTENT_EDIT = "content.edit"
+    CONTENT_PUBLISH = "content.publish"
+    MEDIA_MANAGE = "media.manage"
+    MOBILE_UI_READ = "mobile_ui.read"
+    MOBILE_UI_EDIT = "mobile_ui.edit"
+    MOBILE_UI_PUBLISH = "mobile_ui.publish"
 
 
 ROLE_PERMISSIONS: Dict[UserRole, FrozenSet[Permission]] = {
@@ -37,6 +44,13 @@ ROLE_PERMISSIONS: Dict[UserRole, FrozenSet[Permission]] = {
             Permission.USERS_MANAGE_ROLES,
             Permission.ENTITLEMENTS_MANAGE,
             Permission.ATTEMPTS_READ_ANY,
+            Permission.CONTENT_READ,
+            Permission.CONTENT_EDIT,
+            Permission.CONTENT_PUBLISH,
+            Permission.MEDIA_MANAGE,
+            Permission.MOBILE_UI_READ,
+            Permission.MOBILE_UI_EDIT,
+            Permission.MOBILE_UI_PUBLISH,
         }
     ),
     UserRole.REVIEWER: frozenset(
@@ -64,4 +78,3 @@ ROLE_PERMISSIONS: Dict[UserRole, FrozenSet[Permission]] = {
 def has_permission(role: UserRole, permission: Permission) -> bool:
     """Return whether a role is granted a named permission."""
     return permission in ROLE_PERMISSIONS.get(role, frozenset())
-

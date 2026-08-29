@@ -17,6 +17,7 @@ from backend.api.routes.questions import router as questions_router
 from backend.api.routes.auth import router as auth_router
 from backend.api.routes.student import router as student_router
 from backend.api.routes.admin import router as admin_router
+from backend.api.routes.mobile_ui import router as mobile_ui_router
 
 settings = get_settings()
 
@@ -44,6 +45,7 @@ app.include_router(student_router)
 app.include_router(admin_router)
 app.include_router(assessments_router)
 app.include_router(questions_router)
+app.include_router(mobile_ui_router)
 
 
 @app.get("/api/health", include_in_schema=False)
