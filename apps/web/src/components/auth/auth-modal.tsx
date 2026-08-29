@@ -16,7 +16,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth-context';
 import { authApi, studentApi } from '@medical/api-client';
-import { PasswordEntropyResult, MedicalTaxonomyMetadata } from '@medical/shared';
+import {
+  getPostAuthDestination,
+  MedicalTaxonomyMetadata,
+  PasswordEntropyResult,
+  validateLoginInput,
+  validateRegistrationInput,
+} from '@medical/shared';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -85,7 +91,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
     try {
       const res = await googleSignIn(idToken);
       onClose();
-      if (!res.user?.residency_stage || !res.user?.target_exam || res.is_new_user) {
+      if (getPostAuthDestination(res.user, res.is_new_user) === 'ONBOARDING') {
         router.push('/onboarding');
       } else {
         if (onSuccess) onSuccess();
@@ -155,22 +161,32 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login', onSuccess }:
 
     try {
       if (mode === 'login') {
-        const res = await login(email, password);
+        const validation = validateLoginInput({ email, password });
+        if (!validation.success) {
+          setError(validation.error);
+          return;
+        }
+        const res = await login(validation.data.email, validation.data.password);
         onClose();
-        if (!res.user?.residency_stage || !res.user?.target_exam) {
+        if (getPostAuthDestination(res.user) === 'ONBOARDING') {
           router.push('/onboarding');
         } else {
           if (onSuccess) onSuccess();
           router.push('/student');
         }
       } else {
-        await register({
+        const validation = validateRegistrationInput({
           email,
           password,
           name,
           target_exam: targetExam,
           primary_speciality: primarySpeciality,
-        } as any);
+        });
+        if (!validation.success) {
+          setError(validation.error);
+          return;
+        }
+        await register(validation.data);
         onClose();
         // Mandatory onboarding after registration
         router.push('/onboarding');

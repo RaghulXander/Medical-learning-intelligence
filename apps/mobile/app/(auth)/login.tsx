@@ -22,6 +22,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Stethoscope, Lock, Mail, AlertCircle, Sparkles } from 'lucide-react-native';
 import { useAuth } from '../../lib/auth/auth-context';
 import { Button } from '../../components/ui/Button';
+import { validateLoginInput } from '@medical/shared';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -73,15 +74,16 @@ export default function LoginScreen() {
   }, [googleResponse, googleSignIn]);
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter both email and password.');
+    const validation = validateLoginInput({ email, password });
+    if (!validation.success) {
+      setError(validation.error);
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      await login(email.trim(), password);
+      await login(validation.data.email, validation.data.password);
       // NavigationGuard will automatically route to /onboarding or /(tabs)
     } catch (err: any) {
       setError(err?.message || 'Authentication failed. Please check your medical credentials.');

@@ -68,6 +68,10 @@ class RegisterRequest(BaseModel):
     target_exam: Optional[str] = "NEET_SS"
     residency_stage: Optional[str] = None
     medical_college: Optional[str] = None
+    primary_speciality: Optional[str] = Field(
+        "Pathology",
+        description="Pathology-only during the MVP; Oncopathology is accepted as a Pathology track alias.",
+    )
 
 
 class LoginRequest(BaseModel):
@@ -146,6 +150,7 @@ def register_with_password(
             target_exam=req.target_exam,
             residency_stage=req.residency_stage,
             medical_college=req.medical_college,
+            primary_speciality=req.primary_speciality,
             ip_address=ip,
             user_agent=ua,
         )

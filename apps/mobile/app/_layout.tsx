@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { AuthProvider, useAuth } from '../lib/auth/auth-context';
+import { isOnboardingComplete } from '@medical/shared';
 
 function NavigationGuard() {
   const { user, isLoading } = useAuth();
@@ -29,7 +30,7 @@ function NavigationGuard() {
       }
     } else {
       // User is signed in -> check onboarding profile completion
-      const isOnboarded = !!user.residency_stage && !!user.target_exam;
+      const isOnboarded = isOnboardingComplete(user);
 
       if (!isOnboarded && !inOnboarding) {
         router.replace('/onboarding' as any);

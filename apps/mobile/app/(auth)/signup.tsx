@@ -20,6 +20,7 @@ import { useRouter } from 'expo-router';
 import { Stethoscope, Lock, Mail, User, Sparkles, AlertCircle } from 'lucide-react-native';
 import { useAuth } from '../../lib/auth/auth-context';
 import { authApi } from '@medical/api-client';
+import { validateRegistrationInput } from '@medical/shared';
 import { Button } from '../../components/ui/Button';
 
 export default function SignupScreen() {
@@ -42,21 +43,22 @@ export default function SignupScreen() {
   };
 
   const handleSignup = async () => {
-    if (!email.trim() || !password.trim()) {
-      setError('Please provide email and password.');
+    const validation = validateRegistrationInput({
+      email,
+      password,
+      name,
+      target_exam: 'NEET_SS',
+      primary_speciality: 'Oncopathology',
+    });
+    if (!validation.success) {
+      setError(validation.error);
       return;
     }
 
     setLoading(true);
     setError(null);
     try {
-      await register({
-        email: email.trim().toLowerCase(),
-        password,
-        name: name.trim() || 'Medical Resident',
-        target_exam: 'NEET_SS',
-        primary_speciality: 'Oncopathology',
-      });
+      await register(validation.data);
       // Automatically routed to /onboarding
     } catch (err: any) {
       setError(err?.message || 'Registration failed. Please check your details.');

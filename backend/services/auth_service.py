@@ -202,6 +202,7 @@ class AuthService:
                 "avatar_url": user.avatar_url,
                 "target_exam": user.target_exam,
                 "residency_stage": user.residency_stage,
+                "primary_speciality": user.primary_speciality,
                 "has_password": bool(user.password_hash),
                 "is_subscribed": user.is_subscribed,
             },
@@ -219,6 +220,7 @@ class AuthService:
         target_exam: Optional[str] = "NEET_SS",
         residency_stage: Optional[str] = None,
         medical_college: Optional[str] = None,
+        primary_speciality: Optional[str] = "Pathology",
         ip_address: Optional[str] = None,
         user_agent: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -241,6 +243,10 @@ class AuthService:
 
         is_super = is_super_admin_email(email)
         hashed_pwd = hash_password(password)
+        requested_speciality = (primary_speciality or "Pathology").strip().lower()
+        if requested_speciality not in {"pathology", "oncopathology"}:
+            raise ValueError("The current MVP supports Pathology registrations only")
+
         user = User(
             id=str(uuid.uuid4()),
             email=email,
@@ -271,6 +277,7 @@ class AuthService:
                 "role": user.role.value if hasattr(user.role, "value") else str(user.role),
                 "target_exam": user.target_exam,
                 "residency_stage": user.residency_stage,
+                "primary_speciality": user.primary_speciality,
                 "has_password": True,
                 "is_subscribed": user.is_subscribed,
             },

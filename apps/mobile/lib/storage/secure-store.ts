@@ -5,41 +5,52 @@
  */
 
 import { Platform } from 'react-native';
+import * as ExpoSecureStore from 'expo-secure-store';
 
 const memoryStore = new Map<string, string>();
+
+function getWebStorage(): Storage | null {
+  return typeof localStorage === 'undefined' ? null : localStorage;
+}
 
 export const SecureStorage = {
   async setItem(key: string, value: string): Promise<void> {
     try {
-      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.setItem(key, value);
+      if (Platform.OS === 'web') {
+        const storage = getWebStorage();
+        if (storage) storage.setItem(key, value);
       } else {
-        memoryStore.set(key, value);
+        await ExpoSecureStore.setItemAsync(key, value, {
+          keychainAccessible: ExpoSecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+        });
       }
-    } catch {
+    } catch (error) {
+      if (Platform.OS !== 'web') throw error;
       memoryStore.set(key, value);
     }
   },
 
   async getItem(key: string): Promise<string | null> {
     try {
-      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        return localStorage.getItem(key);
+      if (Platform.OS === 'web') {
+        return getWebStorage()?.getItem(key) ?? memoryStore.get(key) ?? null;
       }
-      return memoryStore.get(key) || null;
-    } catch {
+      return await ExpoSecureStore.getItemAsync(key);
+    } catch (error) {
+      if (Platform.OS !== 'web') throw error;
       return memoryStore.get(key) || null;
     }
   },
 
   async removeItem(key: string): Promise<void> {
     try {
-      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
-        localStorage.removeItem(key);
+      if (Platform.OS === 'web') {
+        getWebStorage()?.removeItem(key);
       } else {
-        memoryStore.delete(key);
+        await ExpoSecureStore.deleteItemAsync(key);
       }
-    } catch {
+    } catch (error) {
+      if (Platform.OS !== 'web') throw error;
       memoryStore.delete(key);
     }
   },
