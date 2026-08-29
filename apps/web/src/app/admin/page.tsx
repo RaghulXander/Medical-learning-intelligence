@@ -569,6 +569,9 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Question Stem */}
+                    <Link href={`/admin/questions/${selectedQuestion.id}`} className="block"><Button variant="outline" size="sm" className="w-full">Edit question content & review history</Button></Link>
+
+                    {/* Question Stem */}
                     <div>
                       <h4 className="text-xs font-semibold text-slate-400 mb-1">Question Stem:</h4>
                       <p className="text-sm font-bold text-white leading-relaxed p-3.5 rounded-xl bg-slate-950/70 border border-white/5">

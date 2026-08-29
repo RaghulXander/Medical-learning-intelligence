@@ -7,8 +7,30 @@
 import { z } from 'zod';
 
 export const QuestionOptionSchema = z.object({
-  key: z.string().min(1).max(2),
+  key: z.string().regex(/^[A-Z]$/),
   text: z.string().min(1, 'Option text cannot be empty'),
+});
+
+export const QuestionEditSchema = z.object({
+  expected_updated_at: z.string().datetime(),
+  stem: z.string().trim().min(10).max(10000),
+  options: z.array(QuestionOptionSchema).min(2).max(8),
+  correct_option: z.string().regex(/^[A-Z]$/),
+  explanation: z.string().trim().max(20000).nullable().optional(),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+  cognitive_level: z.enum(['recall', 'understanding', 'application', 'analysis']),
+  question_type: z.enum(['single_best_answer', 'multiple_choice', 'case_based']),
+  primary_topic_id: z.string().nullable().optional(),
+  learning_objective: z.string().trim().max(2000).nullable().optional(),
+  edit_notes: z.string().trim().max(1000).nullable().optional(),
+}).superRefine((question, context) => {
+  const keys = question.options.map((option) => option.key);
+  if (new Set(keys).size !== keys.length) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['options'], message: 'Option keys must be unique' });
+  }
+  if (!keys.includes(question.correct_option)) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ['correct_option'], message: 'Correct answer must match an option' });
+  }
 });
 
 export const QuestionFilterSchema = z.object({

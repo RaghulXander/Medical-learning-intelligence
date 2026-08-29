@@ -4,7 +4,7 @@
  * Question Bank API endpoints for search, filtering, and editorial curation.
  */
 
-import { Question, QuestionStatus } from '@medical/shared';
+import { Question, QuestionEditPayload, QuestionRevision, QuestionStatus } from '@medical/shared';
 import { MedicalApiClient, defaultClient } from './client';
 
 export interface ListQuestionsParams {
@@ -63,6 +63,20 @@ export class QuestionsApi {
     return this.client.request<Question>(`/api/questions/${questionId}`);
   }
 
+  async updateQuestion(
+    questionId: string,
+    payload: QuestionEditPayload
+  ): Promise<{ status: string; question_id: string; revision_number: number; updated_at: string }> {
+    return this.client.request(`/api/questions/${questionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async listRevisions(questionId: string): Promise<{ items: QuestionRevision[] }> {
+    return this.client.request(`/api/questions/${questionId}/revisions`);
+  }
+
   /**
    * Transition question editorial status
    */
@@ -93,4 +107,3 @@ export class QuestionsApi {
 }
 
 export const questionsApi = new QuestionsApi();
-

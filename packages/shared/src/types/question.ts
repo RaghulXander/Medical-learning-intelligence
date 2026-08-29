@@ -16,7 +16,7 @@ export type QuestionStatus =
 
 export type CognitiveLevel = 'recall' | 'understanding' | 'application' | 'analysis';
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
-export type QuestionType = 'single_best_answer' | 'multiple_response' | 'assertion_reason';
+export type QuestionType = 'single_best_answer' | 'multiple_choice' | 'case_based';
 
 export interface QuestionOption {
   key: string; // "A", "B", "C", "D"
@@ -55,6 +55,7 @@ export interface Question {
   options: QuestionOption[];
   correct_option: string; // "A" | "B" | "C" | "D"
   explanation?: string;
+  learning_objective?: string;
   
   // Metadata & Status
   difficulty: DifficultyLevel;
@@ -70,4 +71,28 @@ export interface Question {
   
   created_at?: string;
   updated_at?: string;
+}
+
+export interface QuestionEditPayload {
+  expected_updated_at: string;
+  stem: string;
+  options: QuestionOption[];
+  correct_option: string;
+  explanation?: string | null;
+  difficulty: DifficultyLevel;
+  cognitive_level: CognitiveLevel;
+  question_type: QuestionType;
+  primary_topic_id?: string | null;
+  learning_objective?: string | null;
+  edit_notes?: string | null;
+}
+
+export interface QuestionRevision {
+  id: string;
+  revision_number: number;
+  editor_id?: string | null;
+  changed_fields: string[];
+  edit_notes?: string | null;
+  snapshot: Record<string, unknown>;
+  created_at: string;
 }
