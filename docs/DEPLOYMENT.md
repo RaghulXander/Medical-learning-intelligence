@@ -1,100 +1,148 @@
-# DocEdge deployment guide
+# DocEdge Deployment Guide
 
-This guide describes the initial M10 staging deployment:
+The production-alpha topology is:
 
-- Web: `https://medprepai.netlify.app`
-- API and PostgreSQL: Render, Singapore region
-- Contact: `raghuljayan@gmail.com`
+- Next.js web on Vercel
+- FastAPI container on Render
+- PostgreSQL on Neon
+- Native preview/production artifacts through Expo EAS
 
-## 1. Push the deployment configuration
+## 1. Render API
 
-Render and Netlify deploy from Git, so commit and push the M10 files before creating the Blueprint.
-
-Important root files:
-
-- `render.yaml`
-- `Dockerfile.backend`
-- `netlify.toml`
-- `alembic.ini`
-- `migrations/`
-
-## 2. Create the Render Blueprint
-
-1. Sign in to Render and connect the GitHub repository.
-2. Choose **New → Blueprint**.
-3. Select the repository and branch containing `render.yaml`.
-4. Keep the Blueprint path as `render.yaml`.
-5. Review the two proposed resources:
-   - `docedge-api`
-   - `docedge-postgres`
-6. Render will request `GOOGLE_CLIENT_IDS`. Enter the same production Google web client ID used by Netlify. Multiple IDs are comma-separated.
-7. Apply the Blueprint.
-
-The initial Blueprint uses free resources for staging. Free Render PostgreSQL expires after 30 days and has no backups; do not treat it as the final production database.
-
-## 3. Verify Render
-
-After deployment, copy the API URL, for example:
+Render deploys `Dockerfile.backend` using `render.yaml`. Configure:
 
 ```text
-https://docedge-api.onrender.com
+APP_ENV=production
+DATABASE_URL=<Neon PostgreSQL URL with sslmode=require>
+JWT_SECRET_KEY=<generated high-entropy value>
+GOOGLE_CLIENT_IDS=<web,Android,and iOS client IDs separated by commas>
+CORS_ALLOWED_ORIGINS=https://<production-project>.vercel.app
 ```
 
-Open:
+The container entrypoint applies `alembic upgrade head` before Uvicorn starts.
+Verify after every release:
 
 ```text
-https://docedge-api.onrender.com/api/health
-https://docedge-api.onrender.com/api/ready
-https://docedge-api.onrender.com/api/version
+https://<render-service>.onrender.com/api/health
+https://<render-service>.onrender.com/api/ready
+https://<render-service>.onrender.com/api/version
 ```
 
-All three must return HTTP 200. Production intentionally does not expose `/docs`.
+Render free web services sleep after inactivity. A cold start during alpha is
+expected and does not indicate database loss.
 
-The startup command applies `alembic upgrade head`, and migration `20260826_0002` enables the PostgreSQL `vector` extension.
+## 2. Neon PostgreSQL
 
-## 4. Configure Netlify
+Neon replaces the expiring Render free database; it does not replace the Render
+API. Copy the Neon connection string into Render's `DATABASE_URL` and retain
+`sslmode=require`.
 
-In **Site configuration → Environment variables**, set:
+Before switching a database containing required data:
+
+1. export the existing database;
+2. restore into Neon;
+3. run Alembic against Neon;
+4. point Render to Neon;
+5. verify users, questions, roles and assessments;
+6. retain the old database until verification is complete.
+
+For disposable alpha data, migrations plus the controlled seed/import scripts
+are sufficient.
+
+## 3. Vercel web
+
+Import the monorepo and set the Vercel project root directory to `apps/web`.
+`apps/web/vercel.json` installs from the workspace root and builds shared packages
+before Next.js.
+
+Configure:
 
 ```text
-API_URL=https://docedge-api.onrender.com
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=<production Google web client ID>
+API_URL=https://<render-service>.onrender.com
+NEXT_PUBLIC_API_URL=https://<render-service>.onrender.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=<Google web OAuth client ID>
 NEXT_PUBLIC_CONTACT_EMAIL=raghuljayan@gmail.com
+NEXT_PUBLIC_SITE_URL=https://<production-project>.vercel.app
+NEXT_PUBLIC_APP_ENV=production
 ```
 
-Use the real Render URL, without a trailing slash. Then choose **Deploys → Trigger deploy → Clear cache and deploy site**.
+`NEXT_PUBLIC_*` values are compiled into browser code. They are not secrets.
+Never place database credentials, JWT secrets or OAuth client secrets in them.
 
-`NEXT_PUBLIC_API_URL` is not required for the Netlify web application. Browser requests use relative `/api` URLs and Netlify's Next.js server proxies them using the private server-side `API_URL` value.
+### Landing-page CMS publishing
 
-Netlify secret scanning remains enabled. The deployment allowlists only the public contact email, API origin, and Google OAuth client ID keys; database URLs, JWT secrets, OAuth client secrets, and storage credentials must never be allowlisted.
+The CMS editor is available to administrators at `/admin/content`. Published
+content is committed to `apps/web/content/landing-page.json`, so the existing
+Vercel Git integration rebuilds the site after a successful publication.
 
-## 5. Configure Google OAuth
-
-In the Google Cloud OAuth web client, add this authorized JavaScript origin:
+Configure these server-only values on the Render API service:
 
 ```text
-https://medprepai.netlify.app
+CMS_GITHUB_OWNER=RaghulXander
+CMS_GITHUB_REPOSITORY=Medical-learning-intelligence
+CMS_GITHUB_BRANCH=main
+CMS_GITHUB_CONTENT_PATH=apps/web/content/landing-page.json
+CMS_GITHUB_TOKEN=<fine-grained token or GitHub App token>
 ```
 
-If a custom web domain is added later, add it separately to Google and to Render's `CORS_ALLOWED_ORIGINS`.
+Restrict the credential to this repository and repository-content write access.
+Do not create `NEXT_PUBLIC_CMS_GITHUB_TOKEN`. The editor uses the existing user
+JWT; the Render backend performs GitHub operations after RBAC and schema checks.
 
-## 6. Staging smoke test
+If GitHub variables are absent, administrators can load and preview the bundled
+local content but publishing returns `503` without modifying files. A stale file
+SHA returns `409`, requiring the editor to reload instead of overwriting another
+administrator's publication.
 
-1. Open the Netlify site in a private browser window.
-2. Register with email/password.
-3. Complete onboarding and refresh the dashboard.
-4. Verify the free-user contact banner uses `raghuljayan@gmail.com`.
-5. Sign in as an administrator and manually grant exam access.
-6. Verify the entitlement persists after sign-out/sign-in.
-7. Confirm imported questions remain `IMPORTED`; do not bulk approve them for deployment testing.
+## 4. Google OAuth
 
-Assessment execution remains unavailable until the M12 ontology/review workflow produces a reviewed `APPROVED` pool.
+Create separate OAuth clients as required:
 
-## 7. Before production users
+- Web: authorize the stable Vercel production origin.
+- Android: package `ai.docedge.student` plus the EAS signing SHA-1.
+- iOS: bundle identifier `ai.docedge.student`.
 
-- Upgrade Render PostgreSQL from Free to a paid plan with backups.
-- Upgrade the API if cold starts are unacceptable.
-- Move `alembic upgrade head` from `dockerCommand` to Render's paid pre-deploy command.
-- Provision managed Redis and set `REDIS_URL`.
-- Perform and record a database restoration test.
-- Configure error monitoring and an uptime check for `/api/ready`.
+Add every ID-token audience accepted from clients to Render's
+`GOOGLE_CLIENT_IDS`. Do not add OAuth client secrets to web or mobile bundles.
+
+## 5. Expo/EAS native builds
+
+`apps/mobile/eas.json` defines development, preview and production profiles.
+Configure preview values before building:
+
+```text
+EXPO_PUBLIC_API_URL=https://<render-service>.onrender.com
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=<Android OAuth client ID>
+EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=<iOS OAuth client ID when used>
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=<web OAuth client ID for Expo web>
+```
+
+Build a shareable Android alpha APK:
+
+```bash
+cd apps/mobile
+eas build --platform android --profile preview --clear-cache
+```
+
+Uninstall stale alpha APKs when validating a native configuration change.
+
+## 6. Production-alpha smoke test
+
+1. Open the stable Vercel URL in a private window.
+2. Register and complete onboarding.
+3. Verify free-user entitlement messaging.
+4. Verify Google web sign-in.
+5. Install the latest EAS preview build and verify password and Google sign-in.
+6. Grant subscription access through the admin flow and verify it persists.
+7. Confirm `/api/ready` reports database readiness.
+8. Confirm imported questions are not silently promoted to `APPROVED`.
+
+## 7. Before public launch
+
+- Replace sleeping/free compute if cold starts are unacceptable.
+- Establish automated backups and perform a recorded restore test.
+- Add error monitoring and uptime checks.
+- Separate migration execution from application startup when the platform supports
+  a reliable pre-deploy job.
+- Configure managed Redis only when queued/background behavior is enabled.
+- Review provider terms, quotas, privacy controls and incident ownership.

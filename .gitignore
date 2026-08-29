@@ -19,6 +19,7 @@ ENV/
 # Node & Frontend (Next.js, Bun, Expo)
 node_modules/
 .next/
+site/
 apps/*/.next/
 apps/*/dist/
 apps/*/build/

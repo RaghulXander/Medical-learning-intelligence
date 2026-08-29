@@ -1,76 +1,82 @@
-# Medical Exam AI — Architecture Specification
+# Architecture Overview
 
-## 1. System Architecture
+## Architectural style
 
-The Medical Exam AI Platform is architected as a modular monolith with isolated specialized ML services.
+DocEdge AI is a modular monolith with two user-facing clients. Business rules,
+authorization and persistence are centralized in a Python FastAPI backend.
+The web and mobile clients share TypeScript contracts and API calls but retain
+platform-specific presentation and identity adapters.
 
 ```mermaid
-flowchart TD
-    subgraph Client["Frontend (Next.js + TypeScript + Tailwind CSS)"]
-        AdminUI["Admin Review & Question Bank Management"]
-        StudentUI["Student Mock Exam & Analytics Portal"]
-    end
-
-    subgraph Backend["Backend Core (Node.js / Express or Fastify)"]
-        AuthModule["Auth & Role Management"]
-        QuestionBankModule["Question Bank & Filters"]
-        ExamEngineModule["Exam Blueprint & Scoring Engine"]
-        ReportingModule["User Feedback & Issue Reporting"]
-        PipelineRunner["Data Ingestion & Extraction Worker"]
-    end
-
-    subgraph MLService["Python ML Service (FastAPI)"]
-        PubMedBERT["PubMedBERT MCQA Validator\n(jamezoon/medmcqa-pubmedbert-mcqa)"]
-        SimilarityService["Duplicate & Clustering Engine"]
-    end
-
-    subgraph Storage["Persistent Layer"]
-        PG[("PostgreSQL 16 + pgvector")]
-        Redis[("Redis / BullMQ Queue")]
-        ProcessedData["Processed JSONL Datasets\n(data/processed/pathology/)"]
-    end
-
-    Client --> Backend
-    Backend --> PG
-    Backend --> Redis
-    Backend --> MLService
-    PipelineRunner --> ProcessedData
-    ProcessedData --> PG
+flowchart LR
+    Student[Student] --> Web[Next.js web]
+    Student --> Mobile[Expo mobile]
+    Admin[Administrator] --> Web
+    Web --> API[FastAPI modular monolith]
+    Mobile --> API
+    API --> DB[(PostgreSQL)]
+    Web --> Google[Google Identity]
+    Mobile --> Google
+    API --> Google
 ```
 
----
+## Runtime boundaries
 
-## 2. Ingestion & Extraction Pipeline
+| Boundary | Responsibility | Source |
+|---|---|---|
+| Next.js web | Landing, admin and browser student experience | `apps/web` |
+| Expo mobile | Native student experience and native OAuth adapter | `apps/mobile` |
+| Shared contracts | Domain types and validation schemas | `packages/shared` |
+| Shared API client | Typed HTTP calls and session header integration | `packages/api-client` |
+| FastAPI | Authentication, authorization, students, administration, questions and assessments | `backend` |
+| Persistence | SQLAlchemy models, PostgreSQL sessions and Alembic migrations | `database`, `alembic` |
+| Data pipeline | Reproducible extraction, normalization and ingestion | `scripts`, `backend/ingestion` |
 
-The pipeline ingests raw datasets (MedMCQA), isolates Pathology questions, normalizes the records to the unified domain schema, computes duplicate clusters without data loss, and outputs clean JSONL files ready for database import.
+`apps/student-native` is a historical prototype workspace. `apps/mobile` is the
+active native application; final removal or consolidation belongs to M12.
 
-### Pipeline Stages
+## Backend modules
 
-1. **Ingestion (`scripts/import_medmcqa.py`)**:
-   - Downloads immutable raw Parquet splits (`train.parquet`, `validation.parquet`, `test.parquet`).
-2. **Extraction (`scripts/extract_pathology.py`)**:
-   - Filters rows where `subject_name == 'Pathology'`.
-   - Preserves 100% of rows (15,526 questions total: 14,884 train, 337 validation, 305 test).
-3. **Normalization (`scripts/normalize_medmcqa.py`)**:
-   - Maps raw fields to the `Question` model.
-   - Cleans Unicode/whitespace while preserving medical symbols.
-   - Implements topic decoupling (`topic_name_original`, `topic_name_normalized`, `topic_mapping_status = 'UNMAPPED' | 'RAW_ONLY'`).
-   - Computes deterministic UUIDs and SHA-256 content hashes.
-4. **Duplicate Clustering (`scripts/deduplicate_questions.py`)**:
-   - Clusters near/exact duplicate questions and attaches cluster signals without dropping any records.
-5. **JSONL Export (`scripts/run_pipeline.py`)**:
-   - Generates split-specific and aggregated `.jsonl` files plus `summary_report.json`.
+The API remains one deployable container. Route modules delegate to service
+modules rather than becoming independent network services.
 
----
+```mermaid
+flowchart TB
+    Routes[FastAPI route modules] --> Auth[Auth service]
+    Routes --> Student[Student service]
+    Routes --> Admin[Admin service]
+    Routes --> Assessment[Assessment service]
+    Auth --> Models[SQLAlchemy models]
+    Student --> Models
+    Admin --> Models
+    Assessment --> Models
+    Models --> Postgres[(PostgreSQL + pgvector)]
+```
 
-## 3. Engineering Guidelines & Constraints
+## Core invariants
 
-1. **Three-Tier Domain Decoupling**:
-   - **Canonical Taxonomy**: `questions.primary_topic_id` is the exam-agnostic medical truth.
-   - **Curriculum Mapping**: `course_curriculum_mappings` connects canonical topics to courses with specific depth (`undergraduate`, `postgraduate`, `super_specialty`) and weightages.
-   - **Provenance**: `questions.source_exam_id` and `external_source` capture historical origin (e.g. past paper tags, MedMCQA), never confused with target course syllabus.
-2. **Immutable Raw Data**: Raw datasets in `data/raw/` are strictly read-only.
-3. **Zero Silent Deletion**: Duplicate hashes are stored as validation signals; records are preserved faithfully.
-4. **Decoupled Curriculum**: Raw topic names from source datasets are kept as source metadata; curriculum hierarchy is defined independently.
-5. **No Hallucinated Citations**: Reference provenance is tracked explicitly; AI-inferred evidence is strictly marked `AI_SUGGESTED`.
-6. **Modular ML Isolation**: Machine learning services run in a lightweight Python FastAPI service, cleanly decoupled from the web application.
+1. Backend authorization is authoritative; hidden UI is not access control.
+2. PostgreSQL is the system of record and Alembic owns schema evolution.
+3. Raw datasets remain immutable and imports preserve external identifiers.
+4. Curriculum, canonical medical taxonomy and source provenance are separate.
+5. AI-suggested evidence is never represented as human-verified evidence.
+6. AI-generated questions are not published without the required review state.
+7. Google clients acquire credentials differently, but the backend verifies all
+   accepted Google ID-token audiences.
+8. Medical content is educational and not an autonomous diagnostic service.
+
+## Environments
+
+- **Local:** Docker PostgreSQL/Redis, local FastAPI, Next.js and Expo.
+- **Preview:** Vercel preview plus EAS preview builds against an explicitly
+  configured backend environment.
+- **Production alpha:** Vercel web, Render API, Neon PostgreSQL and EAS builds.
+
+See [deployment view](architecture/DEPLOYMENT_VIEW.md) and
+[deployment runbook](DEPLOYMENT.md) for operational detail.
+
+## Future boundaries
+
+Redis-backed jobs, evidence retrieval and the PubMedBERT validator remain
+extension points. They become separate deployables only when workload isolation
+or scaling provides a measured benefit.

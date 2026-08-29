@@ -1,0 +1,2 @@
+# Documentation-only dependencies. Keep separate from the production API image.
+mkdocs-material>=9.6,<10

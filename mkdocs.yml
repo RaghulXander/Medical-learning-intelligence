@@ -1,0 +1,54 @@
+site_name: DocEdge AI Engineering
+site_description: Architecture, development, data, and operations documentation
+repo_name: Medical-learning-intelligence
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - Overview: ARCHITECTURE.md
+      - System context: architecture/SYSTEM_CONTEXT.md
+      - Containers: architecture/CONTAINERS.md
+      - Deployment view: architecture/DEPLOYMENT_VIEW.md
+      - Decisions:
+          - Index: decisions/README.md
+          - Template: decisions/0000-template.md
+          - ADR 0001 — Modular monolith: decisions/0001-modular-monolith.md
+          - ADR 0002 — Client boundaries: decisions/0002-platform-client-boundaries.md
+          - ADR 0003 — Alpha hosting: decisions/0003-alpha-hosting.md
+          - ADR 0004 — Surgical Pathology ontology: decisions/0004-versioned-surgical-pathology-ontology.md
+      - Ownership and change impact: OWNERSHIP.md
+  - Development:
+      - Local development: LOCAL_DEVELOPMENT.md
+      - Deployment: DEPLOYMENT.md
+      - Milestone 12 code review: reviews/M12_CODE_REVIEW.md
+  - Product and data:
+      - Product requirements: PRD.md
+      - Data model: DATA_MODEL.md
+      - Data sources: DATA_SOURCES.md
+      - Knowledge base: KNOWLEDGE_BASE.md
+      - Surgical Pathology ontology: SURGICAL_PATHOLOGY_ONTOLOGY.md
+      - Roadmap: ROADMAP.md
+
+strict: true

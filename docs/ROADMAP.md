@@ -12,12 +12,13 @@
 | **M6: Question Selection & Learner Model** | Days 10–11 | Intelligent Question Selection Engine, Hard Eligibility Precedence, Cascading Fallbacks, Laplace-smoothed UserMastery, Discrete Recency Penalties, Deterministic Seeded Selection. | **COMPLETED** |
 | **M7: Core Identity & Common Backend** | Days 12–13 | Google OAuth2, Argon2id/bcrypt auth, strong password generator, guest diagnostic quiz & merge engine, adaptive onboarding, daily quiz API, session management & RBAC. | **COMPLETED** |
 | **M7a: UI Enrichment & Missing Flows** | Day 13 | Next.js screens: Glassmorphic Auth Modal with live password entropy bar & 1-click strong pass, Guest Diagnostic Funnel, 3-Step Adaptive Onboarding (`/onboarding`), Enriched Student Hub with Circular Readiness Dial, and Smart Mistake Vault (`/student/review`). | **COMPLETED** |
-| **M8: Student Native App & Mobile Experience** | Days 14–15 | Marrow-grade Native Mobile App (`apps/student-native`), Student Dashboard, Daily Quiz Card, Readiness Dial, Exam Runner & Analytics. | *Current / In Progress* |
+| **M8: Student Native App & Mobile Experience** | Days 14–15 | Native Mobile App (`apps/mobile`), Student Dashboard, Daily Quiz Card, Readiness Dial, Exam Runner & Analytics. | **COMPLETED** |
 | **M9: Security & Entitlements** | Release Foundation | Authentication hardening, authorization/ownership, course entitlements, audit trails, and migration preparation. | *In Progress* |
-| **M10: Productionization** | Release Foundation | Netlify web deployment, production API and managed data services, migrations, CI/CD, observability, backups, and Expo native publishing. | *In Progress* |
-| **M11: Architecture Documentation** | Team Scale | Architecture/developer documentation system and multi-developer onboarding. | *Planned* |
-| **M12: Ontology, AI Review & Code Review** | Quality | Consolidated topic ontology; AI-assisted approve/reject/retire workflow with feedback; Python, React, React Native, and shared-component review. | *Planned* |
-| **M13: Landing Page CMS** | Product Operations | Widget-based landing-page sections with show/hide, ordering, and configurable content. | *Planned* |
+| **M10: Productionization** | Release Foundation | Vercel web deployment, Render API, Neon database, migrations, CI/CD, observability, backups, and Expo native publishing. | **COMPLETED** |
+| **M11: Architecture Documentation** | Team Scale | Architecture/developer documentation system and multi-developer onboarding. | *Current / In Progress* |
+| **M12: Ontology, AI Review & Code Review** | Quality | Consolidated topic ontology; AI-assisted approve/reject/retire workflow with feedback; Python, React, React Native, and shared-component review. | **In progress** — baseline review and shared auth rules complete. |
+| **M13: Git-backed Landing Page CMS** | Product Operations | Adapt the owner's `irg-space` JSON editor and save-and-publish workflow into a typed widget registry with RBAC, preview, GitHub publishing, Vercel deployment, media and rollback. | **In progress** — core editor, JSON renderer, validation, GitHub publishing and audit complete. |
+| **M14: Surgical Pathology Knowledge Ontology** | Knowledge Architecture | Versioned, typed Surgical Pathology hierarchy; reusable morphology/IHC/molecular relationships; source provenance; Breast vertical slice; reviewed question crosswalk. | **In progress** — schema, draft core hierarchy, and initial Breast names seeded; evidence relationships and reviewed crosswalk remain. |
 | **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 
 ---

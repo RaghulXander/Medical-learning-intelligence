@@ -16,6 +16,9 @@ The platform strictly decouples **Medical Knowledge**, **Educational Curricula**
    - Questions are never assigned to an academic course simply because they belong to a medical specialty.
 4. **Hierarchical Source & Document Provenance (`sources` $\rightarrow$ `source_documents` $\rightarrow$ `document_chunks`)**:
    - Supports multi-level citation and RAG vector search from authoritative works (e.g. *Robbins*, *WHO Blue Books*) down to specific volumes, chapters, pages, and extracted text chunks.
+5. **Versioned Medical Ontology (`OntologyScheme` and typed `OntologyNode`)**:
+   - Adds diagnostic entities, reusable features, aliases, relationships, and evidence without replacing the course-oriented `CurriculumTopic` tree.
+   - `QuestionOntologyMapping` records the mapping method, confidence, verification state, and ontology version. It never changes question approval status.
 
 ---
 
@@ -27,6 +30,13 @@ erDiagram
     CurriculumTopic ||--o{ CourseCurriculumMapping : mapped_to
     CurriculumTopic ||--o{ CurriculumTopic : parent_of
     CurriculumTopic ||--o{ Question : classifies
+
+    OntologyScheme ||--o{ OntologyNode : versions
+    OntologyNode ||--o{ OntologyNode : parent_of
+    OntologyNode ||--o{ OntologyAlias : named_by
+    OntologyNode ||--o{ OntologyRelationship : participates_in
+    OntologyNode ||--o{ QuestionOntologyMapping : classifies
+    Question ||--o{ QuestionOntologyMapping : mapped_by
 
     Source ||--o{ SourceDocument : contains
     SourceDocument ||--o{ DocumentChunk : divided_into
@@ -122,8 +132,8 @@ Authoritative reference hierarchy from author/work down to chunks for RAG:
 
 ```
 Source (e.g., Robbins & Cotran Pathologic Basis of Disease)
-  └── SourceDocument (e.g., 10th Edition, Chapter 6: Neoplasia)
-        └── DocumentChunk (e.g., Chunk #12: HER2 IHC ASCO/CAP scoring criteria + Vector Embedding)
+  └── SourceDocument (a legitimately accessed edition and chapter)
+        └── DocumentChunk (an authorized excerpt with exact location and hash)
 ```
 
 #### `Source`

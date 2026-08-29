@@ -90,8 +90,8 @@ medical-learning-intelligence/
 │   │   │   ├── components/ui/    # Clean Shadcn UI (Button, Card, Badge, Progress, Separator)
 │   │   │   └── styles/globals.css # Dark-mode medical theme tokens & glassmorphism
 │   │
-│   └── student-native/           # React Native / Expo workspace scaffold
-│       └── src/index.ts          # Ready to consume @medical/shared and @medical/api-client
+│   ├── mobile/                   # Active Expo / React Native student application
+│   └── student-native/           # Historical prototype; disposition tracked in M12
 │
 ├── backend/                      # FastAPI Universal Assessment Engine (Port 8000)
 │   ├── api/
@@ -153,7 +153,15 @@ Open the web app at `http://localhost:3000`, the API at `http://127.0.0.1:8000`,
 
 The dataset download/import is optional for booting the application but required to run question-based exams. For Windows commands, mobile networking, database verification, test/build commands, and troubleshooting, follow [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md).
 
-For the Netlify + Render staging and production workflow, follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+For the Vercel + Render + Neon + EAS workflow, follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+Build or preview the engineering documentation portal with:
+
+```bash
+python -m pip install -r requirements-docs.txt
+bun run docs:build
+bun run docs:serve
+```
 
 ---
 
@@ -162,9 +170,10 @@ For the Netlify + Render staging and production workflow, follow [docs/DEPLOYMEN
 - Milestones 1–8: data pipeline, PostgreSQL model, curriculum, assessment engine, selection, identity, web experience, and Expo student app.
 - [Milestone 9](MileStones/MileStone9.md): security hardening, ownership, course/bundle entitlements, migrations, and reporting.
 - [Milestone 10](MileStones/MileStone10.md): production hosting, managed services, database release migrations, CI/CD, observability, backups, and native app publishing.
-- Milestone 11: architecture and multi-developer documentation.
-- Milestone 12: Python/React/React Native review and shared-component architecture.
-- Milestone 13: landing-page widget CMS.
+- [Milestone 11](MileStones/MileStone11.md): architecture documentation, C4 views, ADRs, ownership maps, API reference, and multi-developer workflow.
+- [Milestone 12](MileStones/MileStone12.md): ontology, AI review workflow, and Python/React/React Native consolidation *(in progress)*.
+- [Milestone 13](MileStones/MileStone13.md): Git-backed landing-page widget CMS adapted from `RaghulXander/irg-space`.
+- [Milestone 14](MileStones/MileStone14.md): versioned Surgical Pathology ontology, diagnostic entity relationships, provenance, and reviewed question mapping.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and the specifications in [`MileStones/`](MileStones/) for detailed scope.
 
