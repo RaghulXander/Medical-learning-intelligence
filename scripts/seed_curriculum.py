@@ -22,13 +22,12 @@ from database.models import (
     CurriculumLevel,
     CurriculumTopic,
     DepthLevel,
-    DocumentChunk,
     Source,
-    SourceDocument,
     SourceType,
     User,
     UserRole,
 )
+from backend.domain.pathology_ontology import PATHOLOGY_TOPICS
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -37,10 +36,10 @@ logger = logging.getLogger(__name__)
 FOUNDATIONAL_SOURCES = [
     {
         "short_name": "robbins_pathology",
-        "title": "Robbins & Cotran Pathologic Basis of Disease",
-        "author": "Kumar, Abbas, Aster",
-        "edition": "10th Edition",
-        "year": 2020,
+        "title": "Robbins, Cotran & Kumar Pathologic Basis of Disease",
+        "author": "Kumar, Abbas, Aster, Debnath, Das",
+        "edition": "11th Edition",
+        "year": 2025,
         "publisher": "Elsevier",
         "source_type": SourceType.TEXTBOOK,
     },
@@ -190,6 +189,21 @@ CURRICULUM_TREE = [
     ("LO-APOPTOSIS-BCL2", "Differentiate Pro- vs Anti-apoptotic BCL2 Family Members", CurriculumLevel.LEARNING_OBJECTIVE, "SUBTOPIC-APOPTOSIS", "Recall roles of BCL2, BCL-XL vs BAX, BAK, and BH3-only sensors (BIM, PUMA).", {"competency": "GENPATH-CI-02"}),
 ]
 
+# Keep the existing detailed nodes while completing the first-level ontology.
+_existing_curriculum_codes = {node[0] for node in CURRICULUM_TREE}
+CURRICULUM_TREE.extend(
+    (
+        topic.code,
+        topic.name,
+        CurriculumLevel.TOPIC,
+        topic.parent_code,
+        f"Canonical Pathology grouping for {topic.name}.",
+        {"ontology_version": "pathology-v1", "aliases": list(topic.aliases)},
+    )
+    for topic in PATHOLOGY_TOPICS
+    if topic.code not in _existing_curriculum_codes
+)
+
 # Cross-Course Curriculum Mappings (One Topic -> Multiple Courses with differing depth)
 COURSE_TOPIC_MAPPINGS = [
     # Breast Pathology across all 4 courses:
@@ -241,37 +255,8 @@ def seed_curriculum(engine) -> None:
                 existing_sources[src_data["short_name"]] = source
                 logger.info(f"Seeded source: {src_data['title']}")
 
-        # 3. Seed Sample Source Document & Chunks (Robbins Chapter 6)
-        robbins = existing_sources.get("robbins_pathology")
-        if robbins:
-            existing_doc = session.query(SourceDocument).filter_by(source_id=robbins.id, chapter_number=6).first()
-            if not existing_doc:
-                doc = SourceDocument(
-                    source_id=robbins.id,
-                    title="Chapter 6: Neoplasia",
-                    edition="10th Edition",
-                    chapter_number=6,
-                    page_start=265,
-                    page_end=340,
-                    metadata_json={"sections": ["Hallmarks of Cancer", "Oncogenes", "Tumor Suppressors"]},
-                )
-                session.add(doc)
-                session.flush()
-
-                # Add sample chunk for RAG / Evidence
-                chunk = DocumentChunk(
-                    document_id=doc.id,
-                    chunk_index=1,
-                    section_heading="HER2 in Breast Carcinoma",
-                    page_number=285,
-                    content="Amplification of ERBB2 (HER2) occurs in approximately 15% to 20% of breast cancers. These tumors are sensitive to targeted therapy with anti-HER2 antibodies (e.g., trastuzumab).",
-                    content_hash="her2_sample_chunk_hash_001",
-                    metadata_json={"keywords": ["HER2", "ERBB2", "trastuzumab", "breast carcinoma"]},
-                )
-                session.add(chunk)
-                logger.info("Seeded sample SourceDocument & DocumentChunk (Robbins Chapter 6)")
-
-        # 4. Seed Courses
+        # 3. Seed Courses. Source documents are created only from legitimately
+        # accessed material with exact provenance; do not seed illustrative text.
         course_map: Dict[str, Course] = {}
         for course_data in INITIAL_COURSES:
             existing_course = session.query(Course).filter_by(code=course_data["code"]).first()

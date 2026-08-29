@@ -100,15 +100,11 @@ class TestDatabaseLayer(unittest.TestCase):
             robbins = session.query(Source).filter_by(short_name="robbins_pathology").first()
             self.assertIsNotNone(robbins)
             self.assertEqual(robbins.source_type, SourceType.TEXTBOOK)
-
-            # Check Source Documents & Chunks
-            doc = session.query(SourceDocument).filter_by(source_id=robbins.id).first()
-            self.assertIsNotNone(doc)
-            self.assertEqual(doc.title, "Chapter 6: Neoplasia")
-
-            chunk = session.query(DocumentChunk).filter_by(document_id=doc.id).first()
-            self.assertIsNotNone(chunk)
-            self.assertIn("ERBB2", chunk.content)
+            self.assertEqual(robbins.edition, "11th Edition")
+            self.assertEqual(
+                session.query(SourceDocument).filter_by(source_id=robbins.id).count(),
+                0,
+            )
 
             # Check Canonical Knowledge Domain Tree
             spec = session.query(CurriculumTopic).filter_by(code="SPEC-PATH").first()
@@ -133,9 +129,31 @@ class TestDatabaseLayer(unittest.TestCase):
     def test_evidence_and_document_provenance_linkages(self):
         seed_curriculum(self.engine)
         with self.SessionLocal() as session:
-            robbins = session.query(Source).filter_by(short_name="robbins_pathology").first()
-            doc = session.query(SourceDocument).filter_by(source_id=robbins.id).first()
-            chunk = session.query(DocumentChunk).filter_by(document_id=doc.id).first()
+            source = Source(
+                short_name="automated_test_source",
+                title="Automated Test Editorial Source",
+                author="Test suite",
+                source_type=SourceType.JOURNAL_ARTICLE,
+            )
+            session.add(source)
+            session.flush()
+            doc = SourceDocument(
+                source_id=source.id,
+                title="Synthetic test document",
+                chapter_number=1,
+            )
+            session.add(doc)
+            session.flush()
+            chunk = DocumentChunk(
+                document_id=doc.id,
+                chunk_index=0,
+                section_heading="Synthetic section",
+                page_number=1,
+                content="Synthetic evidence used only to test database relationships.",
+                content_hash="synthetic_test_chunk_hash",
+            )
+            session.add(chunk)
+            session.flush()
 
             q = Question(
                 id="q-evidence-test",
@@ -154,13 +172,13 @@ class TestDatabaseLayer(unittest.TestCase):
 
             evidence = QuestionEvidence(
                 question_id=q.id,
-                source_id=robbins.id,
+                source_id=source.id,
                 document_id=doc.id,
                 chunk_id=chunk.id,
-                chapter="Chapter 6: Neoplasia",
-                page_range="pg. 285",
-                section="HER2 in Breast Carcinoma",
-                excerpt="Amplification of ERBB2 (HER2) occurs in approximately 15% to 20% of breast cancers...",
+                chapter="Synthetic chapter 1",
+                page_range="p. 1",
+                section="Synthetic section",
+                excerpt="Synthetic evidence used only to test database relationships.",
                 verification_status=VerificationStatus.HUMAN_VERIFIED,
                 confidence=1.0,
             )
@@ -171,9 +189,9 @@ class TestDatabaseLayer(unittest.TestCase):
             self.assertEqual(len(q_fetched.evidence_links), 1)
             ev = q_fetched.evidence_links[0]
             self.assertEqual(ev.verification_status, VerificationStatus.HUMAN_VERIFIED)
-            self.assertEqual(ev.source.short_name, "robbins_pathology")
-            self.assertEqual(ev.document.title, "Chapter 6: Neoplasia")
-            self.assertEqual(ev.chunk.page_number, 285)
+            self.assertEqual(ev.source.short_name, "automated_test_source")
+            self.assertEqual(ev.document.title, "Synthetic test document")
+            self.assertEqual(ev.chunk.page_number, 1)
 
     def test_init_db_adds_missing_question_columns(self):
         legacy_engine = create_engine(

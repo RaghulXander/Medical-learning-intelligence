@@ -7,9 +7,10 @@ Provides search, topic/status filtering, question inspection, and status transit
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
@@ -19,6 +20,7 @@ from database.models import (
     DifficultyLevel,
     Question,
     QuestionEvidence,
+    QuestionRevision,
     QuestionStatus,
     QuestionType,
     User,
@@ -26,6 +28,17 @@ from database.models import (
 from backend.api.routes.auth import get_current_user
 from backend.api.dependencies import require_permission
 from backend.core.authorization import Permission
+from backend.services.question_review_service import (
+    InvalidQuestionStatusTransition,
+    transition_question_status,
+)
+from backend.services.question_editor_service import (
+    EmptyQuestionEdit,
+    QuestionEditConflict,
+    edit_question,
+)
+from backend.core.authorization import has_permission
+from database.models import AdminAuditLog
 
 router = APIRouter(prefix="/api/questions", tags=["Questions"])
 
@@ -48,12 +61,36 @@ class UpdateQuestionStatusRequest(BaseModel):
     notes: Optional[str] = None
 
 
+class QuestionOptionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    key: str = Field(pattern=r"^[A-Z]$", min_length=1, max_length=1)
+    text: str = Field(min_length=1, max_length=1000)
+
+
 class UpdateQuestionRequest(BaseModel):
-    stem: Optional[str] = None
-    explanation: Optional[str] = None
-    difficulty: Optional[str] = None
-    cognitive_level: Optional[str] = None
-    primary_topic_id: Optional[str] = None
+    model_config = ConfigDict(extra="forbid")
+
+    expected_updated_at: datetime
+    stem: str = Field(min_length=10, max_length=10000)
+    options: list[QuestionOptionRequest] = Field(min_length=2, max_length=8)
+    correct_option: str = Field(pattern=r"^[A-Z]$")
+    explanation: str | None = Field(default=None, max_length=20000)
+    difficulty: DifficultyLevel
+    cognitive_level: CognitiveLevel
+    question_type: QuestionType
+    primary_topic_id: str | None = None
+    learning_objective: str | None = Field(default=None, max_length=2000)
+    edit_notes: str | None = Field(default=None, max_length=1000)
+
+    @model_validator(mode="after")
+    def validate_options(self):
+        keys = [option.key for option in self.options]
+        if len(keys) != len(set(keys)):
+            raise ValueError("Option keys must be unique")
+        if self.correct_option not in keys:
+            raise ValueError("Correct option must identify one submitted option")
+        return self
 
 
 class ReportQuestionRequest(BaseModel):
@@ -231,9 +268,13 @@ def get_question_detail(
         "correct_option": q.correct_option,
         "correct_index": q.correct_index,
         "explanation": q.explanation,
+        "learning_objective": q.learning_objective,
         "difficulty": q.difficulty.value if q.difficulty else "medium",
         "cognitive_level": q.cognitive_level.value if q.cognitive_level else "recall",
         "status": q.status.value if hasattr(q.status, "value") else str(q.status),
+        "question_type": q.question_type.value,
+        "primary_topic_id": q.primary_topic_id,
+        "updated_at": q.updated_at.isoformat(),
         "duplicate_cluster_id": cluster_id,
         "citations": citations,
     }
@@ -256,14 +297,35 @@ def update_question_status(
 
     try:
         new_status = QuestionStatus(req.status.upper())
-        q.status = new_status
+        if new_status == QuestionStatus.APPROVED and not has_permission(current_user.role, Permission.QUESTIONS_APPROVE):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Approval permission is required")
+        if new_status == QuestionStatus.RETIRED and not has_permission(current_user.role, Permission.QUESTIONS_RETIRE):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Retirement permission is required")
+        review = transition_question_status(
+            db=db,
+            question=q,
+            new_status=new_status,
+            reviewer_id=current_user.id,
+            notes=req.notes,
+        )
+        db.add(AdminAuditLog(
+            admin_id=current_user.id,
+            action="QUESTION_STATUS_TRANSITION",
+            entity_type="QUESTION",
+            entity_id=q.id,
+            changes={"new_status": new_status.value, "notes": req.notes},
+        ))
         db.commit()
         db.refresh(q)
         return {
             "status": "success",
             "question_id": q.id,
             "new_status": q.status.value,
+            "review_id": review.id,
         }
+    except InvalidQuestionStatusTransition as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -286,29 +348,68 @@ def update_question_content(
             detail=f"Question with ID '{question_id}' not found.",
         )
 
-    if req.stem is not None:
-        q.stem = req.stem
-    if req.explanation is not None:
-        q.explanation = req.explanation
-    if req.difficulty is not None:
-        try:
-            q.difficulty = DifficultyLevel(req.difficulty.lower())
-        except ValueError:
-            pass
-    if req.cognitive_level is not None:
-        try:
-            q.cognitive_level = CognitiveLevel(req.cognitive_level.lower())
-        except ValueError:
-            pass
-    if req.primary_topic_id is not None:
-        q.primary_topic_id = req.primary_topic_id
-    db.commit()
-    db.refresh(q)
-    return {
-        "status": "success",
-        "question_id": q.id,
-        "updated": True,
-    }
+    try:
+        revision = edit_question(
+            db,
+            q,
+            editor_id=current_user.id,
+            expected_updated_at=req.expected_updated_at,
+            values={
+                "stem": req.stem.strip(),
+                "options": [option.model_dump() for option in req.options],
+                "correct_option": req.correct_option,
+                "explanation": req.explanation.strip() if req.explanation else None,
+                "difficulty": req.difficulty,
+                "cognitive_level": req.cognitive_level,
+                "question_type": req.question_type,
+                "primary_topic_id": req.primary_topic_id or None,
+                "learning_objective": req.learning_objective.strip() if req.learning_objective else None,
+            },
+            edit_notes=req.edit_notes,
+        )
+        db.add(AdminAuditLog(
+            admin_id=current_user.id,
+            action="QUESTION_CONTENT_EDIT",
+            entity_type="QUESTION",
+            entity_id=q.id,
+            changes={"revision_number": revision.revision_number, "changed_fields": revision.changed_fields},
+        ))
+        db.commit()
+        db.refresh(q)
+        return {"status": "success", "question_id": q.id, "revision_number": revision.revision_number, "updated_at": q.updated_at.isoformat()}
+    except QuestionEditConflict as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+    except EmptyQuestionEdit as exc:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+
+@router.get("/{question_id}/revisions")
+def list_question_revisions(
+    question_id: str,
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_READ_EDITORIAL)),
+) -> Dict[str, Any]:
+    if not db.query(Question.id).filter(Question.id == question_id).first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found")
+    revisions = (
+        db.query(QuestionRevision)
+        .filter(QuestionRevision.question_id == question_id)
+        .order_by(QuestionRevision.revision_number.desc())
+        .limit(limit)
+        .all()
+    )
+    return {"items": [{
+        "id": revision.id,
+        "revision_number": revision.revision_number,
+        "editor_id": revision.editor_id,
+        "changed_fields": revision.changed_fields,
+        "edit_notes": revision.edit_notes,
+        "snapshot": revision.snapshot,
+        "created_at": revision.created_at.isoformat(),
+    } for revision in revisions]}
 
 
 @router.post("/report")

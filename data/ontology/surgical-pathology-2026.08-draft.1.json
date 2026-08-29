@@ -1,0 +1,128 @@
+{
+  "scheme": {
+    "code": "SURGICAL-PATHOLOGY",
+    "name": "Surgical Pathology Knowledge Ontology",
+    "version": "2026.08-draft.1",
+    "status": "DRAFT",
+    "description": "Editorial hierarchy for surgical pathology navigation, classification, and question mapping.",
+    "source_scope": [
+      {
+        "title": "Rosai and Ackerman's Surgical Pathology",
+        "edition": "11th",
+        "publisher": "Elsevier",
+        "use": "Public publisher table of contents used to check organ-system coverage only.",
+        "url": "https://shop.elsevier.com/books/rosai-and-ackermans-surgical-pathology-2-volume-set/goldblum/978-0-323-26339-9",
+        "accessed_on": "2026-08-29"
+      },
+      {
+        "title": "WHO Classification of Tumours: Breast Tumours",
+        "edition": "6th edition online beta",
+        "publisher": "IARC",
+        "use": "Public classification structure used for the initial Breast entity names; beta status is preserved.",
+        "url": "https://whobluebooks.iarc.who.int/structures/breast-tumours/",
+        "accessed_on": "2026-08-29"
+      }
+    ],
+    "copyright_note": "Contains an original hierarchy and public classification names only; no textbook prose, tables, figures, images, or diagnostic assertions are included."
+  },
+  "nodes": [
+    {"code": "PATH", "preferred_name": "Pathology Knowledge Root", "node_type": "ROOT", "parent_code": null, "display_order": 10, "status": "DRAFT"},
+    {"code": "SP", "preferred_name": "Surgical Pathology", "node_type": "DISCIPLINE", "parent_code": "PATH", "display_order": 10, "status": "DRAFT"},
+
+    {"code": "SP-PRINCIPLES", "preferred_name": "Principles and Methods", "node_type": "METHOD_GROUP", "parent_code": "SP", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-PRINCIPLES-SPECIMEN", "preferred_name": "Specimen Handling, Grossing and Staging", "node_type": "METHOD", "parent_code": "SP-PRINCIPLES", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-PRINCIPLES-FROZEN", "preferred_name": "Frozen Section and Intraoperative Consultation", "node_type": "METHOD", "parent_code": "SP-PRINCIPLES", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-PRINCIPLES-QA", "preferred_name": "Quality Assurance", "node_type": "METHOD", "parent_code": "SP-PRINCIPLES", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-PRINCIPLES-SYNOPTIC", "preferred_name": "Synoptic Reporting", "node_type": "METHOD", "parent_code": "SP-PRINCIPLES", "display_order": 40, "status": "DRAFT"},
+    {"code": "SP-PRINCIPLES-HISTOTECH", "preferred_name": "Histotechnology", "node_type": "METHOD", "parent_code": "SP-PRINCIPLES", "display_order": 50, "status": "DRAFT"},
+
+    {"code": "SP-ANCILLARY", "preferred_name": "Ancillary Diagnostics", "node_type": "METHOD_GROUP", "parent_code": "SP", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-ANCILLARY-IHC", "preferred_name": "Immunohistochemistry", "node_type": "METHOD", "parent_code": "SP-ANCILLARY", "display_order": 10, "status": "DRAFT", "aliases": [{"alias": "IHC", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-ANCILLARY-MOLECULAR", "preferred_name": "Molecular Pathology", "node_type": "METHOD", "parent_code": "SP-ANCILLARY", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-ANCILLARY-CYTOGENETICS", "preferred_name": "Cytogenetics and FISH", "node_type": "METHOD", "parent_code": "SP-ANCILLARY", "display_order": 30, "status": "DRAFT", "aliases": [{"alias": "FISH", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-ANCILLARY-EM", "preferred_name": "Electron Microscopy", "node_type": "METHOD", "parent_code": "SP-ANCILLARY", "display_order": 40, "status": "DRAFT", "aliases": [{"alias": "EM", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-ANCILLARY-DIGITAL", "preferred_name": "Digital and Computational Pathology", "node_type": "METHOD", "parent_code": "SP-ANCILLARY", "display_order": 50, "status": "DRAFT"},
+
+    {"code": "SP-CARDIOVASCULAR", "preferred_name": "Cardiovascular", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-CARDIOVASCULAR-HEART", "preferred_name": "Heart", "node_type": "ORGAN", "parent_code": "SP-CARDIOVASCULAR", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-CARDIOVASCULAR-VESSELS", "preferred_name": "Blood Vessels", "node_type": "ANATOMIC_SITE", "parent_code": "SP-CARDIOVASCULAR", "display_order": 20, "status": "DRAFT"},
+
+    {"code": "SP-HEMATOLYMPHOID", "preferred_name": "Hematolymphoid Surgical Pathology", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 40, "status": "DRAFT", "aliases": [{"alias": "Haematolymphoid Surgical Pathology", "alias_type": "SPELLING_VARIANT", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-HEMATOLYMPHOID-LYMPH-NODE", "preferred_name": "Lymph Node", "node_type": "ORGAN", "parent_code": "SP-HEMATOLYMPHOID", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-HEMATOLYMPHOID-SPLEEN", "preferred_name": "Spleen", "node_type": "ORGAN", "parent_code": "SP-HEMATOLYMPHOID", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-HEMATOLYMPHOID-BONE-MARROW", "preferred_name": "Bone Marrow", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEMATOLYMPHOID", "display_order": 30, "status": "DRAFT"},
+
+    {"code": "SP-HEAD-NECK", "preferred_name": "Head, Neck and Upper Aerodigestive Tract", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 50, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-ORAL", "preferred_name": "Oral Cavity and Oropharynx", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEAD-NECK", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-NASOPHARYNX", "preferred_name": "Nasopharynx", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEAD-NECK", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-JAW", "preferred_name": "Jaw and Odontogenic Lesions", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEAD-NECK", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-SALIVARY", "preferred_name": "Salivary Glands", "node_type": "ORGAN", "parent_code": "SP-HEAD-NECK", "display_order": 40, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-LARYNX", "preferred_name": "Larynx, Hypopharynx and Trachea", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEAD-NECK", "display_order": 50, "status": "DRAFT"},
+    {"code": "SP-HEAD-NECK-EYE-EAR", "preferred_name": "Eye, Ocular Adnexa and Ear", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HEAD-NECK", "display_order": 60, "status": "DRAFT"},
+
+    {"code": "SP-SKIN", "preferred_name": "Skin", "node_type": "ORGAN", "parent_code": "SP", "display_order": 60, "status": "DRAFT", "aliases": [{"alias": "Dermatopathology", "alias_type": "SPECIALTY_TERM", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-THORACIC", "preferred_name": "Thoracic", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 70, "status": "DRAFT"},
+    {"code": "SP-THORACIC-LUNG", "preferred_name": "Lung and Bronchial Tree", "node_type": "ORGAN", "parent_code": "SP-THORACIC", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-THORACIC-PLEURA", "preferred_name": "Pleura and Pericardium", "node_type": "ANATOMIC_SITE", "parent_code": "SP-THORACIC", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-THORACIC-MEDIASTINUM", "preferred_name": "Mediastinum and Thymus", "node_type": "ANATOMIC_SITE", "parent_code": "SP-THORACIC", "display_order": 30, "status": "DRAFT"},
+
+    {"code": "SP-GI", "preferred_name": "Gastrointestinal", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 80, "status": "DRAFT"},
+    {"code": "SP-GI-ESOPHAGUS", "preferred_name": "Esophagus", "node_type": "ORGAN", "parent_code": "SP-GI", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-GI-STOMACH", "preferred_name": "Stomach", "node_type": "ORGAN", "parent_code": "SP-GI", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-GI-SMALL-INTESTINE", "preferred_name": "Small Intestine", "node_type": "ORGAN", "parent_code": "SP-GI", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-GI-APPENDIX", "preferred_name": "Appendix", "node_type": "ORGAN", "parent_code": "SP-GI", "display_order": 40, "status": "DRAFT"},
+    {"code": "SP-GI-COLORECTAL", "preferred_name": "Colon, Rectum and Anus", "node_type": "ANATOMIC_SITE", "parent_code": "SP-GI", "display_order": 50, "status": "DRAFT"},
+    {"code": "SP-GI-PERITONEUM", "preferred_name": "Peritoneum and Retroperitoneum", "node_type": "ANATOMIC_SITE", "parent_code": "SP-GI", "display_order": 60, "status": "DRAFT"},
+
+    {"code": "SP-HPB", "preferred_name": "Hepatobiliary and Pancreas", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 90, "status": "DRAFT"},
+    {"code": "SP-HPB-LIVER", "preferred_name": "Liver", "node_type": "ORGAN", "parent_code": "SP-HPB", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-HPB-BILIARY", "preferred_name": "Gallbladder and Extrahepatic Bile Ducts", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HPB", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-HPB-PANCREAS", "preferred_name": "Pancreas and Ampullary Region", "node_type": "ANATOMIC_SITE", "parent_code": "SP-HPB", "display_order": 30, "status": "DRAFT"},
+
+    {"code": "SP-GU", "preferred_name": "Genitourinary", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 100, "status": "DRAFT"},
+    {"code": "SP-GU-KIDNEY", "preferred_name": "Kidney and Renal Pelvis", "node_type": "ORGAN", "parent_code": "SP-GU", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-GU-LOWER-URINARY", "preferred_name": "Ureter, Bladder and Urethra", "node_type": "ANATOMIC_SITE", "parent_code": "SP-GU", "display_order": 20, "status": "DRAFT"},
+
+    {"code": "SP-MALE-REPRODUCTIVE", "preferred_name": "Male Reproductive", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 110, "status": "DRAFT"},
+    {"code": "SP-MALE-REPRODUCTIVE-PROSTATE", "preferred_name": "Prostate and Seminal Vesicles", "node_type": "ORGAN", "parent_code": "SP-MALE-REPRODUCTIVE", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-MALE-REPRODUCTIVE-TESTIS", "preferred_name": "Testis and Epididymis", "node_type": "ORGAN", "parent_code": "SP-MALE-REPRODUCTIVE", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-MALE-REPRODUCTIVE-PENIS", "preferred_name": "Penis", "node_type": "ORGAN", "parent_code": "SP-MALE-REPRODUCTIVE", "display_order": 30, "status": "DRAFT"},
+
+    {"code": "SP-FEMALE-REPRODUCTIVE", "preferred_name": "Female Reproductive", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 120, "status": "DRAFT"},
+    {"code": "SP-FEMALE-REPRODUCTIVE-VULVA-VAGINA", "preferred_name": "Vulva and Vagina", "node_type": "ANATOMIC_SITE", "parent_code": "SP-FEMALE-REPRODUCTIVE", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-FEMALE-REPRODUCTIVE-CERVIX", "preferred_name": "Cervix", "node_type": "ORGAN", "parent_code": "SP-FEMALE-REPRODUCTIVE", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-FEMALE-REPRODUCTIVE-UTERUS", "preferred_name": "Endometrium and Myometrium", "node_type": "ANATOMIC_SITE", "parent_code": "SP-FEMALE-REPRODUCTIVE", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-FEMALE-REPRODUCTIVE-ADNEXA", "preferred_name": "Ovary and Fallopian Tube", "node_type": "ANATOMIC_SITE", "parent_code": "SP-FEMALE-REPRODUCTIVE", "display_order": 40, "status": "DRAFT"},
+    {"code": "SP-FEMALE-REPRODUCTIVE-PLACENTA", "preferred_name": "Placenta and Gestational Trophoblastic Disease", "node_type": "ANATOMIC_SITE", "parent_code": "SP-FEMALE-REPRODUCTIVE", "display_order": 50, "status": "DRAFT"},
+
+    {"code": "SP-BREAST", "preferred_name": "Breast", "node_type": "ORGAN", "parent_code": "SP", "display_order": 130, "status": "DRAFT", "aliases": [{"alias": "Mammary Gland", "alias_type": "SYNONYM", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-EPITHELIAL", "preferred_name": "Epithelial Lesions and Tumours", "node_type": "DISEASE_FAMILY", "parent_code": "SP-BREAST", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-BREAST-BENIGN-PROLIFERATIONS", "preferred_name": "Benign Epithelial Proliferations and Precursors", "node_type": "DISEASE_FAMILY", "parent_code": "SP-BREAST-EPITHELIAL", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-BREAST-USUAL-DUCTAL-HYPERPLASIA", "preferred_name": "Usual Ductal Hyperplasia", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-BENIGN-PROLIFERATIONS", "display_order": 10, "status": "DRAFT", "aliases": [{"alias": "UDH", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-ATYPICAL-DUCTAL-HYPERPLASIA", "preferred_name": "Atypical Ductal Hyperplasia", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-BENIGN-PROLIFERATIONS", "display_order": 20, "status": "DRAFT", "aliases": [{"alias": "ADH", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-IN-SITU", "preferred_name": "In Situ and Lobular Neoplasia", "node_type": "DISEASE_FAMILY", "parent_code": "SP-BREAST-EPITHELIAL", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-BREAST-DCIS", "preferred_name": "Ductal Carcinoma In Situ", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-IN-SITU", "display_order": 10, "status": "DRAFT", "aliases": [{"alias": "DCIS", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-ALH", "preferred_name": "Atypical Lobular Hyperplasia", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-IN-SITU", "display_order": 20, "status": "DRAFT", "aliases": [{"alias": "ALH", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-LCIS", "preferred_name": "Lobular Carcinoma In Situ", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-IN-SITU", "display_order": 30, "status": "DRAFT", "aliases": [{"alias": "LCIS", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-INVASIVE", "preferred_name": "Invasive Breast Carcinomas", "node_type": "DISEASE_FAMILY", "parent_code": "SP-BREAST-EPITHELIAL", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-BREAST-IBC-NST", "preferred_name": "Invasive Breast Carcinoma of No Special Type", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-INVASIVE", "display_order": 10, "status": "DRAFT", "aliases": [{"alias": "IBC-NST", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}, {"alias": "Invasive Ductal Carcinoma, NOS", "alias_type": "LEGACY_TERM", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-INVASIVE-LOBULAR", "preferred_name": "Invasive Lobular Carcinoma", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-INVASIVE", "display_order": 20, "status": "DRAFT", "aliases": [{"alias": "ILC", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-BREAST-TUBULAR-CARCINOMA", "preferred_name": "Tubular Carcinoma", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-INVASIVE", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-BREAST-MUCINOUS-CARCINOMA", "preferred_name": "Mucinous Carcinoma", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-INVASIVE", "display_order": 40, "status": "DRAFT"},
+    {"code": "SP-BREAST-METAPLASTIC-CARCINOMA", "preferred_name": "Metaplastic Carcinoma", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-INVASIVE", "display_order": 50, "status": "DRAFT"},
+    {"code": "SP-BREAST-FIBROEPITHELIAL", "preferred_name": "Fibroepithelial Tumours and Hamartomas", "node_type": "DISEASE_FAMILY", "parent_code": "SP-BREAST", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-BREAST-FIBROADENOMA", "preferred_name": "Fibroadenoma", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-FIBROEPITHELIAL", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-BREAST-PHYLLODES", "preferred_name": "Phyllodes Tumour", "node_type": "DIAGNOSTIC_ENTITY", "parent_code": "SP-BREAST-FIBROEPITHELIAL", "display_order": 20, "status": "DRAFT", "aliases": [{"alias": "Phyllodes Tumor", "alias_type": "SPELLING_VARIANT", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+
+    {"code": "SP-ENDOCRINE", "preferred_name": "Endocrine and Neuroendocrine", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 140, "status": "DRAFT"},
+    {"code": "SP-ENDOCRINE-THYROID", "preferred_name": "Thyroid", "node_type": "ORGAN", "parent_code": "SP-ENDOCRINE", "display_order": 10, "status": "DRAFT"},
+    {"code": "SP-ENDOCRINE-PARATHYROID", "preferred_name": "Parathyroid", "node_type": "ORGAN", "parent_code": "SP-ENDOCRINE", "display_order": 20, "status": "DRAFT"},
+    {"code": "SP-ENDOCRINE-ADRENAL", "preferred_name": "Adrenal and Paraganglia", "node_type": "ANATOMIC_SITE", "parent_code": "SP-ENDOCRINE", "display_order": 30, "status": "DRAFT"},
+    {"code": "SP-ENDOCRINE-PITUITARY", "preferred_name": "Pituitary", "node_type": "ORGAN", "parent_code": "SP-ENDOCRINE", "display_order": 40, "status": "DRAFT"},
+
+    {"code": "SP-BONE-JOINTS", "preferred_name": "Bone and Joints", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 150, "status": "DRAFT"},
+    {"code": "SP-SOFT-TISSUE", "preferred_name": "Soft Tissue", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 160, "status": "DRAFT"},
+    {"code": "SP-CNS", "preferred_name": "Central Nervous System", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 170, "status": "DRAFT", "aliases": [{"alias": "CNS", "alias_type": "ABBREVIATION", "language": "en", "verification_status": "AI_SUGGESTED"}]},
+    {"code": "SP-PNS-MUSCLE", "preferred_name": "Peripheral Nerve and Skeletal Muscle", "node_type": "ANATOMIC_SYSTEM", "parent_code": "SP", "display_order": 180, "status": "DRAFT"}
+  ]
+}

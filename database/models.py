@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     Column,
     DateTime,
     Enum,
@@ -28,6 +29,15 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON, TypeDecorator, String as SQLString
+
+from backend.domain.surgical_pathology_ontology import (
+    OntologyMappingMethod,
+    OntologyMappingRole,
+    OntologyNodeStatus,
+    OntologyNodeType,
+    OntologyRelationshipType,
+    OntologySchemeStatus,
+)
 
 
 class Base(DeclarativeBase):
@@ -342,6 +352,246 @@ class CourseCurriculumMapping(Base):
 
 
 # -----------------------------------------------------------------------------
+# 4a. Versioned Knowledge Ontology
+# -----------------------------------------------------------------------------
+class OntologyScheme(Base):
+    __tablename__ = "ontology_schemes"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    code: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    version: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[OntologySchemeStatus] = mapped_column(
+        make_enum(OntologySchemeStatus), default=OntologySchemeStatus.DRAFT, nullable=False, index=True
+    )
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
+    released_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    __table_args__ = (UniqueConstraint("code", "version", name="uq_ontology_scheme_version"),)
+
+    nodes: Mapped[List["OntologyNode"]] = relationship(
+        "OntologyNode", back_populates="scheme", cascade="all, delete-orphan"
+    )
+
+
+class OntologyNode(Base):
+    __tablename__ = "ontology_nodes"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    scheme_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_schemes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    code: Mapped[str] = mapped_column(String(150), nullable=False)
+    preferred_name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    node_type: Mapped[OntologyNodeType] = mapped_column(make_enum(OntologyNodeType), nullable=False, index=True)
+    parent_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    display_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    status: Mapped[OntologyNodeStatus] = mapped_column(
+        make_enum(OntologyNodeStatus), default=OntologyNodeStatus.DRAFT, nullable=False, index=True
+    )
+    metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
+    valid_from: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    valid_to: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    __table_args__ = (
+        UniqueConstraint("scheme_id", "code", name="uq_ontology_node_scheme_code"),
+        CheckConstraint("parent_id IS NULL OR parent_id <> id", name="ck_ontology_node_not_self_parent"),
+        CheckConstraint("valid_to IS NULL OR valid_to > valid_from", name="ck_ontology_node_valid_range"),
+    )
+
+    scheme: Mapped["OntologyScheme"] = relationship("OntologyScheme", back_populates="nodes")
+    parent: Mapped[Optional["OntologyNode"]] = relationship(
+        "OntologyNode", remote_side="OntologyNode.id", back_populates="children"
+    )
+    children: Mapped[List["OntologyNode"]] = relationship("OntologyNode", back_populates="parent")
+    aliases: Mapped[List["OntologyAlias"]] = relationship(
+        "OntologyAlias", back_populates="node", cascade="all, delete-orphan"
+    )
+
+
+class OntologyAlias(Base):
+    __tablename__ = "ontology_aliases"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    node_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    alias: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    alias_type: Mapped[str] = mapped_column(String(50), default="SYNONYM", nullable=False)
+    language: Mapped[str] = mapped_column(String(20), default="en", nullable=False)
+    source: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    verification_status: Mapped[VerificationStatus] = mapped_column(
+        make_enum(VerificationStatus), default=VerificationStatus.AI_SUGGESTED, nullable=False, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    __table_args__ = (
+        UniqueConstraint("node_id", "alias", "language", name="uq_ontology_alias_node_text_language"),
+    )
+
+    node: Mapped["OntologyNode"] = relationship("OntologyNode", back_populates="aliases")
+
+
+class OntologyRelationship(Base):
+    __tablename__ = "ontology_relationships"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    source_node_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    relationship_type: Mapped[OntologyRelationshipType] = mapped_column(
+        make_enum(OntologyRelationshipType), nullable=False, index=True
+    )
+    target_node_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    qualifier: Mapped[Dict[str, Any]] = mapped_column(JSONType, default=dict)
+    polarity: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    frequency: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    diagnostic_weight: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    verification_status: Mapped[VerificationStatus] = mapped_column(
+        make_enum(VerificationStatus), default=VerificationStatus.AI_SUGGESTED, nullable=False, index=True
+    )
+    created_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
+    reviewed_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "source_node_id",
+            "relationship_type",
+            "target_node_id",
+            name="uq_ontology_relationship_triple",
+        ),
+        CheckConstraint("source_node_id <> target_node_id", name="ck_ontology_relationship_not_self"),
+        CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_ontology_relationship_confidence"),
+    )
+
+    source_node: Mapped["OntologyNode"] = relationship("OntologyNode", foreign_keys=[source_node_id])
+    target_node: Mapped["OntologyNode"] = relationship("OntologyNode", foreign_keys=[target_node_id])
+    evidence_items: Mapped[List["OntologyEvidence"]] = relationship(
+        "OntologyEvidence", back_populates="ontology_relationship", cascade="all, delete-orphan"
+    )
+
+
+class OntologyEvidence(Base):
+    __tablename__ = "ontology_evidence"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    node_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    relationship_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("ontology_relationships.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+    source_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("sources.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    document_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("source_documents.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    chunk_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("document_chunks.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    chapter: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
+    section: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    page_range: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    verification_status: Mapped[VerificationStatus] = mapped_column(
+        make_enum(VerificationStatus), default=VerificationStatus.AI_SUGGESTED, nullable=False, index=True
+    )
+    confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    created_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    __table_args__ = (
+        CheckConstraint(
+            "(node_id IS NOT NULL AND relationship_id IS NULL) OR "
+            "(node_id IS NULL AND relationship_id IS NOT NULL)",
+            name="ck_ontology_evidence_exactly_one_target",
+        ),
+        CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_ontology_evidence_confidence"),
+    )
+
+    node: Mapped[Optional["OntologyNode"]] = relationship("OntologyNode")
+    ontology_relationship: Mapped[Optional["OntologyRelationship"]] = relationship(
+        "OntologyRelationship", back_populates="evidence_items"
+    )
+    source: Mapped["Source"] = relationship("Source")
+    document: Mapped[Optional["SourceDocument"]] = relationship("SourceDocument")
+    chunk: Mapped[Optional["DocumentChunk"]] = relationship("DocumentChunk")
+
+
+class QuestionOntologyMapping(Base):
+    __tablename__ = "question_ontology_mappings"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    node_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_nodes.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    mapping_role: Mapped[OntologyMappingRole] = mapped_column(
+        make_enum(OntologyMappingRole), default=OntologyMappingRole.PRIMARY, nullable=False, index=True
+    )
+    mapping_method: Mapped[OntologyMappingMethod] = mapped_column(
+        make_enum(OntologyMappingMethod), default=OntologyMappingMethod.RULE, nullable=False, index=True
+    )
+    confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    verification_status: Mapped[VerificationStatus] = mapped_column(
+        make_enum(VerificationStatus), default=VerificationStatus.AI_SUGGESTED, nullable=False, index=True
+    )
+    ontology_version: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+    supersedes_mapping_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("question_ontology_mappings.id", ondelete="SET NULL"), nullable=True
+    )
+    mapped_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
+    reviewed_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    __table_args__ = (
+        CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_question_ontology_mapping_confidence"),
+    )
+
+    question: Mapped["Question"] = relationship("Question", back_populates="ontology_mappings")
+    node: Mapped["OntologyNode"] = relationship("OntologyNode")
+    supersedes_mapping: Mapped[Optional["QuestionOntologyMapping"]] = relationship(
+        "QuestionOntologyMapping", remote_side="QuestionOntologyMapping.id"
+    )
+
+
+# -----------------------------------------------------------------------------
 # 5. Source Model (Authoritative Knowledge Corpus / Works)
 # -----------------------------------------------------------------------------
 class Source(Base):
@@ -508,8 +758,42 @@ class Question(Base):
     reviews: Mapped[List["QuestionReview"]] = relationship(
         "QuestionReview", back_populates="question", cascade="all, delete-orphan"
     )
+    revisions: Mapped[List["QuestionRevision"]] = relationship(
+        "QuestionRevision", back_populates="question", cascade="all, delete-orphan"
+    )
     reports: Mapped[List["QuestionReport"]] = relationship(
         "QuestionReport", back_populates="question", cascade="all, delete-orphan"
+    )
+    ontology_mappings: Mapped[List["QuestionOntologyMapping"]] = relationship(
+        "QuestionOntologyMapping", back_populates="question", cascade="all, delete-orphan"
+    )
+
+
+# -----------------------------------------------------------------------------
+# 8a. Question Revision Model (immutable editorial snapshots)
+# -----------------------------------------------------------------------------
+class QuestionRevision(Base):
+    __tablename__ = "question_revisions"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    editor_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    revision_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    changed_fields: Mapped[List[str]] = mapped_column(JSONType, default=list, nullable=False)
+    edit_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    question: Mapped["Question"] = relationship("Question", back_populates="revisions")
+
+    __table_args__ = (
+        UniqueConstraint("question_id", "revision_number", name="uq_question_revision_number"),
     )
 
 
@@ -934,3 +1218,27 @@ class AdminAuditLog(Base):
     # Relationships
     admin: Mapped["User"] = relationship("User")
 
+
+# -----------------------------------------------------------------------------
+# 24. Published server-driven mobile screen documents
+# -----------------------------------------------------------------------------
+class MobileScreenConfiguration(Base):
+    __tablename__ = "mobile_screen_configurations"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    screen_key: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    schema_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    document: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+    published_by: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    published_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("screen_key", "version", name="uq_mobile_screen_version"),
+        Index("ix_mobile_screen_active", "screen_key", "is_active"),
+    )

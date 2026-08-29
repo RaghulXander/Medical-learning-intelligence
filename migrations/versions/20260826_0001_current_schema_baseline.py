@@ -18,11 +18,45 @@ branch_labels = None
 depends_on = None
 
 
+# Keep the adopted M10 baseline stable as new ORM models are introduced. Without
+# this allow-list, a fresh migration run would create future tables here and then
+# fail when their own revisions attempt to create them.
+M10_BASELINE_TABLES = (
+    "users",
+    "courses",
+    "curriculum_topics",
+    "course_curriculum_mappings",
+    "sources",
+    "source_documents",
+    "document_chunks",
+    "questions",
+    "question_evidence",
+    "question_reviews",
+    "question_reports",
+    "marking_schemes",
+    "assessments",
+    "assessment_sections",
+    "assessment_questions",
+    "assessment_attempts",
+    "attempt_questions",
+    "user_question_history",
+    "user_mastery",
+    "guest_sessions",
+    "user_sessions",
+    "auth_audit_logs",
+    "admin_audit_logs",
+)
+
+
 def upgrade() -> None:
     bind = op.get_bind()
     # Fresh staging/production databases receive the complete current schema.
     # Existing current databases are adopted without dropping or recreating data.
-    Base.metadata.create_all(bind=bind, checkfirst=True)
+    Base.metadata.create_all(
+        bind=bind,
+        tables=[Base.metadata.tables[name] for name in M10_BASELINE_TABLES],
+        checkfirst=True,
+    )
 
     # The manual subscription entitlement was added immediately before the
     # baseline. Adopt older initialized databases without requiring init_db().
