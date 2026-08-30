@@ -107,3 +107,5 @@ Part A passes. If it does not, improve the parser/configuration and rerun the pi
 ## Current implementation assessment
 
 The repository already has useful foundations: SHA-256 registration, deterministic slices, dual page fields, normalized blocks, evidence blocks, reports, and an embedding gate. Part A is **not yet complete** because human gold-set accuracy testing, pinned-version validation, structured image/figure handling, and verified page-label calibration remain. Part B is **not started** until batch/GCS processing and canonical ingestion runs exist.
+
+For extraction on one machine and review/application work on another, follow [the two-machine book-processing runbook](../docs/M15_TWO_MACHINE_BOOK_RUNBOOK.md) and its [run handoff template](../docs/templates/M15_RUN_HANDOFF_TEMPLATE.md).

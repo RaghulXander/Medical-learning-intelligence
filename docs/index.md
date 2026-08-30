@@ -10,6 +10,7 @@ platform as it exists today.
 - Production operator: [Deployment](DEPLOYMENT.md)
 - Schema or ingestion work: [Data model](DATA_MODEL.md) and
   [data sources](DATA_SOURCES.md)
+- Two-machine book extraction and transfer: [M15 book-processing runbook](M15_TWO_MACHINE_BOOK_RUNBOOK.md)
 - Architectural change: [Architecture decisions](decisions/README.md)
 - Unsure what to edit: [Ownership and change impact](OWNERSHIP.md)
 
