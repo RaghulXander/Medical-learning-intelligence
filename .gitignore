@@ -3,6 +3,10 @@
 .env.*
 !.env.example
 !.env.gcp.example
+*key*.json
+*.key.json
+*credentials*.json
+docedge-*.json
 
 # Python Caches & Virtual Environments
 __pycache__/
