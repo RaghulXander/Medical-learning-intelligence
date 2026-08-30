@@ -9,6 +9,19 @@ permissions:
   contents: read
 
 jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install documentation dependencies
+        run: python -m pip install -r requirements-docs.txt
+      - name: Build documentation strictly
+        run: python -m mkdocs build --strict
+
   backend:
     runs-on: ubuntu-latest
     services:
@@ -72,6 +85,8 @@ jobs:
           bun --filter @medical/api-client build
       - name: Typecheck web
         run: bun --filter web typecheck
+      - name: Validate CMS content
+        run: bun run test:cms
       - name: Build web
         env:
           API_URL: http://127.0.0.1:8000

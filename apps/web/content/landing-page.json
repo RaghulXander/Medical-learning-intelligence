@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "documentVersion": "2026-08-29T00:00:00Z",
+  "site": {
+    "title": "DocEdge AI",
+    "description": "Medical exam preparation with reviewed evidence and intelligent assessment"
+  },
+  "sections": [
+    {
+      "id": "home-hero",
+      "type": "hero",
+      "enabled": true,
+      "order": 10,
+      "audience": "ALL",
+      "props": {
+        "eyebrow": "Next-Gen Medical Exam Intelligence",
+        "title": "Master Medical Exams with",
+        "highlight": "Precision Intelligence & Provenance",
+        "description": "The timed mock exam engine and curated question bank for Pathology, NEET-PG, NEET-SS, and INI-CET.",
+        "primaryAction": {
+          "label": "Try 5-Question Diagnostic",
+          "action": "START_DIAGNOSTIC"
+        },
+        "secondaryAction": {
+          "label": "Explore Student Hub",
+          "action": "OPEN_STUDENT_HUB"
+        }
+      }
+    },
+    {
+      "id": "home-diagnostic",
+      "type": "diagnostic_cta",
+      "enabled": true,
+      "order": 20,
+      "audience": "ALL",
+      "props": {
+        "badge": "Instant Diagnostic Mode",
+        "title": "Benchmark your core medical knowledge and diagnostic accuracy",
+        "description": "No login friction. Take the test anonymously, inspect detailed rationales, and merge your score later.",
+        "questionCount": 5,
+        "durationMinutes": 5,
+        "actionLabel": "Start Test"
+      }
+    },
+    {
+      "id": "home-stats",
+      "type": "stats",
+      "enabled": true,
+      "order": 30,
+      "audience": "ALL",
+      "props": {
+        "items": [
+          { "label": "Curated Medical MCQs", "value": "15,000+" },
+          { "label": "Specialty Topics", "value": "60+" },
+          { "label": "Assessment Presets", "value": "1-Click Instant" },
+          { "label": "Literature References", "value": "Peer-Reviewed" }
+        ]
+      }
+    },
+    {
+      "id": "home-features",
+      "type": "feature_grid",
+      "enabled": true,
+      "order": 40,
+      "audience": "ALL",
+      "props": {
+        "badge": "Platform Capabilities",
+        "title": "Engineered for medical residents and competitive aspirants",
+        "description": "From blueprint generation to state recovery, every component is built for serious medical learning.",
+        "items": [
+          {
+            "icon": "microscope",
+            "title": "Standard Medical Curricula & Super-Specialty",
+            "description": "Targeted preparation for DM/DrNB, MD/MS/DNB and postgraduate entrance examinations.",
+            "tag": "Curriculum Aligned"
+          },
+          {
+            "icon": "zap",
+            "title": "Universal Timed Assessment Engine",
+            "description": "Simulate exam conditions with synchronized state, review markers and negative marking.",
+            "tag": "State-Preserving"
+          },
+          {
+            "icon": "shield-check",
+            "title": "Reviewed Evidence Citations",
+            "description": "References preserve provenance and distinguish suggested evidence from human verification.",
+            "tag": "Verified Literature"
+          },
+          {
+            "icon": "brain-circuit",
+            "title": "Intelligent Learner Modeling",
+            "description": "Mastery tracking, recency penalties and weak-topic remediation blueprints.",
+            "tag": "Adaptive Learning"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -315,6 +315,13 @@ export default function AdminDashboardPage() {
 
         {/* Tab Switcher */}
         <div className="flex items-center gap-2 p-1 rounded-xl bg-white/[0.04] border border-white/10">
+          <Link
+            href="/admin/content"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white"
+          >
+            <LayoutGrid className="h-4 w-4" />
+            <span>Landing CMS</span>
+          </Link>
           <button
             type="button"
             onClick={() => setActiveTab('QUESTIONS')}
