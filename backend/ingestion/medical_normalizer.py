@@ -77,6 +77,8 @@ class PageEvidenceBlock:
     word_count: int = 0
     character_count: int = 0
     content_hash: str = ""
+    version: int = 1
+    ingestion_version: str = "v1"
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:

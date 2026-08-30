@@ -112,6 +112,7 @@ class RegisteredDocument:
     sha256: str
     total_pages: int
     textbook_page_offset: int = 0  # Number of front matter/preface pages before printed page 1
+    version: int = 1  # Ingestion calibration version (bump if page calibration changes)
     registered_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
@@ -217,6 +218,7 @@ class DocumentRegistry:
         speciality: str = "Pathology",
         subject: str = "Pathology",
         textbook_page_offset: int = 0,
+        version: int = 1,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> RegisteredDocument:
         """Registers a raw reference PDF file with cryptographic hash validation and page offset tracking."""
@@ -228,9 +230,9 @@ class DocumentRegistry:
         sha256 = compute_file_sha256(path)
         total_pages = get_pdf_page_count(path)
 
-        # Generate deterministic UUIDv5 based on short_name and sha256
+        # Generate deterministic UUIDv5 based on short_name, sha256, and version
         doc_id = str(
-            uuid.uuid5(DOCUMENT_NAMESPACE, f"{short_name.lower()}:{sha256}")
+            uuid.uuid5(DOCUMENT_NAMESPACE, f"{short_name.lower()}:{sha256}:v{version}")
         )
 
         existing = self.documents.get(doc_id)
@@ -253,6 +255,7 @@ class DocumentRegistry:
             sha256=sha256,
             total_pages=total_pages,
             textbook_page_offset=textbook_page_offset,
+            version=version,
             registered_at=datetime.now(timezone.utc).isoformat(),
             metadata=metadata or {},
             slices=slices,

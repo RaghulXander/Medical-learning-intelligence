@@ -1,0 +1,408 @@
+{
+  "slice_id": "robbins_review_p0001_p0015",
+  "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+  "source": "Robbins and Cotran Review of Pathology",
+  "evidence_count": 14,
+  "evidence_blocks": [
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0002_tb0000_29c1413e",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 2,
+      "textbook_page": null,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "FOURTH EDITION",
+      "content": "Review of Pathology\n\n\n### FOURTH EDITION\n\n\nEdward C. Klatt, MD\n\nProfessor of Pathology\n\nDepartment of Biomedical Sciences\n\nDirector, Biomedical Education Program\n\nMercer University School of Medicine\n\nSavannah, Georgia\n\nVinay Kumar, MBBS, MD, FRCPath\n\nDonald N. Pritzker Professor\n\nChair, Department of Pathology\n\nBiologic Sciences Division and\n\nPritzker School of Medicine\n\nThe University of Chicago\n\nChicago, Illinois",
+      "headings": [
+        "FOURTH EDITION"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 15,
+      "word_count": 55,
+      "character_count": 419,
+      "content_hash": "29c1413e307b6d0507048ef8c4309cd43762b154802c5a54c77a777d126ed2cc",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0003_tb0000_09ed4e7f",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 3,
+      "textbook_page": null,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "RB119",
+      "content": "1600 John F. Kennedy Blvd.\n\nSte. 1800\n\nPhiladelphia, PA 19103-2899\n\nCopyright © 2015, 2010, 2005, 2000 by Saunders, an imprint of Elsevier Inc.\n\nAll rights reserved. No part of this publication may be reproduced or transmitted in any form or by\n\nany means, electronic or mechanical, including photocopying, recording, or any information storage\n\nand retrieval system, without permission in writing from the publisher. Details on how to seek per-\n\nmission, further information about the Publisher’s permissions policies and our arrangements with\n\norganizations such as the Copyright Clearance Center and the Copyright Licensing Agency, can be\n\nfound at our website: www.elsevier.com/permissions.\n\nThis book and the individual contributions contained in it are protected under copyright by the\n\nPublisher (other than as may be noted herein).\n\nLibrary of Congress Cataloging-in-Publication Data\n\nKlatt, Edward C., 1951- , author.\n\np. ; cm.\n\nReview of pathology\n\nComplemented by: Robbins basic pathology / [edited by] Vinay Kumar, Abul K. Abbas, Jon C.\n\nAster. 9th ed. c2013; and Robbins and Cotran pathologic basis of disease / [edited by] Vinay Kumar,\n\nAbul K. Abbas, Jon C. Aster. Ninth edition. United VRG [2015]\n\n\n### ISBN 978-1-4557-5155-6\n\n\nI. Kumar, Vinay, 1944- , author. II. Robbins basic pathology. Complemented by (work): III. Rob-\n\nbins and Cotran pathologic basis of disease. Complemented by (work): IV. Title. V. Title: Review of\n\npathology.\n\n[DNLM: 1. Pathology--Examination Questions. QZ 18.2]\n\n\n### RB119\n\n\n616.07076--dc23\n\n2014031270\n\nExecutive Content Strategist: William R. Schmitt\n\nContent Development Specialist: Laura Schmidt\n\nPublishing Services Manager: Anne Altepeter\n\nProject Manager: Louise King\n\nDesigner: Louis Forgione\n\nPrinted in Canada\n\nLast digit is the print number: 9 8 7 6 5 4 3 2 1\n\nNotices\n\nKnowledge and best practice in this field are constantly changing. As new research and experience\n\nbroaden our understanding, changes in research methods, professional practices, or medical\n\ntreatment may become necessary.\n\nPractitioners and researchers must always rely on their own experience and knowledge in\n\nevaluating and using any information, methods, compounds, or experiments described herein. In\n\nusing such information or methods they should be mindful of their own safety and the safety of\n\nothers, including parties for whom they have a professional responsibility.\n\nWith respect to any drug or pharmaceutical products identified, readers are advised to check\n\nthe most current information provided (i) on procedures featured or (ii) by the manufacturer of\n\neach product to be administered, to verify the recommended dose or formula, the method and\n\nduration of administration, and contraindications. It is the responsibility of practitioners, relying\n\non their own experience and knowledge of their patients, to make diagnoses, to determine dosages\n\nand the best treatment for each individual patient, and to take all appropriate safety precautions.\n\nTo the fullest extent of the law, neither the publisher nor the authors, contributors, or editors\n\nassume any liability for any injury and/or damage to persons or property as a matter of products\n\nliability, negligence or otherwise, or from any use or operation of any methods, products,\n\ninstructions, or ideas contained in the material herein.",
+      "headings": [
+        "ISBN 978-1-4557-5155-6",
+        "RB119"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 52,
+      "word_count": 493,
+      "character_count": 3338,
+      "content_hash": "09ed4e7f606a9aeaca292ac8ddf292e4685000c29f81cc4db9cb998444d66614",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0004_tb0000_18548fc9",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 4,
+      "textbook_page": null,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "RB119",
+      "content": "To our students, for their constant challenge and stimulation",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 1,
+      "word_count": 9,
+      "character_count": 61,
+      "content_hash": "18548fc9d6685c043e6ac0e8a3fac480305fdaf66d65a9225026c7314d2d9dc8",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0005_tb0000_29a04db7",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 5,
+      "textbook_page": null,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "RB119",
+      "content": "vii\n\nThis book is designed to provide a comprehensive review of\n\nboth general and organ-specific pathology through multiple\n\nchoice questions with explanations of the answers. The source\n\nmaterials are the ninth editions of Robbins and Cotran Patho-\n\nlogic Basis of Disease (PBD9) and Robbins Basic Pathology (BP9),\n\nand in several chapters, Robbins and Cotran Atlas of Pathology\n\n(AP3). The questions in this review book follow the chapters\n\nand topics in these source materials to facilitate ongoing self-\n\nassessment as students work their way through a curriculum\n\nto gain and then apply their understanding of key concepts.\n\nThis book is intended to be a useful resource for students in a\n\nvariety of health science training programs.\n\nIn keeping with recommended question writing style for\n\nlicensing examinations, we have included single best-answer\n\nquestions, most with a clinical vignette, followed by a series\n\nof homogenous choices. This approach emphasizes an under -\n\nstanding of pathophysiologic mechanisms and manifestations\n\nof disease in a clinical context. We have incorporated relevant\n\nlaboratory, radiologic, and physical diagnostic findings in\n\nthe questions to emphasize clinicopathologic correlations.\n\nAlthough this adds to the extent of individual questions, the\n\nthoroughness reinforces learning, as a review should. Each an-\n\nswer includes a succinct explanation of why a particular choice\n\nis “correct” and the other choices are “incorrect.” Each answer\n\nis referenced by page numbers to both Robbins and Cotran\n\nPathologic Basis of Disease and Robbins Basic Pathology (both the\n\ncurrent ninth edition and the previous eighth edition of each),\n\nand in several cases, to figures in the third edition of Robbins\n\nand Cotran Atlas of Pathology, to facilitate and encourage a more\n\ncomplete reading of topics targeted for further review. Pathol-\n\nogy is a visually oriented discipline; hence full-color images\n\naccompany many of the questions. The illustrations are taken\n\nmainly from the Robbins textbooks, so students can reinforce\n\ntheir study of the figures in the texts with questions that utilize\n\nthe same or similar images.\n\nThe revisions in this fourth edition reflect new topics and\n\nnew understanding of disease processes reflected in the most\n\nrecent editions of the Robbins textbooks. The questions are\n\nintentionally written to be fairly difficult, with the purpose\n\nof “pushing the envelope” of students’ understanding of pa-\n\nthology. We are pushing it even further with a comprehensive\n\nfinal examination section that includes questions drawn from\n\nchallenging topics covered in the entire book.\n\nMastery of this book will better prepare the student for fur-\n\nther challenges. Many of the questions require the student to en-\n\ngage in a “multi-step” process: first, to interpret the information\n\npresented to arrive at a diagnosis, and then to solve a problem\n\nbased on that diagnosis. This reinforces the clinical reasoning\n\nskills needed in delivery of health care. We must hasten to add\n\nthat no review book is a substitute for textbooks and other course\n\nmaterials provided by individual instructors within the context\n\nof a curriculum. This book should be used in conjunction with\n\nthorough study of Robbins and Cotran Pathologic Basis of Disease\n\nand/or Robbins Basic Pathology and curricular materials. Finally,\n\nwe hope that both students and their faculty will find this review\n\nbook to be a useful adjunct to the learning of pathology.\n\nEdward C. Klatt, MD\n\nVinay Kumar, MBBS, MD, FRCPath\n\nPreface",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 60,
+      "word_count": 541,
+      "character_count": 3550,
+      "content_hash": "29a04db75a8b57ef2e0aab3c2915056abae110e3922ea819271969c0350f565d",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0006_tb0001_ea6a3713",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 6,
+      "textbook_page": 1,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "RB119",
+      "content": "ix\n\nAlthough medical knowledge has increased exponentially\n\nover the past 100 years, the desire to learn and apply this\n\nknowledge to the service of others has not changed. The study\n\nand practice of the healing arts requires persistence more than\n\nbrilliance. By continuing as a lifelong student, it is possible to\n\nbecome a better health practitioner with the passage of time.\n\nUse this book to find where you are on the pathway to ex -\n\ncellence and be inspired to continue down that path. We pro-\n\nvide a guide to light the way toward knowledge in pathology\n\nwithin the welcoming environment of this book.\n\nCommon mistakes made by students in answering ques -\n\ntions result from failure to read and analyze information care-\n\nfully by: (1) relying on a single finding as an exclusionary\n\ncriterion, and (2) ignoring important diagnostic information.\n\nMedicine is mostly analogue, not digital, and the information\n\nyou obtain is applicable across a continuum of probability. In\n\nselecting the best answer, remember these four key elements:\n\n(1) read the question thoroughly, (2) define the terms (use\n\nyour vocabulary), (3) rank possible answers from common to\n\nuncommon, and (4) recognize key diagnostic information that\n\ndifferentiates the answers.\n\nThere are no magic formulas for academic achievement.\n\nThe most important thing you can do is to spend some time\n\neach day in a learning process. Learning requires modification\n\nof synaptic interfaces at the dendritic level in the brain, and for\n\nlearning to occur, there are a finite number of synaptic modifi-\n\ncations that can be established per unit time, above which total\n\ncomprehension is reduced. Increasing the rate or length of in -\n\n\n| Feature / Marker | Diagnostic Finding |\n| --- | --- |\n| Morphology / IHC | Positive / Specific expression |\n\n\nformation delivery diminishes the efficiency of learning. Lack\n\nof break periods or engaging in “all nighters” presage onset of\n\ndiminished performance, particularly when least desirable—\n\nduring an examination. There is also decay of learning over\n\ntime, with inevitable random loss of data elements. The key\n\nbranch points in learning, where review with reinforcement\n\ncan reduce data loss, occur at 20 to 40 minutes (transfer to in -\n\ntermediate memory) and at 24 to 48 hours (transfer to long-\n\nterm memory) following initial learning.\n\nDevelop methods for filtering information from quality\n\nsources. We live in an age of information overload. Stay on task\n\nand avoid distractions. Identify the important data and under-\n\nlying concepts. Develop a specific, personalized plan for ap -\n\nproaching, reviewing, and preparing for assessments of your\n\nknowledge. Seek quality feedback, both positive to provide\n\nmotivation for your commitment to further learning, as well as\n\nnegative to focus on your rate of progress toward competency.\n\nWe hope, therefore, that this review will be useful not only\n\nin preparing for examinations but also for courses you take\n\nthroughout your career. It is our sincere hope that this review\n\nbook will make you a better health practitioner in your chosen\n\ncareer.\n\nT o Our Students",
+      "headings": [],
+      "tables": [
+        {
+          "headers": [
+            "Feature / Marker",
+            "Diagnostic Finding"
+          ],
+          "rows": [
+            [
+              "Morphology / IHC",
+              "Positive / Specific expression"
+            ]
+          ]
+        }
+      ],
+      "figures": [],
+      "raw_block_count": 53,
+      "word_count": 501,
+      "character_count": 3128,
+      "content_hash": "ea6a37135d0a1af03dfa760fe328a94070330117cfc030d1d4a7f69c567b4636",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0007_tb0002_00833d74",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 7,
+      "textbook_page": 2,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": null,
+      "section": "RB119",
+      "content": "x\n\nWe are very grateful to Laura Schmidt, content development\n\nspecialist, and William Schmitt, executive content strategist, at\n\nElsevier, for their support of this project. Special thanks is due\n\nLouise King, project manager, for her understanding of the\n\nneeds of the authors, for providing good advice, and for her\n\nwillingness to accommodate multiple changes. Nhu Trinh at\n\nThe University of Chicago is acknowledged for crucial secre -\n\ntarial support to one of us. We are grateful to our families and\n\ncolleagues for graciously accepting this additional demand on\n\nour time.\n\nThe authors also are indebted to the pioneers in pathology\n\neducation for the Robbins and Cotran series, starting with the\n\nfounding author, Dr. Stanley Robbins, and continuing with\n\nDr. Ramzi Cotran. These lead authors have set the standard\n\nof excellence that characterizes the series. There continue to be\n\nnumerous contributing authors who have made the Robbins\n\nand Cotran series a valuable educational tool.\n\nEdward C. Klatt\n\nVinay Kumar\n\nAcknowledgments",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 21,
+      "word_count": 159,
+      "character_count": 1042,
+      "content_hash": "00833d74a00c3e56d35d1bd6a82766bf010106e7cf211ad286531a525c90b543",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0008_tb0003_cf488996",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 8,
+      "textbook_page": 3,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER",
+      "section": "RB119",
+      "content": "### CHAPTER\n\n\nThe Cell as a Unit of Health\n\nand Disease\n\n1 A study of peripheral blood smears shows that neutro -\n\nphil nuclei of women have a Barr body, whereas those of men\n\ndo not. The Barr body is an inactivated X chromosome. Which\n\nof the following forms of RNA is most likely to play a role in\n\nBarr body formation?\n\nA lncRNA\n\nC mRNA\n\nB miRNA\n\nD siRNA\n\nE tRNA\n\n2 In an experiment, a nuclear chromosomal gene is\n\nfound to be actively transcribing messenger RNA (mRNA)\n\nthat is transported into the cell cytoplasm. However, there is\n\nno observed protein product from translation of this mRNA.\n\nHow is the silencing of this active gene’s mRNA most likely\n\nto occur?\n\nA Absence of tRNA\n\nB Binding to miRNA\n\nC Methylation of DNA\n\nD Mutation of mRNA\n\nE Upregulation of mtDNA\n\n3 A proponent of Chilean Malbec, Syrah, and Merlot\n\nwines (all reds) touts their contribution to longevity, but this\n\nwine aficionado also controls his dietary caloric content so that\n\nhis body mass index is <22. This lifestyle promotes increased\n\ninsulin sensitivity and glucose utilization. He fully expects to\n\nlive longer because he has read that caloric restriction pro -\n\nlongs life. In this man, which of the following intracellular\n\nsubstances will most likely mediate the effect of calorie restric-\n\ntion upon increased longevity?\n\nA Caspase\n\nB Glutathione\n\nC Sirtuins\n\nD Telomerase\n\nE Ubiquitin\n\n4 A 40-year-old woman has had chronic congestive heart\n\nfailure for the past 3 years. In the past 2 months, she devel-\n\noped a cough productive of rust-colored sputum. A sputum\n\ncytology specimen now shows numerous hemosiderin-laden\n\nmacrophages. Which of the following subcellular structures in\n\nthese macrophages is most important for the accumulation of\n\nthis pigment?\n\nA Chromosome\n\nB Endoplasmic reticulum\n\nC Golgi apparatus\n\nD Lysosome\n\nE Ribosome\n\n5 An experiment is conducted in which cells in tissue\n\nculture are subjected to high levels of ultraviolet radiant\n\nenergy. Electron microscopy shows cellular damage in the\n\nform of increased cytosolic aggregates of denatured pro-\n\nteins. In situ hybridization reveals that protein components\n\nin these aggregates also are found in proteasomes. Which\n\nof the following substances most likely binds to the dena -\n\ntured proteins, targeting them for catabolism by cytosolic\n\nproteasomes?\n\nA Adenosine monophosphate\n\nB Calcium\n\nC Caspase\n\nD Granzyme B\n\nE Hydrogen peroxide\n\nF Ubiquitin\n\n6 At the site of a surgical incision, endothelial cells elab-\n\norate vascular endothelial growth factor. There is sprouting\n\nwith migration of endothelial cells into the wound to establish\n\nnew capillaries. Which of the following intracellular proteins\n\nis most important in facilitating movement of endothelial\n\ncells?\n\nA Actin\n\nB Cytokeratin\n\nC Desmin\n\nD Lamin\n\nE Myosin\n\nPBD9 Chapter 1: The Cell as a Unit of Health and Disease",
+      "headings": [
+        "CHAPTER"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 77,
+      "word_count": 457,
+      "character_count": 2851,
+      "content_hash": "cf4889968188c2fa79f9330acba13058809056f33628832b43129e337f8e028a",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0009_tb0004_842269b3",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 9,
+      "textbook_page": 4,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER",
+      "section": "RB119",
+      "content": "7 In an experiment, release of epidermal growth factor\n\ninto an area of denuded skin causes mitogenic stimulation\n\nof the skin epithelial cells. Which of the following proteins is\n\nmost likely to be involved in transducing the mitogenic signal\n\nfrom the epidermal cell membrane to the nucleus?\n\nA Cyclic AMP\n\nB Cyclin D\n\nC Cyclin-dependent kinase\n\nD G proteins\n\nE RAS proteins\n\n8 Various soluble mediators are added to a cell culture\n\ncontaining epidermal cells to determine which of the mediators\n\nmight be useful for promoting epidermal cell growth. When\n\nepidermal growth factor (EGF) is added, it binds to epidermal\n\ncell surface receptors, with subsequent transcription factor\n\ntranslocation and DNA transcription. This effect in the epider-\n\nmal cells is most likely to be mediated through which of the\n\nfollowing intracellular pathways?\n\nA Calcium ion channel\n\nB Cyclic AMP\n\nC Cyclin-dependent kinase\n\nD JAK/STAT system\n\nE Mitogen-activated protein (MAP) kinase\n\n9 An experiment involves factors controlling wound heal-\n\ning. Skin ulcerations are observed, and the factors involved in\n\nthe healing process are analyzed. Which of the following fac-\n\ntors is most likely to be effective in promoting angiogenesis?\n\nA Basic fibroblast growth factor\n\nB Endostatin\n\nC Epidermal growth factor\n\nD Interleukin-1\n\nE Platelet-derived growth factor\n\n10 In an experiment, surgical incisions are made in a study\n\ngroup of laboratory rats. Observations about the wounds are\n\nrecorded over a 2-week period using various chemical media-\n\ntors. Which of the following steps in the inflammatory-repair\n\nresponse is most likely affected by neutralization of transform-\n\ning growth factor β (TGF-β)?\n\nA Chemotaxis of lymphocytes\n\nB Increase in vascular permeability\n\nC Leukocyte extravasation\n\nD Migration of epithelial cells\n\nE Production of collagen\n\n11 A 62-year-old man has had increasing knee pain with\n\nmovement for the past 10 years. The knee joint surfaces are\n\neroded and the joint space narrowed. There is loss of com-\n\npressibility and lubrication of articular cartilaginous surfaces.\n\nLoss of which of the following extracellular matrix compo -\n\nnents has most likely occurred in this man?\n\nA Elastin\n\nB Fibronectin\n\nC Hyaluronan\n\nD Integrin\n\nE Laminin\n\n12 An experiment is conducted involving cellular aspects of\n\nwound healing. Components of the extracellular matrix are an-\n\nalyzed to determine their sites of production and their binding\n\npatterns to other tissue components. Which of the following\n\nmolecules synthesized by fibroblasts can best bind to cellular\n\nintegrins and extracellular collagen and attach epidermal basal\n\ncells to basement membrane?\n\nA Dermatan sulfate\n\nB Fibronectin\n\nC Heparin\n\nD Hyaluronic acid\n\nE Procollagen\n\n13 An experiment analyzes factors involved in the cell cycle\n\nduring growth factor–induced cellular regeneration in a tissue\n\nculture. Cyclin B synthesis is induced; the cyclin B binds and\n\nactivates cyclin-dependent kinase 1 (CDK1). The active kinase\n\nproduced by this process is most likely to control progression\n\nin which of the following phases of the cell cycle?\n\nA G0 to G1\n\nB G1 to S\n\nC S to G2\n\nD G2 to M\n\nE M to G1\n\n14 In an experiment, the role of low-density lipoprotein\n\n(LDL) receptors in uptake of lipids in the liver is studied. A\n\nmouse model is created in which the LDL receptor gene is not\n\nexpressed in the liver. For creating such a knockout mouse,\n\nwhich of the following cells would be most useful?\n\nA Adult bone marrow mesenchymal progenitor cells\n\nB Embryonic stem cells in culture\n\nC Hematopoietic stem cells\n\nD Hepatic oval cells\n\nE Regenerating hepatocytes\n\n15 Dermal fibroblasts are harvested from the skin biopsy\n\nspecimen of an adult man. These fibroblasts are transduced\n\nwith genes encoding for transcription factors including SOX2\n\nand MYC. Under appropriate culture conditions these cells are\n\nthen able to generate endodermal, mesodermal, and ectoder -\n\nmal cells. Into which of the following kinds of stem cell have\n\nthese fibroblasts been transformed?\n\nA Embryonic\n\nB Lineage-committed\n\nC Mesenchymal\n\nD Pleuripotent",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 98,
+      "word_count": 635,
+      "character_count": 4095,
+      "content_hash": "842269b36ca1adf9e093a30ed261bdb8c6256743fe2c4cb7715f8ef524e6cd79",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0010_tb0005_9369bcbc",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 10,
+      "textbook_page": 5,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER 1 The Cell as a Unit of Health and Disease",
+      "section": "ANSWERS",
+      "content": "1 A There are forms of noncoding RNA that play a role in\n\ngene expression. Long noncoding RNA (lncRNA) segments\n\ngreater than 200 nucleotides in length can bind to chroma -\n\ntin to restrict access of RNA polymerase to coding segments.\n\nThe X chromosome transcribes XIST, a lncRNA that binds to\n\nand represses X chromosome expression. However, not all\n\ngenes on the “inactive” X chromosome are switched off. The\n\nRNA transcribed from nuclear DNA that directs protein syn-\n\nthesis through translation is mRNA. MicroRNAs (miRNAs)\n\nare noncoding RNA sequences that inhibit the translation\n\nof mRNAs. Gene-silencing RNAs (small interfering RNAs\n\n[siRNAs]) have the same function as miRNAs, but they are\n\nproduced synthetically for experimental purposes. Transfer\n\nRNA (tRNA) participates in the translation of mRNA to pro-\n\nteins by linking to specific amino acids.\n\n\n### PBD9 5–6 BP9 217–218 PBD8 150–152 BP8 235–237\n\n\n2 B MicroRNAs (miRNA) are encoded by about 5% of\n\nthe human genome. miRNAs do not encode for proteins,\n\nbut bind to and inactivate or cleave to mRNA, preventing\n\ntranslation of proteins by mRNA, effectively silencing gene\n\nexpression without affecting the gene directly. There is\n\nabundant tRNA present in the cytoplasm that is not a rate-\n\nlimiting step to translation. DNA methylation, particularly\n\nat CG dinucleotides, is a way of suppressing gene expres -\n\nsion directly, as is seen with genomic imprinting. Mutations\n\nthat occur in genes in DNA may result in reduced mRNA\n\nproduction or abnormal protein production, but mRNA it -\n\nself is not mutated. Mitochondrial DNA (mtDNA) encodes\n\nfor proteins mainly involved in oxidative phosphorylation\n\nmetabolic pathways.\n\n\n### PBD9 4–5 BP9 217–218 BP8 137\n\n\n3 C The one sure way to increase life span is calorie re -\n\nstriction. But why do without the things we like, only to do\n\nwithout them longer? Dietary excesses lead to increased mor-\n\nbidity with reduced quality of life, as well as mortality, from\n\nchronic diseases such as diabetes mellitus. The activity of sir-\n\ntuins on histone acetylation and deacetylation may promote\n\ntranscription of genes encoding for proteins that increase\n\nmetabolic activity and inhibit effects of free radicals. Red\n\nwines have been shown to increase sirtuins, but don’t drink\n\ntoo much! Moderation is the key. Glutathione promotes free\n\nradical breakdown, although chronic excessive alcohol con -\n\nsumption depletes hepatocyte glutathione. Caspases trigger\n\napoptosis and cell death. Telomerases aid in promoting con-\n\ntinued cell division, but cannot be altered by lifestyle, and\n\nturning them on is one feature of neoplasia. Ubiquitin is a\n\npeptide that is part of the ubiquitin-proteasome pathway of\n\nprotein degradation seen with nutrient deficiencies, so when\n\nyou eat less, be sure to eat a balanced diet.\n\n\n### PBD9 3–4, 68 BP9 26–27 PBD8 41, 444 BP8 28\n\n\n4 D Heterophagocytosis by macrophages requires that\n\nendocytosed vacuoles fuse with lysosomes to degrade the\n\nengulfed material. With congestive heart failure, extravas ation\n\nof RBCs into alveoli occurs, and pulmonary macrophages\n\nmust phagocytose the RBCs, breaking down the hemoglo -\n\nbin and recycling the iron by hemosiderin formation. The\n\nother listed options are components that play a role in cell\n\nsynthetic functions.\n\n\n### PBD9 10, 13 BP9 22–23 PBD8 52–53 BP8 12\n\n\n5 F Heat-shock proteins provide for a variety of cellular\n\n“housekeeping” activities, including recycling and restora -\n\ntion of damaged proteins and removal of denatured pro -\n\nteins. Ubiquitin targets denatured proteins and facilitates\n\ntheir binding to proteasomes, which then break down the\n\nproteins to peptides. ADP increases when ATP is depleted,\n\nhelping to drive anaerobic glycolysis. Cytosolic calcium lev -\n\nels may increase with cell injury that depletes ATP; the calci-\n\num activates phospholipases, endonucleases, and proteases,\n\nwhich damage the cell membranes, structural proteins, and\n\nmitochondria. Caspases are enzymes that facilitate apopto -\n\nsis. Granzyme B is released from cytotoxic T lymphocytes\n\nand triggers apoptosis. Hydrogen peroxide is one of the acti-\n\nvated oxygen species generated under conditions of cellular\n\nischemia, producing nonspecific damage to cellular struc-\n\ntures, particularly membranes.\n\n\n### PBD9 13–14 BP9 21–22 PBD8 37–38 BP8 22\n\n\n6 A Actin is a microfilament involved with cell movement.\n\nThe other possibilities listed in B to D are intermediate fila -\n\nments, which are larger than actin but smaller than myosin\n\n(a thick filament interdigitating with actin, required for mus-\n\ncle movement). Cytokeratins form cytoskeletal elements of\n\nepithelial cells. Desmin forms the scaffold in muscle cells on\n\nwhich actin and myosin contract. Lamin is associated with\n\nthe nuclear membrane.\n\n\n### PBD9 10–11 PBD8 50\n\n\n7 E RAS proteins transduce signals from growth factor re-\n\nceptors, such as epidermal growth factor, that have intrinsic\n\ntyrosine kinase activity. G proteins perform a similar function\n\nfor G protein–linked, seven-transmembrane receptors. Cyclic\n\nAMP is an effector in the G protein signaling pathway. Cyclins\n\nand cyclin-dependent kinases regulate the cell cycle in the\n\nnucleus.\n\n\n### PBD9 17 BP9 179 PBD8 90–92 BP8 64, 66\n\n\n8 E The MAP kinase cascade is involved in signaling from\n\nactivation via cell surface receptors for growth factors. This\n\npathway is particularly important for signaling of EGF and\n\nfibroblast growth factor. Ligand binding, such as occurs\n\n\n### ANSWERS\n\n\nwith acetylcholine at a nerve-muscle junction, alters the\n\nconformation of ion channel receptors to allow flow of spe -\n\ncific ions such as calcium into the cell, changing the electric\n\npotential across the cell membrane. Cyclic AMP is a second\n\nmessenger that is typically activated via ligand binding to\n\nreceptors with seven transmembrane segments that associ -\n\nate with GTP-hydrolyzing proteins; chemokine receptors",
+      "headings": [
+        "PBD9 5–6 BP9 217–218 PBD8 150–152 BP8 235–237",
+        "PBD9 4–5 BP9 217–218 BP8 137",
+        "PBD9 3–4, 68 BP9 26–27 PBD8 41, 444 BP8 28",
+        "PBD9 10, 13 BP9 22–23 PBD8 52–53 BP8 12",
+        "PBD9 13–14 BP9 21–22 PBD8 37–38 BP8 22",
+        "PBD9 10–11 PBD8 50",
+        "PBD9 17 BP9 179 PBD8 90–92 BP8 64, 66",
+        "ANSWERS"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 105,
+      "word_count": 905,
+      "character_count": 5912,
+      "content_hash": "9369bcbca6ab88916f644bd77294e8e701fc0ef92826067f0a5e1fcc0e1c56e8",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0011_tb0006_da0261a4",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 11,
+      "textbook_page": 6,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER 1 The Cell as a Unit of Health and Disease",
+      "section": "PBD9 28–29 BP9 60–61 PBD8 82–84 BP8 62",
+      "content": "function in this fashion. Cyclin-dependent kinases act within\n\nthe nucleus. JAK/STAT pathways typically are recruited by\n\ncytokine receptors.\n\n\n### PBD9 17 BP9 61–62 PBD8 90–92 BP8 64–66\n\n\n9 A Basic fibroblast growth factor is a potent inducer of\n\nangiogenesis. It can participate in all steps of angiogenesis.\n\nEndostatin is an inhibitor of angiogenesis. Epidermal growth\n\nfactor and interleukin-1 have no significant angiogenic ac -\n\ntivity. Platelet-derived growth factor plays a role in vascular\n\nremodeling.\n\n\n### PBD9 19–20 BP9 62 PBD8 88 BP8 64, 72\n\n\n10 E TGF-β stimulates many steps in fibrogenesis, includ-\n\ning fibroblast chemotaxis and production of collagen by fi -\n\nbroblasts, while inhibiting degradation of collagen. All of the\n\nother steps listed are unaffected by TGF-β.\n\n\n### PBD9 20 BP9 62 PBD8 87–89 BP8 64, 73\n\n\n11 C He has osteoarthritis, or degenerative joint disease,\n\nwith loss of articular hyaline cartilage. Hyaluronan (hyaluron-\n\nic acid) is a large mucopolysaccharide, one form of proteogly-\n\ncan, which forms a hydrated, compressible gel contributing\n\nto the shock-absorbing function of joint surfaces. Elastin is a\n\nfibrillar protein that provides recoil in tissues such as skin,\n\narterial walls, and ligaments that need to stretch and return\n\nto their original shape. Fibronectin is a form of glycoprotein\n\nthat serves an adhesive function. Integrins are glycoproteins\n\nthat serve as cellular receptors for extracellular matrix com-\n\nponents; they can link to intracellular actin so that cells can\n\nalter their shape and mobility. Laminins are a form of glyco-\n\nprotein that help to anchor epithelial surfaces in basement\n\nmembranes.\n\n\n### PBD9 21–24 BP9 63–64 PBD8 94–95 BP8 66–67\n\n\n12 B Fibronectin is a key component of the extracellu -\n\nlar matrix and has a structure that looks like a paper clip.\n\nFibronectin can be synthesized by monocytes, fibroblasts,\n\nand endothelium. Dermatan sulfate, a glycosaminoglycan,\n\nforms a gel that provides resilience and lubrication. Heparin\n\nthat is infused has an anticoagulant function. Hyaluronic\n\nacid binds water to form a gelatinous extracellular matrix.\n\nProcollagen produced by fibroblasts is formed into ropelike\n\nstrands of collagen, which provide tensile strength.\n\n\n### PBD9 21, 24 BP9 64 PBD8 96–97 BP8 68\n\n\n13 D CDK1 controls an extremely important transition\n\npoint, the G2 to M transition, during the cell cycle, which can\n\nbe regulated by CDK inhibitors. The other checkpoints listed\n\nare regulated by a distinct set of proteins.\n\n\n### PBD9 26 BP9 59, 180–181 PBD8 86–87 BP8 63\n\n\n14 B Embryonic stem (ES) cells are multipotent and can\n\ngive rise to all cells, including hepatocytes. Gene targeting to\n\nproduce knockout mice is done in cultures of ES cells, which\n\nare then injected into mouse blastocysts and implanted into\n\nthe uterus of a surrogate mother. Mesenchymal stem cells\n\nalso are multipotential, but they are not useful for gene tar -\n\ngeting. Hematopoietic stem cells can give rise to all hema -\n\ntopoietic cells, but not other types of cells. Hepatocytes and\n\noval cells within the liver can give rise only to liver cells.\n\n\n### PBD9 27–28 BP9 60–61 PBD8 83 BP8 61–63\n\n\n15 D These transformed cells are designated iPS cells be-\n\ncause they have been induced to become pleuripotent. This\n\ntransformation process gets around the problem of using em-\n\nbryonic stem (ES) cells derived from manipulation of human\n\nembryos, which raises ethical and religious concerns. Embry-\n\nonic stem cells are totipotent, but they become pleuripotent\n\ncells that can further divide into many different cell lines, yet\n\nmaintain themselves in a replicating pool. Thus pleuripotent\n\ncells are the next best thing compared to embryonic cells for\n\n\n### PBD9 28–29 BP9 60–61 PBD8 82–84 BP8 62\n\n\nderiving human cells that could replace damaged or diseased\n\ntissues. Further differentiation of pleuripotent cells gives rise to\n\ncells with more restricted developmental capacity, such as mes-\n\nenchymal stem cells that can give rise to tissues such as muscle\n\nand cartilage but not to endodermal or ectodermal cells.",
+      "headings": [
+        "PBD9 17 BP9 61–62 PBD8 90–92 BP8 64–66",
+        "PBD9 19–20 BP9 62 PBD8 88 BP8 64, 72",
+        "PBD9 20 BP9 62 PBD8 87–89 BP8 64, 73",
+        "PBD9 21–24 BP9 63–64 PBD8 94–95 BP8 66–67",
+        "PBD9 21, 24 BP9 64 PBD8 96–97 BP8 68",
+        "PBD9 26 BP9 59, 180–181 PBD8 86–87 BP8 63",
+        "PBD9 27–28 BP9 60–61 PBD8 83 BP8 61–63",
+        "PBD9 28–29 BP9 60–61 PBD8 82–84 BP8 62"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 71,
+      "word_count": 640,
+      "character_count": 4092,
+      "content_hash": "da0261a47e545dc0b9d38aa66b5f1e5aa346e2b042a36e3623f53a1aff643356",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0012_tb0007_fda3d512",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 12,
+      "textbook_page": 7,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER",
+      "section": "PBD9 28–29 BP9 60–61 PBD8 82–84 BP8 62",
+      "content": "### CHAPTER\n\n\nCellular Pathology\n\n1 A 77-year-old woman has chronic renal failure. Her serum\n\nurea nitrogen is 40 mg/dL. She is given a diuretic medication\n\nand loses 2 kg (4.4 lb). She reduces the protein in her diet and\n\nher serum urea nitrogen decreases to 30 mg/dL. Which of the\n\nfollowing terms best describes cellular responses to disease and\n\ntreatment in this woman?\n\nA Adaptation\n\nB Apoptosis\n\nC Necroptosis\n\nD Irreversible injury\n\nE Metabolic derangement\n\n2 A 53-year-old woman with no prior illnesses has a\n\nroutine checkup by her physician. On examination she has a\n\nblood pressure of 150/95 mm Hg. If her hypertension remains\n\nuntreated for years, which of the following cellular alterations\n\nwould most likely be seen in her myocardium?\n\nA Apoptosis\n\nB Dysplasia\n\nC Fatty change\n\nD Hemosiderosis\n\nE Hyperplasia\n\nF Hypertrophy\n\nG Metaplasia\n\n3 A 22-year-old woman becomes pregnant. A fetal ultra -\n\nsound examination at 13 weeks’ gestation shows her uterus\n\nmeasures 7 × 4 × 3 cm. At delivery of a term infant, her uterus\n\nmeasures 34 × 18 × 12 cm. Which of the following cellular pro-\n\ncesses has contributed most to the increase in her uterine size?\n\nA Endometrial glandular hyperplasia\n\nB Myometrial fibroblast proliferation\n\nC Endometrial stromal hypertrophy\n\nD Myometrial smooth muscle hypertrophy\n\nE Vascular endothelial hyperplasia\n\n4 A 20-year-old woman breastfeeds her infant. On exami-\n\nnation, her breasts are slightly increased in size. Milk can be\n\nexpressed from both nipples. Which of the following process -\n\nes that occurred in her breasts during pregnancy enables her\n\nto breastfeed the infant?\n\nA Ductal metaplasia\n\nB Epithelial dysplasia\n\nC Intracellular lipid deposition\n\nD Lobular hyperplasia\n\nE Stromal hypertrophy\n\n5 A 16-year-old boy sustained blunt trauma to his abdo -\n\nmen when he struck a bridge abutment at high speed while\n\ndriving a motor vehicle. Peritoneal lavage shows a hemoperi -\n\ntoneum, and at laparotomy, a small portion of the left lobe of\n\nthe injured liver is removed. Two months later, a CT scan of\n\nthe abdomen shows that the liver has nearly regained its size\n\nbefore the injury. Which of the following processes best ex -\n\nplains this CT scan finding?\n\nA Apoptosis\n\nB Dysplasia\n\nC Hyperplasia\n\nD Hydropic change\n\nE Steatosis\n\n6 A 71-year-old man has had difficulty with urination, in-\n\ncluding hesitancy and increased frequency, for the past 5 years.\n\nA digital rectal examination reveals that his prostate gland is\n\npalpably enlarged to twice normal size. A transurethral resection\n\nof the prostate is performed, and the microscopic appearance of\n\nthe prostate “chips” obtained is that of nodules of glands with\n\nintervening stroma. Which of the following pathologic processes\n\nhas most likely occurred in his prostate?\n\nA Apoptosis\n\nB Dysplasia\n\nC Fatty change\n\nD Hyperplasia\n\nE Hypertrophy\n\nF Metaplasia\n\nPBD9 Chapter 2: Cellular Responses to Stress and Toxic Insults: Adaptation, Injury, and Death\n\nPBD8 Chapter 1: Cellular Responses to Stress and Toxic Insults\n\nBP9 and BP8 Chapter 1: Cell Injury, Cell Death, and Adaptations",
+      "headings": [
+        "CHAPTER"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 75,
+      "word_count": 493,
+      "character_count": 3090,
+      "content_hash": "fda3d512b10191fb9ad8e025c28f17e27e397b1d80c891bf737eca29baf3a7d7",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0013_tb0008_4c769a6e",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 13,
+      "textbook_page": 8,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER",
+      "section": "PBD9 28–29 BP9 60–61 PBD8 82–84 BP8 62",
+      "content": "7 A 29-year-old man sustains a left femoral fracture in a mo-\n\ntorcycle accident. His leg is placed in a plaster cast. After his left\n\nleg has been immobilized for 6 weeks, the diameter of the left calf\n\nhas decreased in size. This change in size is most likely to result\n\nfrom which of the following alterations in his calf muscles?\n\nA Aplasia\n\nB Atrophy\n\nC Dystrophy\n\nD Hyalinosis\n\nE Hypoplasia\n\n8 A 34-year-old obese woman has experienced heartburn\n\nfrom gastric reflux for the past 5 years after eating large meals.\n\nShe undergoes upper gastrointestinal endoscopy, and a biopsy\n\nspecimen of the distal esophagus is obtained. Which of the\n\nfollowing microscopic changes, seen in the figure, has most\n\nlikely occurred?\n\nA Columnar metaplasia\n\nB Goblet cell hyperplasia\n\nC Lamina propria atrophy\n\nD Squamous dysplasia\n\nE Mucosal hypertrophy\n\n9 An 11-year-old girl becomes infected with hepatitis A\n\nand experiences mild nausea for 1 week. On physical exami -\n\nnation, she has minimal right upper quadrant tenderness and\n\nscleral icterus. Laboratory findings include a serum AST of 68\n\nU/L, ALT of 75 U/L, and total bilirubin of 5.1 mg/dL. Her\n\nlaboratory findings most likely result from which of the fol -\n\nlowing changes in her hepatocytes?\n\nA Cell membrane defects\n\nB Lysosomal autophagy\n\nC Mitochondrial swelling\n\nD Nuclear chromatin clumping\n\nE Ribosomal dispersion\n\n10 A 33-year-old woman has had increasing lethargy and\n\ndecreased urine output for the past week. Laboratory studies\n\nshow her serum creatinine is 4.3 mg/dL and urea nitrogen\n\n40 mg/dL. A renal biopsy is performed, and the specimen is\n\nexamined using electron microscopy. Which of the following\n\nmorphologic cellular changes most likely suggests a diagnosis\n\nof acute tubular necrosis?\n\nA Chromatin clumping\n\nB Mitochondrial swelling\n\nC Nuclear fragmentation\n\nD Plasma membrane blebs\n\nE Ribosomal disaggregation\n\n11 A 50-year-old man has experienced an episode of chest\n\npain for 6 hours. A representative histologic section of his\n\nleft ventricular myocardium is shown in the figure. There\n\nis no hemorrhage or inflammation. Which of the following\n\nconditions most likely produced these myocardial changes?\n\nA Arterial thrombosis\n\nB Autoimmunity\n\nC Blunt chest trauma\n\nD Protein-deficient diet\n\nE Viral infection\n\n12 A 38-year-old woman has experienced severe abdomi -\n\nnal pain over the past day. On examination she is hypotensive\n\nand in shock. Laboratory studies show elevated serum lipase.\n\nFrom the representative gross appearance of the mesentery\n\nshown in the figure, which of the following events has most\n\nlikely occurred?\n\nA Acute pancreatitis\n\nB Gangrenous cholecystitis\n\nC Hepatitis B virus infection\n\nD Small intestinal infarction\n\nE Tuberculous lymphadenitis",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 66,
+      "word_count": 424,
+      "character_count": 2746,
+      "content_hash": "4c769a6e18924a74a8a026e92f88f018bdaff3293023797b467cd81c3ec49f12",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0014_tb0009_82140339",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 14,
+      "textbook_page": 9,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER 2 Cellular Pathology",
+      "section": "A ADP",
+      "content": "13 A 68-year-old woman suddenly lost consciousness and\n\non awakening 1 hour later, she could not speak or move her\n\nright arm. Two months later, a head CT scan showed a large\n\ncystic area in the left parietal lobe. Which of the following\n\npathologic processes has most likely occurred in her brain?\n\nA Apoptosis\n\nB Coagulative necrosis\n\nC Fat necrosis\n\nD Karyolysis\n\nE Liquefactive necrosis\n\n14 A screening chest radiograph of an asymptomatic\n\n37-year-old man shows a 3-cm nodule in the middle lobe\n\nof his right lung. The nodule is excised with a pulmonary\n\nwedge resection, and sectioning shows a sharply circum -\n\nscribed mass with a soft, white center. The microscopic ap -\n\npearance is shown in the figure. The serum interferon gamma\n\nrelease assay is positive. Which of the following pathologic\n\nprocesses has most likely occurred in this nodule?\n\nA Apoptosis\n\nB Caseous necrosis\n\nC Coagulative necrosis\n\nD Fat necrosis\n\nE Fatty change\n\nF Gangrenous necrosis\n\nG Liquefactive necrosis\n\n15 An experimental drug administered to a tissue prepa -\n\nration is found to inhibit cellular oxidative phosphorylation\n\nwhen given in high doses, and ATP production drops to 5% of\n\nnormal. Cell membrane function is diminished. Which of the\n\nfollowing substances is most likely to be present at increased\n\nconcentration in culture fluid bathing the tissue?\n\nA Calcium\n\nB Glucose\n\nC Ketones\n\nD Potassium\n\nE Sodium\n\n16 A 47-year-old woman has poorly controlled diabetes\n\nmellitus and develops coronary artery disease. She now has de-\n\ncreasing cardiac output with blood pressure of 80/40 mm Hg\n\nand ejection fraction of 18%. An increase in which of the follow-\n\ning substances in her blood is most indicative of reversible cell\n\ninjury from decreased systemic arterial perfusion of multiple\n\norgans and tissues?\n\nA Carbon dioxide\n\nB Creatinine\n\nC Glucose\n\nD Lactic acid\n\n\n| Feature / Marker | Diagnostic Finding |\n| --- | --- |\n| Morphology / IHC | Positive / Specific expression |\n\n\nE Troponin I\n\n17 A tissue preparation is experimentally subjected to a\n\nhypoxic environment. The cells in this tissue begin to swell,\n\nand chromatin begins to clump in cell nuclei. ATPases are acti-\n\nvated, and ATP production decreases. Which of the following\n\nions accumulating in mitochondria and the cytosol contributes\n\nmost to these findings and to eventual cell death?\n\nA Ca2+\n\nB Cl−\n\n\n### C HCO3−\n\n\n\n### D K+\n\n\nE Na+\n\n\n### F PO43−\n\n\n18 In an experiment, a large amount of a drug is admin-\n\nistered to experimental organisms and is converted by cy -\n\ntochrome P-450 to a toxic metabolite. Accumulation of this\n\nmetabolite leads to increased intracellular lipid peroxidation.\n\nDepletion of which of the following intracellular substances\n\nwithin the cytosol exacerbates this form of cellular injury by\n\nthis mechanism?\n\n\n### A ADP\n\n\nB Glutathione\n\nC NADPH oxidase\n\nD Nitric oxide synthase\n\nE mRNA\n\nF Sodium\n\n19 In an experiment, metabolically active cells are subject -\n\ned to radiant energy in the form of x-rays. This results in cell\n\ninjury caused by hydrolysis of water. Which of the following\n\nintracellular enzymes helps to protect the cells from this type\n\nof injury?\n\nA Endonuclease\n\nB Glutathione peroxidase\n\nC Lactate dehydrogenase\n\nD Phospholipase\n\nE Protease\n\n20 A 5-year-old child ingests 50 iron tablets, each with 27\n\nmg of iron. Within 6 hours the child develops abdominal pain\n\nand lethargy. On physical examination he is hypotensive. Lab-\n\noratory studies show metabolic acidosis. Through formation\n\nof which of the following compounds is the cell injury in this\n\nchild most likely mediated?\n\nA Ascorbic acid\n\nB Hemosiderin\n\nC Hydroxyl radical\n\nD Nitric oxide\n\nE Superoxide dismutase",
+      "headings": [
+        "C HCO3−",
+        "D K+",
+        "F PO43−",
+        "A ADP"
+      ],
+      "tables": [
+        {
+          "headers": [
+            "Feature / Marker",
+            "Diagnostic Finding"
+          ],
+          "rows": [
+            [
+              "Morphology / IHC",
+              "Positive / Specific expression"
+            ]
+          ]
+        }
+      ],
+      "figures": [],
+      "raw_block_count": 95,
+      "word_count": 595,
+      "character_count": 3679,
+      "content_hash": "821403399ea6fff6dc7c5e5c4c02ea6ed400119954df5d2e565fce7d372bc54a",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "88878cf1-7c67-5194-9da2-429096669458_pdf0015_tb0010_4854bf4d",
+      "document_id": "88878cf1-7c67-5194-9da2-429096669458",
+      "source": "Robbins and Cotran Review of Pathology",
+      "pdf_page": 15,
+      "textbook_page": 10,
+      "chunk_id": "robbins_review_p0001_p0015",
+      "chapter": "CHAPTER 2 Cellular Pathology",
+      "section": "A BCL2",
+      "content": "21 A 63-year-old man has a 2-year history of worsening\n\ncongestive heart failure. An echocardiogram shows mitral\n\nvalve stenosis with left atrial dilation. A mural thrombus is\n\npresent in the left atrium. One month later, he experiences\n\nleft flank pain and notes hematuria. Laboratory testing shows\n\nan elevated serum AST. The representative microscopic ap -\n\npearance of the lesion is shown in the figure. Which of the fol-\n\nlowing patterns of tissue necrosis is most likely to be present\n\nin this man?\n\nA Caseous\n\nB Coagulative\n\nC Fat\n\nD Gangrenous\n\nE Liquefactive\n\n22 A 54-year-old man experienced severe substernal chest\n\npain for 3 hours. An ECG showed changes consistent with an\n\nacute myocardial infarction. After thrombolytic therapy with\n\ntissue plasminogen activator (t-PA), his serum creatine kinase\n\n(CK) level increased. Which of the following tissue events\n\nmost likely occurred in the myocardium after t-PA therapy?\n\nA Cellular regeneration\n\nB Drug toxicity\n\nC Increased synthesis of CK\n\nD Myofiber atrophy\n\nE Reperfusion injury\n\n23 On day 28 of her menstrual cycle, a 23-year-old woman\n\nexperiences onset of menstrual bleeding that lasts for 6 days. She\n\nhas had regular cycles since menarche. Which of the following\n\nprocesses most likely occurs in her endometrial cells to initiate\n\nthe onset of menstrual bleeding?\n\nA Apoptosis\n\nB Atrophy\n\nC Caseous necrosis\n\nD Heterophagocytosis\n\nE Liquefactive necrosis\n\n24 An experiment introduces a knockout gene mutation\n\ninto a cell line. The frequency of shrunken cells with chromatin\n\nclumping, karyorrhexis, and cytoplasmic blebbing is increased\n\ncompared with a cell line without the mutation. Overall sur-\n\nvival of the mutant cell line is reduced. Which of the following\n\ngenes is most likely to be affected by this mutation?\n\n\n### A BAX\n\n\n\n### B BCL2\n\n\n\n### C C-MYC\n\n\n\n### D FAS\n\n\nE p53\n\n25 A 22-year-old woman with leukemia undergoes bone\n\nmarrow transplantation and receives a partially mismatched\n\ndonor marrow. One month later, she has a scaling skin rash. A\n\nskin biopsy is obtained, and on microscopic examination, it has\n\nthe cellular change shown in the figure. This change most likely\n\nresults from which of the following biochemical reactions?\n\nA Activation of caspases\n\nB Elaboration of lipases\n\nC Increase in glycolysis\n\nD Peroxidation of lipids\n\nE Reduction of ATP synthesis\n\n26 A 47-year-old man has a lung carcinoma with metas -\n\ntases. He receives chemotherapy. A month later, histologic\n\nexamination of a metastatic lesion shows many foci in which\n\nindividual tumor cells appear shrunken and deeply eosino -\n\nphilic. Their nuclei exhibit condensed aggregates of chromatin\n\nunder the nuclear membrane. The pathologic process affecting\n\nthese shrunken tumor cells is most likely triggered by release\n\n\n### A BCL2\n\n\nof which of the following substances into the cytosol?\n\nB Catalase\n\nC Cytochrome c\n\nD Lipofuscin\n\nE Phospholipase",
+      "headings": [
+        "A BAX",
+        "B BCL2",
+        "C C-MYC",
+        "D FAS",
+        "A BCL2"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 70,
+      "word_count": 454,
+      "character_count": 2910,
+      "content_hash": "4854bf4db069faf05b33dc82bd97313b46264288f7d6262d14593d9c5f7dcab1",
+      "version": 1,
+      "ingestion_version": "v1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    }
+  ]
+}

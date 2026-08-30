@@ -1,0 +1,25 @@
+{
+  "report_id": "qr_robbins_review_p0016_p0030",
+  "slice_id": "robbins_review_p0016_p0030",
+  "parent_doc_id": "88878cf1-7c67-5194-9da2-429096669458",
+  "parent_doc_title": "Robbins and Cotran Review of Pathology",
+  "start_page_1based": 16,
+  "end_page_1based": 30,
+  "page_count": 15,
+  "total_blocks": 1380,
+  "total_words": 10156,
+  "total_characters": 63365,
+  "structure_counts": {
+    "headings": 59,
+    "paragraphs": 1320,
+    "tables": 1,
+    "lists": 0,
+    "figures": 0
+  },
+  "average_confidence": 0.9217,
+  "low_confidence_block_count": 0,
+  "provenance_integrity_score": 1.0,
+  "provenance_verified": true,
+  "anomalies": [],
+  "generated_at": "2026-08-30T15:03:30.673329+00:00"
+}

@@ -109,7 +109,7 @@ def cmd_process(args: argparse.Namespace) -> None:
 
 
 def cmd_book(args: argparse.Namespace) -> None:
-    """Processes multiple sequential chunks of a book (e.g. --doc robbins_review --chunks 10)."""
+    """Processes multiple sequential chunks of a book (e.g. --doc robbins_review --pages-per-chunk 15 --max-chunks 5)."""
     registry = DocumentRegistry()
     splitter = PDFSplitter(registry=registry)
     docai_client = DocumentAIClient()
@@ -122,15 +122,25 @@ def cmd_book(args: argparse.Namespace) -> None:
         logger.error(f"Document '{args.doc}' not found in registry.")
         return
 
-    pages_per_slice = min(args.pages_per_slice, 15)
-    max_slices = args.chunks or 9999
+    # Respect GCP online layout parser ceiling (<= 15 pages per request)
+    raw_pages_per_chunk = args.pages_per_chunk or args.pages_per_slice or 15
+    if raw_pages_per_chunk > 15:
+        logger.warning(
+            f"Requested {raw_pages_per_chunk} pages per chunk exceeds GCP Document AI online layout parser limit (15). Clamping to 15."
+        )
+    pages_per_chunk = min(raw_pages_per_chunk, 15)
+
+    max_chunks = args.max_chunks or args.chunks or 9999
     start_offset = args.start_page or 1
 
-    logger.info(f"🚀 Slicing & processing '{doc.title}' in {pages_per_slice}-page chunks...")
+    logger.info(
+        f"🚀 Slicing & processing '{doc.title}' in {pages_per_chunk}-page chunks "
+        f"(Max chunks: {'All' if max_chunks >= 9999 else max_chunks}, Start page: {start_offset})..."
+    )
     slices = splitter.create_pilot_chunks(
         doc_id_or_short_name=doc.doc_id,
-        max_slices=max_slices,
-        pages_per_slice=pages_per_slice,
+        max_slices=max_chunks,
+        pages_per_slice=pages_per_chunk,
         start_offset_1based=start_offset,
     )
 
@@ -220,12 +230,42 @@ def main():
     pilot_parser.set_defaults(func=cmd_pilot)
 
     # book
-    book_parser = subparsers.add_parser("book", help="Process multiple chunks of a registered book")
-    book_parser.add_argument("--doc", required=True, help="Document ID or short_name (e.g. robbins_review)")
-    book_parser.add_argument("--chunks", type=int, default=None, help="Number of chunks to process (default: all)")
-    book_parser.add_argument("--start-page", type=int, default=1, help="Starting PDF page (default: 1)")
-    book_parser.add_argument("--pages-per-slice", type=int, default=15, help="Pages per slice chunk (max 15)")
-    book_parser.add_argument("--mock", action="store_true", default=False, help="Force mock layout generator")
+    book_parser = subparsers.add_parser(
+        "book",
+        help="Process multiple sequential chunks of a registered book (strictly <= 15 pages per chunk)",
+    )
+    book_parser.add_argument(
+        "--doc",
+        required=True,
+        help="Document ID or short_name (e.g. robbins_review or robbins_pathologic_basis_11th)",
+    )
+    book_parser.add_argument(
+        "--pages-per-chunk",
+        type=int,
+        default=15,
+        help="Number of PDF pages per chunk/Document AI request (default: 15, max: 15)",
+    )
+    book_parser.add_argument(
+        "--max-chunks",
+        type=int,
+        default=None,
+        help="Maximum number of sequential chunks to process (e.g. --max-chunks 20; default: all chunks)",
+    )
+    book_parser.add_argument(
+        "--start-page",
+        type=int,
+        default=1,
+        help="Starting 1-based PDF physical page (default: 1)",
+    )
+    book_parser.add_argument(
+        "--mock",
+        action="store_true",
+        default=False,
+        help="Force mock layout generator (for offline / CI testing)",
+    )
+    # Aliases for backwards compatibility
+    book_parser.add_argument("--chunks", type=int, default=None, help=argparse.SUPPRESS)
+    book_parser.add_argument("--pages-per-slice", type=int, default=None, help=argparse.SUPPRESS)
     book_parser.set_defaults(func=cmd_book)
 
     args = parser.parse_args()
