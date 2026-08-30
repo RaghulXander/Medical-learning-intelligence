@@ -431,3 +431,73 @@ def report_question(
         "status": "success",
         "message": f"Question {req.question_id} report recorded under category '{req.category}'.",
     }
+
+
+class GenerateQuestionApiRequest(BaseModel):
+    topic: str = Field(..., min_length=2, description="Pathology topic (e.g. 'Breast Carcinoma')")
+    learning_objective: str = Field(..., min_length=5, description="Specific learning objective")
+    subtopic: Optional[str] = Field(default=None)
+    difficulty: str = Field(default="MEDIUM")
+    cognitive_level: str = Field(default="APPLICATION")
+    target_exam: str = Field(default="NEET_PG")
+    count: int = Field(default=1, ge=1, le=10)
+    force_mock: bool = Field(default=False)
+
+
+@router.post("/generate")
+def generate_questions_from_evidence(
+    req: GenerateQuestionApiRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(Permission.QUESTIONS_EDIT)),
+) -> Dict[str, Any]:
+    """
+    Evidence-grounded question generator for authorized editors & educators.
+    Synthesizes questions strictly backed by Robbins pathology evidence.
+    """
+    from backend.services.generation.models import QuestionBlueprint
+    from backend.services.generation.service import QuestionGenerationService
+    from backend.services.generation.generator import get_mcq_generator
+
+    blueprint = QuestionBlueprint(
+        topic=req.topic,
+        learning_objective=req.learning_objective,
+        subtopic=req.subtopic,
+        difficulty=req.difficulty,
+        cognitive_level=req.cognitive_level,
+        target_exam=req.target_exam,
+    )
+
+    service = QuestionGenerationService()
+    generator = get_mcq_generator(force_mock=req.force_mock)
+
+    generated_items = []
+    for _ in range(req.count):
+        try:
+            q, eval_res, mcq = service.generate_question_from_blueprint(
+                db=db,
+                blueprint=blueprint,
+                generator=generator,
+                persist=True,
+            )
+            generated_items.append({
+                "id": q.id,
+                "stem": q.stem,
+                "options": q.options,
+                "correct_option": q.correct_option,
+                "explanation": q.explanation,
+                "status": q.status.value,
+                "quality_score": q.quality_score,
+                "citations": mcq.citations,
+                "evaluation_passed": eval_res.passed,
+            })
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Question generation failed: {str(e)}",
+            )
+
+    return {
+        "status": "success",
+        "generated_count": len(generated_items),
+        "items": generated_items,
+    }
