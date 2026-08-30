@@ -13,6 +13,7 @@ import {
   Sliders,
   Sparkles,
   ChevronDown,
+  FolderTree,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -29,6 +30,7 @@ export function Navbar() {
 
   const links = [
     { href: '/', label: 'Overview', icon: Stethoscope },
+    { href: '/pathology', label: 'Pathology Map', icon: FolderTree },
     { href: '/student', label: 'Student Hub', icon: BookOpen },
     { href: '/admin', label: 'Question Bank (Admin)', icon: ShieldCheck },
   ];

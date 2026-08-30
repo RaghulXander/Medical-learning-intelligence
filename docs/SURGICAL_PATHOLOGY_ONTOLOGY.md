@@ -3,6 +3,20 @@
 Milestone 14 introduces a versioned, typed ontology alongside the existing curriculum
 tree. The current seed is `2026.08-draft.1`; it is not a production classification.
 
+## Preview the hierarchy
+
+The Next.js application exposes a read-only explorer at `/pathology`. It renders
+the versioned seed during the web build, so reviewers can browse the hierarchy,
+search codes and aliases, filter node types, and inspect parent/child paths without
+requiring database access. The page intentionally preserves `DRAFT` and
+`AI_SUGGESTED` labels and must not imply that the ontology has been released.
+
+Run the web application locally and open:
+
+```text
+http://localhost:3005/pathology
+```
+
 ## Current scope
 
 The seed contains 84 nodes:

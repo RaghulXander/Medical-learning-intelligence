@@ -89,6 +89,8 @@ jobs:
         run: bun run test:cms
       - name: Validate editor and mobile UI schemas
         run: bun run test:editor
+      - name: Validate ontology explorer tree
+        run: bun run test:ontology-ui
       - name: Build web
         env:
           API_URL: http://127.0.0.1:8000

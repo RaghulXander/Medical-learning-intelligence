@@ -3,7 +3,8 @@
 > Progress (2026-08-29): Phases 14.1–14.3 have started. The versioned schema,
 > structural validation, core hierarchy, and limited Breast draft seed are present.
 > The sixth-edition WHO Breast source is an online beta, so the scheme remains
-> `DRAFT`; feature relationships, evidence, question crosswalk, and admin UI remain.
+> `DRAFT`; a public read-only ontology explorer is available at `/pathology`, while
+> feature relationships, evidence, reviewed question crosswalk, and editing UI remain.
 
 ## 1. Purpose
 

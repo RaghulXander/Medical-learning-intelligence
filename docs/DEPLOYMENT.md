@@ -6,7 +6,7 @@ The production-alpha topology is:
 - FastAPI container on Render
 - PostgreSQL on Neon
 - Native preview/production artifacts through Expo EAS
-- MkDocs engineering documentation on GitHub Pages
+- MkDocs engineering documentation in a separate Vercel project
 
 ## 1. Render API
 
@@ -179,23 +179,30 @@ Expo tracks this as a Bun-monorepo false positive. CI therefore runs
 `expo install --check`, native TypeScript validation and the EAS build itself
 instead of suppressing actual package-version incompatibilities.
 
-## 6. GitHub Pages documentation
+## 6. Vercel documentation and ontology preview
 
-The engineering portal is published at:
+Use two Vercel projects connected to the same GitHub repository so the Next.js
+application and MkDocs portal keep independent build settings:
 
-```text
-https://raghulxander.github.io/Medical-learning-intelligence/
-```
+| Vercel project | Root directory | Configuration | Purpose |
+| --- | --- | --- | --- |
+| DocEdge web | `apps/web` | `apps/web/vercel.json` | Public application and `/pathology` ontology explorer |
+| DocEdge engineering docs | repository root | `vercel.json` | MkDocs portal built into `site/` |
 
-The **Deploy Documentation** workflow builds MkDocs and publishes the generated
-artifact after every push to `main`. It can also be run manually from the
-repository's Actions tab. Source documentation belongs in `docs/`; `site/` is a
-local build artifact and must remain uncommitted.
+For the documentation project, import the existing GitHub repository again in
+Vercel, leave the root directory at the repository root, and select **Other** as
+the framework if Vercel does not detect the root configuration automatically.
+`vercel.json` installs `requirements-docs.txt`, runs the strict MkDocs build, and
+publishes `site/` as the output directory.
 
-For the initial deployment, open **Settings → Pages** in GitHub and set **Source**
-to **GitHub Actions**. Future pushes require no manual deployment step. A code
-change only changes the published documentation when the corresponding Markdown
-or MkDocs configuration is updated in the same push.
+Both projects should track `main` as their production branch. Vercel's Git
+integration then creates a production deployment after each pushed commit and a
+preview deployment for non-production branches. Source documentation belongs in
+`docs/`; generated `site/` remains uncommitted.
+
+The ontology explorer is available at `/pathology` on the existing web project.
+It is built directly from the versioned seed and does not require the API or a
+seeded production database to display the current editorial hierarchy.
 
 Preview documentation locally with:
 
@@ -204,7 +211,7 @@ python -m mkdocs serve
 ```
 
 Then open `http://127.0.0.1:8000`. The local preview is useful while writing,
-but GitHub Pages is the shared, durable copy.
+but the Vercel documentation project is the shared, durable copy.
 
 ## 7. Production-alpha smoke test
 
