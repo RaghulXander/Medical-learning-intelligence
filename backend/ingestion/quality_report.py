@@ -39,7 +39,7 @@ class QualityReport:
     total_words: int
     total_characters: int
     structure_counts: Dict[str, int]
-    average_confidence: float
+    average_confidence: Optional[float]
     low_confidence_block_count: int
     valid_provenance_block_count: int
     processed_page_count: int
@@ -71,6 +71,12 @@ class QualityReport:
             else "- *No automated anomalies detected.*"
         )
 
+        conf_display = (
+            f"{self.average_confidence * 100:.2f}%"
+            if self.average_confidence is not None
+            else "N/A (Structural Layout Tree)"
+        )
+
         md = f"""# Document AI Extraction Quality Report: `{self.slice_id}`
 
 **Audit Status:** {status_badge}  
@@ -99,7 +105,7 @@ class QualityReport:
 | **Total Extracted Blocks** | {self.total_blocks} | Structured units |
 | **Total Word Count** | {self.total_words:,} | Extracted tokens |
 | **Total Character Count** | {self.total_characters:,} | Normalized characters |
-| **Average Parser Confidence** | **{self.average_confidence * 100:.2f}%** | Parser-reported; not medical accuracy |
+| **Average Parser Confidence** | **{conf_display}** | Parser-reported; not medical accuracy |
 | **Low Confidence Blocks (<75%)** | {self.low_confidence_block_count} | Flagged for review |
 
 ### Structural Element Distribution
@@ -149,10 +155,13 @@ class QualityReportGenerator:
             "figures": sum(1 for b in blocks if b.block_type == "FIGURE_CAPTION"),
         }
 
-        avg_confidence = (
-            sum(b.confidence for b in blocks) / total_blocks if total_blocks else 0.0
-        )
-        low_confidence_count = sum(1 for b in blocks if b.confidence < 0.75)
+        confidences = [b.confidence for b in blocks if b.confidence is not None]
+        if confidences:
+            avg_confidence = round(sum(confidences) / len(confidences), 4)
+            low_confidence_count = sum(1 for c in confidences if c < 0.75)
+        else:
+            avg_confidence = None
+            low_confidence_count = 0
 
         # Provenance verification audit
         anomalies: List[str] = []
@@ -258,7 +267,9 @@ class QualityReportGenerator:
             total_words=total_words,
             total_characters=total_characters,
             structure_counts=structure_counts,
-            average_confidence=round(avg_confidence, 4),
+            average_confidence=(
+                round(avg_confidence, 4) if avg_confidence is not None else None
+            ),
             low_confidence_block_count=low_confidence_count,
             valid_provenance_block_count=valid_provenance_blocks,
             processed_page_count=len(expected_pages & pages_found),

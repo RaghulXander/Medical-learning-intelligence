@@ -414,7 +414,7 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
                 for block in normalized.blocks
             )
         )
-        self.assertTrue(all(block.confidence >= 0.90 for block in normalized.blocks))
+        self.assertTrue(all(block.confidence is None for block in normalized.blocks))
 
     def test_provenance_audit_and_quality_report(self):
         """Tests that extraction quality report verifies 100% provenance and catches anomalies."""

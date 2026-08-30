@@ -102,6 +102,9 @@ class PDFSplitter:
         with open(slice_path, "wb") as f_out:
             writer.write(f_out)
 
+        # Ensure slice PDF is strictly under 18 MB for GCP Document AI payload compliance
+        self._ensure_payload_size_limit(slice_path, max_mb=18.0)
+
         slice_sha256 = compute_file_sha256(slice_path)
 
         manifest = SliceManifest(
@@ -133,6 +136,42 @@ class PDFSplitter:
             f"Successfully created slice '{slice_id}' (pages {start_page_1based}..{end_page_1based}) from '{doc.short_name}'"
         )
         return manifest
+
+    @staticmethod
+    def _ensure_payload_size_limit(pdf_path: Path, max_mb: float = 18.0) -> None:
+        """Compresses/optimizes PDF slice if raw size exceeds Document AI 20MB limit."""
+        if not pdf_path.exists():
+            return
+        size_mb = pdf_path.stat().st_size / (1024 * 1024)
+        if size_mb <= max_mb:
+            return
+
+        try:
+            import os
+            import pymupdf
+            logger.info(
+                f"⚡ Slice '{pdf_path.name}' is {size_mb:.2f}MB (> {max_mb}MB limit). "
+                "Applying 200 DPI layout-preservation optimization..."
+            )
+            doc = pymupdf.open(str(pdf_path))
+            out_doc = pymupdf.open()
+            for page in doc:
+                pix = page.get_pixmap(dpi=200)
+                img_bytes = pix.tobytes("jpeg", jpg_quality=85)
+                img_doc = pymupdf.open("jpeg", img_bytes)
+                page_pdf_bytes = img_doc.convert_to_pdf()
+                page_pdf = pymupdf.open("pdf", page_pdf_bytes)
+                out_doc.insert_pdf(page_pdf)
+
+            doc.close()
+            tmp_path = pdf_path.with_suffix(".opt_tmp.pdf")
+            out_doc.save(str(tmp_path), deflate=True, garbage=4, clean=True)
+            out_doc.close()
+            os.replace(tmp_path, pdf_path)
+            new_size_mb = pdf_path.stat().st_size / (1024 * 1024)
+            logger.info(f"✅ Optimized '{pdf_path.name}' down to {new_size_mb:.2f}MB (GCP payload compliant)")
+        except Exception as e:
+            logger.warning(f"Optimization fallback warning for {pdf_path.name}: {e}")
 
     def create_pilot_chunks(
         self,

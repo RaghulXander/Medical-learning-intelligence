@@ -89,9 +89,14 @@ def process_single_slice(
     )
 
     status_icon = "✅" if report.eligible_for_evidence else "🛑"
+    conf_str = (
+        f"{report.average_confidence * 100:.2f}%"
+        if report.average_confidence is not None
+        else "N/A (Layout Tree)"
+    )
     logger.info(
         f"{status_icon} Quality Report Generated: Integrity Score = {report.provenance_integrity_score * 100:.1f}%, "
-        f"Avg Confidence = {report.average_confidence * 100:.2f}%, Words = {report.total_words:,}"
+        f"Avg Confidence = {conf_str}, Words = {report.total_words:,}"
     )
 
     if not report.eligible_for_evidence:

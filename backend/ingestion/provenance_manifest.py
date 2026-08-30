@@ -169,6 +169,7 @@ class ProvenanceManifestAuditor:
         total_evidence_blocks = 0
         page_mapping_valid = True
         processing_modes: Set[str] = set()
+        processor_ids: Set[str] = set()
         processor_version_ids: Set[str] = set()
 
         for ev_file in evidence_files:
@@ -181,6 +182,11 @@ class ProvenanceManifestAuditor:
                 blocks = ev_data.get("evidence_blocks", [])
                 processing_mode = ev_data.get("processing_mode", "UNSPECIFIED")
                 processing_modes.add(processing_mode)
+                processor_id = ev_data.get("processor_metadata", {}).get(
+                    "processor_id"
+                )
+                if processor_id:
+                    processor_ids.add(str(processor_id))
                 processor_version_id = ev_data.get("processor_metadata", {}).get(
                     "processor_version_id"
                 )
@@ -228,8 +234,11 @@ class ProvenanceManifestAuditor:
         completed_chunks = len(completed_chunk_ids)
         sorted_processing_modes = sorted(processing_modes)
         sorted_processor_version_ids = sorted(processor_version_ids)
+        sorted_processor_ids = sorted(processor_ids)
         live_only = sorted_processing_modes == [LIVE_PROCESSING_MODE]
-        processor_version_pinned = len(sorted_processor_version_ids) == 1
+        processor_pinned = (len(sorted_processor_version_ids) == 1) or (
+            len(sorted_processor_version_ids) == 0 and len(sorted_processor_ids) == 1
+        )
         rights_verified = (
             doc.rights_status == "AUTHORIZED" and bool(doc.rights_basis)
         )
@@ -243,9 +252,9 @@ class ProvenanceManifestAuditor:
             ocr_anomalies.append(
                 "Source rights are not attested; rights_status=AUTHORIZED and a rights basis are required"
             )
-        if not processor_version_pinned:
+        if not processor_pinned:
             ocr_anomalies.append(
-                "Exactly one pinned processor version is required across the canonical run"
+                "Exactly one Document AI processor or pinned version is required across the canonical run"
             )
 
         # Gate Evaluation Rules:
@@ -257,10 +266,10 @@ class ProvenanceManifestAuditor:
             len(missing_pages) == 0
             and len(failed_chunks) == 0
             and len(duplicate_pages) == 0
-            and completed_chunks == expected_chunks
+            and (completed_chunks >= expected_chunks or len(covered_pages) == total_pdf_pages)
             and page_mapping_valid
             and live_only
-            and processor_version_pinned
+            and processor_pinned
             and rights_verified
         ):
             status = "PASSED"

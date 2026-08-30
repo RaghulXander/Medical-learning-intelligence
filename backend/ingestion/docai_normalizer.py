@@ -40,13 +40,13 @@ class NormalizedBlock:
     block_id: str
     block_type: str  # HEADING_1, HEADING_2, HEADING_3, PARAGRAPH, TABLE, LIST_ITEM, FIGURE_CAPTION, RUNNING_HEADER, RUNNING_FOOTER
     content: str
-    confidence: float
     original_doc_id: str
     original_doc_title: str
     original_page_number: int  # 1-based physical page in PDF
     slice_id: str
     slice_page_number: int  # 1-based local page in slice
     content_hash: str
+    confidence: Optional[float] = None
     pdf_page: int = 1
     textbook_page: Optional[int] = None
     document_id: str = ""
@@ -218,10 +218,11 @@ class DocumentAINormalizer:
         heading_count = sum(1 for b in normalized_blocks if "HEADING" in b.block_type)
         paragraph_count = sum(1 for b in normalized_blocks if b.block_type == "PARAGRAPH")
         table_count = sum(1 for b in normalized_blocks if b.block_type == "TABLE")
+        confidences = [b.confidence for b in normalized_blocks if b.confidence is not None]
         avg_confidence = (
-            sum(b.confidence for b in normalized_blocks) / len(normalized_blocks)
-            if normalized_blocks
-            else 1.0
+            round(sum(confidences) / len(confidences), 4)
+            if confidences
+            else None
         )
 
         composite_markdown = "\n\n".join(md_sections)
@@ -230,7 +231,9 @@ class DocumentAINormalizer:
             "heading_count": heading_count,
             "paragraph_count": paragraph_count,
             "table_count": table_count,
-            "average_confidence": round(avg_confidence, 4),
+            "average_confidence": (
+                round(avg_confidence, 4) if avg_confidence is not None else None
+            ),
             "start_page_1based": manifest.start_page_1based,
             "end_page_1based": manifest.end_page_1based,
             "original_pages_covered": sorted(
@@ -543,7 +546,7 @@ class DocumentAINormalizer:
                                 block_id=f"{manifest.slice_id}_p{original_page_num:04d}_tbl_{b.get('blockId', '0')}",
                                 block_type="TABLE",
                                 content=table_md,
-                                confidence=float(b.get("confidence") or 0.95),
+                                confidence=float(b["confidence"]) if "confidence" in b and b["confidence"] is not None else None,
                                 original_doc_id=manifest.parent_doc_id,
                                 original_doc_title=manifest.parent_doc_title,
                                 original_page_number=original_page_num,
@@ -586,7 +589,7 @@ class DocumentAINormalizer:
                                 block_id=f"{manifest.slice_id}_p{original_page_num:04d}_{b.get('blockId', '0')}_{content_hash[:8]}",
                                 block_type=block_type,
                                 content=cleaned_text,
-                                confidence=float(b.get("confidence") or 0.95),
+                                confidence=float(b["confidence"]) if "confidence" in b and b["confidence"] is not None else None,
                                 original_doc_id=manifest.parent_doc_id,
                                 original_doc_title=manifest.parent_doc_title,
                                 original_page_number=original_page_num,
