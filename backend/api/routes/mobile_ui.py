@@ -64,7 +64,7 @@ def _visible(document: MobileScreenDocument, user: User | None, platform: str) -
     return result
 
 
-@router.get("/screens/{screen_key}")
+@router.get("/screens/{screen_key}", response_model=None)
 def get_mobile_screen(
     screen_key: str,
     response: Response,

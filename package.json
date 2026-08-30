@@ -33,6 +33,7 @@
     "docs:serve": "bun scripts/run_python.mjs -m mkdocs serve",
     "test:shared": "bun test packages/shared/src",
     "test:cms": "bun test tests-ts/cms_schema.test.ts",
+    "test:editor": "bun test tests-ts/editor_schemas.test.ts",
     "ontology:preview": "bun scripts/run_python.mjs scripts/group_pathology_questions.py",
     "ontology:apply": "bun scripts/run_python.mjs scripts/group_pathology_questions.py --apply",
     "ontology:seed:surgical": "bun scripts/run_python.mjs scripts/seed_surgical_pathology_ontology.py"

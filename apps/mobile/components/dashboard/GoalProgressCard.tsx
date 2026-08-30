@@ -18,6 +18,8 @@ interface GoalProgressCardProps {
   onContinue: () => void;
   targetExam?: string;
   speciality?: string;
+  title?: string;
+  actionLabel?: string;
 }
 
 export function GoalProgressCard({
@@ -27,6 +29,8 @@ export function GoalProgressCard({
   onContinue,
   targetExam = 'NEET_SS',
   speciality = 'Pathology',
+  title = 'Daily Preparation Target',
+  actionLabel,
 }: GoalProgressCardProps) {
   const percentage = Math.min(100, Math.round((completedToday / dailyGoal) * 100));
 
@@ -35,7 +39,7 @@ export function GoalProgressCard({
       {/* Top row */}
       <View style={styles.topRow}>
         <View>
-          <Text style={styles.greetingText}>Daily Preparation Target</Text>
+          <Text style={styles.greetingText}>{title}</Text>
           <Text style={styles.examText}>
             {targetExam} • {speciality}
           </Text>
@@ -67,7 +71,7 @@ export function GoalProgressCard({
 
       {/* Action */}
       <Button
-        title={completedToday > 0 ? 'Continue Practice' : 'Start Daily Quiz'}
+        title={actionLabel || (completedToday > 0 ? 'Continue Practice' : 'Start Daily Quiz')}
         onPress={onContinue}
         variant="primary"
         size="md"

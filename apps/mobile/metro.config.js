@@ -12,10 +12,10 @@ const monorepoRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-// 1. Watch all files within the monorepo
-config.watchFolders = [monorepoRoot];
+// Preserve Expo's defaults and add the workspace root for local packages.
+config.watchFolders = [...new Set([...(config.watchFolders || []), monorepoRoot])];
 
-// 2. Let Metro know where to resolve packages and in what order
+// Let Metro know where to resolve workspace packages and in what order.
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(monorepoRoot, 'node_modules'),

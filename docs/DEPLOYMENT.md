@@ -94,6 +94,28 @@ local content but publishing returns `503` without modifying files. A stale file
 SHA returns `409`, requiring the editor to reload instead of overwriting another
 administrator's publication.
 
+### Question and native-layout publication
+
+The question editor is available at `/admin/questions/<question-id>`. Its saves
+go to PostgreSQL and create immutable question revisions; they do not commit
+medical content to the landing CMS repository.
+
+The native home-layout editor is available at `/admin/mobile-layout`. Published
+layouts are stored as versioned database records and delivered from:
+
+```text
+GET /api/mobile-ui/screens/home?platform=ANDROID&app_version=1.0.0
+```
+
+Run the current migration before using either editor:
+
+```bash
+python -m alembic upgrade head
+```
+
+The native client includes a bundled fallback, so database, network or invalid
+remote-content failure does not leave the dashboard blank.
+
 ## 4. Google OAuth
 
 Create separate OAuth clients as required:
@@ -125,6 +147,36 @@ eas build --platform android --profile preview --clear-cache
 ```
 
 Uninstall stale alpha APKs when validating a native configuration change.
+
+### EAS Update channels
+
+The application now includes `expo-updates`. Create one new preview and
+production native build after this integration; older installed builds do not
+contain this update runtime.
+
+Compatible JavaScript or asset changes can then be published with:
+
+```bash
+cd apps/mobile
+bun run update:preview -- --message "Describe the tested change"
+bun run update:production -- --message "Describe the approved change"
+```
+
+The GitHub Actions workflow **Publish Mobile Update** performs package builds,
+mobile type checking and publication. Add an Expo access token as the repository
+or protected-environment secret `EXPO_TOKEN`. Publish to preview first, validate
+the installed preview build, and use production only for an approved change.
+
+Changing native dependencies, Expo SDK, permissions, bundle identifiers or
+other native configuration requires a new EAS build and compatible runtime; do
+not publish such a change only through EAS Update.
+
+This Bun workspace intentionally uses isolated dependency linking because the
+Next.js application uses React 18 while Expo SDK 54 uses React 19. Expo Doctor
+may report same-version Expo packages in Bun's peer-context store as duplicates;
+Expo tracks this as a Bun-monorepo false positive. CI therefore runs
+`expo install --check`, native TypeScript validation and the EAS build itself
+instead of suppressing actual package-version incompatibilities.
 
 ## 6. Production-alpha smoke test
 

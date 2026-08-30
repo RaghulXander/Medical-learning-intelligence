@@ -17,7 +17,7 @@
 | **M10: Productionization** | Release Foundation | Vercel web deployment, Render API, Neon database, migrations, CI/CD, observability, backups, and Expo native publishing. | **COMPLETED** |
 | **M11: Architecture Documentation** | Team Scale | Architecture/developer documentation system and multi-developer onboarding. | *Current / In Progress* |
 | **M12: Ontology, AI Review & Code Review** | Quality | Consolidated topic ontology; AI-assisted approve/reject/retire workflow with feedback; Python, React, React Native, and shared-component review. | **In progress** — baseline review and shared auth rules complete. |
-| **M13: Git-backed Landing Page CMS** | Product Operations | Adapt the owner's `irg-space` JSON editor and save-and-publish workflow into a typed widget registry with RBAC, preview, GitHub publishing, Vercel deployment, media and rollback. | **In progress** — core editor, JSON renderer, validation, GitHub publishing and audit complete. |
+| **M13: Editors & Server-Driven UI** | Product Operations | Git-backed landing CMS plus reusable schema fields, revisioned question editing, versioned native layouts, safe widget delivery and EAS Update CI. | **13B–13E completed** — landing media and rollback UI remain. |
 | **M14: Surgical Pathology Knowledge Ontology** | Knowledge Architecture | Versioned, typed Surgical Pathology hierarchy; reusable morphology/IHC/molecular relationships; source provenance; Breast vertical slice; reviewed question crosswalk. | **In progress** — schema, draft core hierarchy, and initial Breast names seeded; evidence relationships and reviewed crosswalk remain. |
 | **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 

@@ -1,9 +1,9 @@
-# Milestone 13 — Landing Page Widget CMS
+# Milestone 13 — Reusable Editors and Server-Driven UI
 
-Implementation status: Core end-to-end slice implemented. Typed content,
-JSON-driven widgets, admin editing/preview/import/export, RBAC validation,
-GitHub SHA-safe publishing and audit logging are available. Media management,
-history/rollback UI and scheduled visibility remain follow-up phases.
+Implementation status: Sub-units 13B–13E are implemented. The reusable field
+engine, revisioned question editor, versioned native layout service/editor,
+native registry/cache/fallback and EAS Update CI workflow are available. The
+original landing CMS media management and rollback UI remain follow-up work.
 
 ## 1. Purpose
 
@@ -24,8 +24,9 @@ An authorized administrator should be able to:
 - commit content changes to GitHub; and
 - trigger or observe the Vercel deployment that publishes the content.
 
-The CMS manages marketing content only. It must not manage questions, medical
-evidence, users, entitlements or application configuration.
+The Git-backed CMS manages marketing content only. Question editing and native
+layout configuration reuse editor primitives but retain separate schemas,
+permissions, persistence and publication workflows.
 
 ## 2. Reference implementation audit
 
@@ -483,9 +484,73 @@ Milestone 13 is complete when:
 
 ## 19. Out of scope
 
-- Editing medical questions or ontology content.
+- Storing medical questions in landing-page CMS JSON or Git.
 - Arbitrary React/HTML/JavaScript widgets.
 - Full visual page-builder positioning.
 - Multi-language content in the first release.
 - User-authored scripts, CSS or tracking tags.
 - Replacing GitHub with a third-party CMS.
+
+## 20. Milestone 13B — Schema-driven editor engine
+
+Status: **Completed**
+
+- `SchemaFieldEditor` renders explicit text, textarea, number, boolean, select,
+  object and repeatable-array field definitions.
+- Immutable JSON path helpers are shared by landing, question and mobile-layout
+  editors.
+- Landing widgets now supply field metadata instead of field-name heuristics.
+- Domain Zod schemas validate in the browser; backend Pydantic schemas remain
+  authoritative at write boundaries.
+
+## 21. Milestone 13C — Revisioned question editor
+
+Status: **Completed**
+
+- `/admin/questions/{questionId}` edits stems, options, correct answer,
+  explanation, learning objective, difficulty, cognitive level and question type.
+- Every content save stores an immutable pre-edit `QuestionRevision` snapshot,
+  changed-field list, editor and optional notes in PostgreSQL.
+- `expected_updated_at` returns `409` for stale editors.
+- Content hashes and correct-answer index are recalculated after editing.
+- Guarded status transitions produce reviews and audit events; rejection and
+  retirement require notes.
+- Evidence remains read-only so a content edit cannot falsely verify a source.
+
+## 22. Milestone 13D — Server-driven native UI
+
+Status: **Completed**
+
+- `/admin/mobile-layout` manages the native home-screen layout.
+- Published documents are versioned in `mobile_screen_configurations` with one
+  active version per screen.
+- Fixed widget types select precompiled React Native components; remote content
+  cannot introduce JavaScript, arbitrary navigation, styles or API endpoints.
+- Visibility supports authentication/subscription audience, platform and stable
+  percentage rollout.
+- The public endpoint applies visibility and supplies ETag/private cache headers.
+- The native app validates remote content, caches the last valid document per
+  user/platform/entitlement and falls back to a bundled layout.
+- Business data and actions remain code-owned.
+
+## 23. Milestone 13E — EAS delivery and release hardening
+
+Status: **Completed**
+
+- `expo-updates` is installed and tied to the existing EAS project.
+- Runtime compatibility uses the application-version policy.
+- Development, preview and production builds use distinct update channels.
+- `.github/workflows/mobile-update.yml` validates and publishes a manually
+  selected preview or production update using the `EXPO_TOKEN` secret.
+- Native dependencies, Expo SDK, permissions or other native-runtime changes
+  still require a new binary. Compatible JavaScript/assets can use EAS Update.
+
+### M13B–13E acceptance result
+
+1. Landing and mobile editors use explicit field definitions.
+2. Question saves are validated, revisioned, audited and conflict-safe.
+3. Native layout publication is validated, versioned, audited and conflict-safe.
+4. Native clients render only allow-listed bundled widgets.
+5. Invalid, offline or incompatible configuration falls back safely.
+6. Preview and production EAS Update delivery is separated and CI-gated.
+7. Tests cover schemas, RBAC, revision history, conflicts and visibility.

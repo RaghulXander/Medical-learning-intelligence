@@ -17,6 +17,8 @@ interface FocusAreaCardProps {
   unmasteredCount?: number;
   onPractice: () => void;
   loading?: boolean;
+  title?: string;
+  actionLabel?: string;
 }
 
 export function FocusAreaCard({
@@ -25,6 +27,8 @@ export function FocusAreaCard({
   unmasteredCount = 6,
   onPractice,
   loading = false,
+  title = 'High-Yield Weak Topic',
+  actionLabel = 'Practice Weak Area',
 }: FocusAreaCardProps) {
   const masteryPercentage = Math.round(masteryScore * 100);
 
@@ -33,7 +37,7 @@ export function FocusAreaCard({
       <View style={styles.header}>
         <View style={styles.badgeRow}>
           <Badge
-            label="High-Yield Weak Topic"
+            label={title}
             variant="warning"
             icon={<AlertCircle size={12} color="#f59e0b" />}
           />
@@ -47,7 +51,7 @@ export function FocusAreaCard({
       </Text>
 
       <Button
-        title="Practice Weak Area"
+        title={actionLabel}
         variant="secondary"
         size="sm"
         loading={loading}

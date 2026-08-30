@@ -1,0 +1,52 @@
+name: Publish Mobile Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: EAS Update channel
+        required: true
+        type: choice
+        options:
+          - preview
+          - production
+        default: preview
+      message:
+        description: Human-readable update summary
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-update-${{ inputs.channel }}
+  cancel-in-progress: false
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.channel }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+      - name: Build workspace packages
+        run: |
+          bun --filter @medical/shared build
+          bun --filter @medical/api-client build
+      - name: Typecheck mobile application
+        run: bun --filter mobile typecheck
+      - name: Publish compatible update
+        working-directory: apps/mobile
+        env:
+          UPDATE_CHANNEL: ${{ inputs.channel }}
+          UPDATE_MESSAGE: ${{ inputs.message }}
+        run: eas update --channel "$UPDATE_CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive

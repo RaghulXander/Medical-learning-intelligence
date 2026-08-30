@@ -172,7 +172,7 @@ bun run docs:serve
 - [Milestone 10](MileStones/MileStone10.md): production hosting, managed services, database release migrations, CI/CD, observability, backups, and native app publishing.
 - [Milestone 11](MileStones/MileStone11.md): architecture documentation, C4 views, ADRs, ownership maps, API reference, and multi-developer workflow.
 - [Milestone 12](MileStones/MileStone12.md): ontology, AI review workflow, and Python/React/React Native consolidation *(in progress)*.
-- [Milestone 13](MileStones/MileStone13.md): Git-backed landing-page widget CMS adapted from `RaghulXander/irg-space`.
+- [Milestone 13](MileStones/MileStone13.md): reusable schema editors, Git-backed landing CMS, revisioned question editing, server-driven native widgets and EAS Update delivery.
 - [Milestone 14](MileStones/MileStone14.md): versioned Surgical Pathology ontology, diagnostic entity relationships, provenance, and reviewed question mapping.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and the specifications in [`MileStones/`](MileStones/) for detailed scope.

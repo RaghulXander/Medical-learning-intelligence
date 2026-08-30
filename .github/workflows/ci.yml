@@ -87,12 +87,15 @@ jobs:
         run: bun --filter web typecheck
       - name: Validate CMS content
         run: bun run test:cms
+      - name: Validate editor and mobile UI schemas
+        run: bun run test:editor
       - name: Build web
         env:
           API_URL: http://127.0.0.1:8000
         run: bun --filter web build
-      - name: Validate Expo dependencies
-        run: bunx expo-doctor apps/mobile
+      - name: Validate Expo dependency versions
+        working-directory: apps/mobile
+        run: bunx expo install --check
       - name: Typecheck mobile
         run: bun --filter mobile typecheck
 

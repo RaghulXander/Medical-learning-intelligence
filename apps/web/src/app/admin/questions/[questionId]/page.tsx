@@ -13,6 +13,17 @@ import { useAuth } from '@/lib/auth-context';
 import { cloneJson, JsonObject, setJsonPath } from '@/lib/editor/json';
 import { questionEditorFields } from '@/lib/questions/editor-schema';
 
+const allowedNextStatuses: Record<QuestionStatus, QuestionStatus[]> = {
+  IMPORTED: ['AI_REVIEW', 'HUMAN_REVIEW', 'REJECTED', 'RETIRED'],
+  GENERATED: ['AI_REVIEW', 'HUMAN_REVIEW', 'REJECTED', 'RETIRED'],
+  AI_REVIEW: ['HUMAN_REVIEW', 'REJECTED'],
+  HUMAN_REVIEW: ['AI_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
+  APPROVED: ['HUMAN_REVIEW', 'REPORTED', 'RETIRED'],
+  REJECTED: ['HUMAN_REVIEW', 'RETIRED'],
+  REPORTED: ['HUMAN_REVIEW', 'RETIRED'],
+  RETIRED: ['HUMAN_REVIEW'],
+};
+
 function normalizeOptions(options: Question['options']): Question['options'] {
   if (Array.isArray(options)) return options;
   return Object.entries(options as unknown as Record<string, string>).map(([key, text]) => ({ key, text }));
@@ -34,9 +45,9 @@ function createDraft(question: Question): QuestionEditPayload {
   };
 }
 
-export default function QuestionEditorPage({ params }: { params: Promise<{ questionId: string }> }) {
+export default function QuestionEditorPage({ params }: { params: { questionId: string } }) {
   const { user, isLoading: authLoading } = useAuth();
-  const [questionId, setQuestionId] = useState('');
+  const questionId = params.questionId;
   const [question, setQuestion] = useState<Question | null>(null);
   const [draft, setDraft] = useState<QuestionEditPayload | null>(null);
   const [revisions, setRevisions] = useState<QuestionRevision[]>([]);
@@ -47,8 +58,6 @@ export default function QuestionEditorPage({ params }: { params: Promise<{ quest
   const [error, setError] = useState<string | null>(null);
   const canEdit = ['SUPER_ADMIN', 'ADMIN', 'REVIEWER', 'EDUCATOR'].includes(user?.role ?? '');
   const canReview = ['SUPER_ADMIN', 'ADMIN', 'REVIEWER'].includes(user?.role ?? '');
-
-  useEffect(() => { void params.then(({ questionId: id }) => setQuestionId(id)); }, [params]);
 
   const load = useCallback(async () => {
     if (!questionId || !canEdit) return;
@@ -94,6 +103,7 @@ export default function QuestionEditorPage({ params }: { params: Promise<{ quest
   if (!question || !draft) return <div className="p-8 text-red-300">{error ?? 'Question unavailable'}</div>;
 
   const jsonDraft = cloneJson(draft) as unknown as JsonObject;
+  const allowed = allowedNextStatuses[question.status];
   return <div className="container mx-auto max-w-7xl px-4 py-8">
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div><Link href="/admin" className="mb-2 inline-flex items-center gap-1 text-xs text-sky-300"><ArrowLeft className="h-3 w-3" />Question bank</Link><h1 className="text-2xl font-bold text-white">Question editor</h1><div className="mt-2 flex gap-2"><Badge variant="secondary">{question.id}</Badge><Badge variant="verified">{question.status}</Badge></div></div>
@@ -105,7 +115,7 @@ export default function QuestionEditorPage({ params }: { params: Promise<{ quest
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <Card className="glass-card p-6"><SchemaFieldEditor value={jsonDraft} fields={questionEditorFields} onChange={(path, value) => setDraft(setJsonPath(jsonDraft, path, value) as unknown as QuestionEditPayload)} /></Card>
       <div className="space-y-6">
-        {canReview && <Card className="glass-card p-5"><h2 className="mb-3 font-bold text-white">Review workflow</h2><textarea rows={4} value={reviewNotes} onChange={(event) => setReviewNotes(event.target.value)} placeholder="Review notes (required for reject/retire)" className="mb-3 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" /><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => void transition('HUMAN_REVIEW')}>Human review</Button><Button size="sm" variant="gradient" onClick={() => void transition('APPROVED')}>Approve</Button><Button size="sm" variant="destructive" onClick={() => void transition('REJECTED')}>Reject</Button><Button size="sm" variant="outline" onClick={() => void transition('RETIRED')}>Retire</Button></div></Card>}
+        {canReview && <Card className="glass-card p-5"><h2 className="mb-3 font-bold text-white">Review workflow</h2><textarea rows={4} value={reviewNotes} onChange={(event) => setReviewNotes(event.target.value)} placeholder="Review notes (required for reject/retire)" className="mb-3 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white" /><div className="flex flex-wrap gap-2"><Button size="sm" variant="outline" disabled={saving || !allowed.includes('HUMAN_REVIEW')} onClick={() => void transition('HUMAN_REVIEW')}>Human review</Button><Button size="sm" variant="gradient" disabled={saving || !allowed.includes('APPROVED')} onClick={() => void transition('APPROVED')}>Approve</Button><Button size="sm" variant="destructive" disabled={saving || !allowed.includes('REJECTED')} onClick={() => void transition('REJECTED')}>Reject</Button><Button size="sm" variant="outline" disabled={saving || !allowed.includes('RETIRED')} onClick={() => void transition('RETIRED')}>Retire</Button></div></Card>}
         <Card className="glass-card p-5"><h2 className="mb-3 flex items-center gap-2 font-bold text-white"><History className="h-4 w-4" />Revision history</h2>{revisions.length === 0 ? <p className="text-xs text-slate-400">No content revisions yet.</p> : <div className="space-y-3">{revisions.map((revision) => <div key={revision.id} className="rounded-lg border border-white/10 p-3 text-xs"><div className="font-semibold text-white">Revision {revision.revision_number}</div><div className="mt-1 text-slate-400">{revision.changed_fields.join(', ')}</div>{revision.edit_notes && <p className="mt-2 text-slate-300">{revision.edit_notes}</p>}<time className="mt-2 block text-slate-500">{new Date(revision.created_at).toLocaleString()}</time></div>)}</div>}</Card>
         {question.citations && question.citations.length > 0 && <Card className="glass-card p-5"><h2 className="mb-3 font-bold text-white">Evidence (read only)</h2>{question.citations.map((citation, index) => <div key={index} className="mb-2 rounded border border-white/10 p-3 text-xs text-slate-300">{citation.source_title}<br /><span className="text-slate-500">{citation.verification_status}</span></div>)}</Card>}
       </div>
