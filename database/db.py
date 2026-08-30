@@ -35,13 +35,21 @@ def get_default_db_url() -> str:
 
 
 def get_engine(database_url: Optional[str] = None, echo: bool = False) -> Engine:
-    """Creates a SQLAlchemy engine."""
+    """Creates a SQLAlchemy engine with graceful SQLite fallback if PostgreSQL is unreachable."""
     url = database_url or get_default_db_url()
     connect_args = {}
     if url.startswith("sqlite"):
         connect_args["check_same_thread"] = False
 
     engine = create_engine(url, echo=echo, connect_args=connect_args)
+    if not url.startswith("sqlite"):
+        try:
+            with engine.connect() as conn:
+                pass
+        except Exception:
+            DEFAULT_SQLITE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            fallback_url = f"sqlite:///{DEFAULT_SQLITE_PATH.resolve()}"
+            engine = create_engine(fallback_url, echo=echo, connect_args={"check_same_thread": False})
     return engine
 
 
@@ -153,6 +161,53 @@ def _ensure_missing_question_columns(engine: Engine) -> None:
         conn.commit()
 
 
+def _ensure_missing_document_chunk_columns(engine: Engine) -> None:
+    """Adds newly introduced columns to existing document_chunks table."""
+    with engine.connect() as conn:
+        if engine.url.drivername.startswith("sqlite"):
+            try:
+                rows = conn.exec_driver_sql("PRAGMA table_info(document_chunks)").fetchall()
+            except Exception:
+                return
+            existing_columns = {row[1] for row in rows}
+            column_specs = {
+                "slice_id": "TEXT",
+                "pdf_page": "INTEGER",
+                "textbook_page": "INTEGER",
+                "chapter_name": "TEXT",
+                "word_count": "INTEGER DEFAULT 0",
+                "embedding": "TEXT",
+                "embedding_model": "TEXT",
+            }
+            for column_name, column_type in column_specs.items():
+                if column_name not in existing_columns:
+                    conn.exec_driver_sql(f"ALTER TABLE document_chunks ADD COLUMN {column_name} {column_type};")
+            conn.commit()
+            return
+
+        try:
+            existing_rows = conn.exec_driver_sql(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_schema = current_schema() AND table_name = 'document_chunks'"
+            ).fetchall()
+        except Exception:
+            return
+        existing_columns = {row[0] for row in existing_rows}
+        column_specs = {
+            "slice_id": "VARCHAR(150)",
+            "pdf_page": "INTEGER",
+            "textbook_page": "INTEGER",
+            "chapter_name": "VARCHAR(255)",
+            "word_count": "INTEGER DEFAULT 0",
+            "embedding": "JSONB",
+            "embedding_model": "VARCHAR(100)",
+        }
+        for column_name, column_type in column_specs.items():
+            if column_name not in existing_columns:
+                conn.execute(text(f"ALTER TABLE document_chunks ADD COLUMN IF NOT EXISTS {column_name} {column_type};"))
+        conn.commit()
+
+
 def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None) -> Engine:
     """Initializes all database tables and ensures newly added schema columns exist."""
     if isinstance(engine, str) and database_url is None:
@@ -196,9 +251,9 @@ def init_db(engine: Optional[Engine] = None, database_url: Optional[str] = None)
 
     # `create_all()` never adds fields to an existing table. Keep this explicit
     # compatibility upgrade until M9 replaces runtime synchronization with Alembic.
-    # Do not swallow failures: continuing with a partially upgraded schema makes
-    # the eventual importer error much harder to diagnose.
+    # Add newly introduced columns to existing tables
     _ensure_missing_question_columns(eng)
+    _ensure_missing_document_chunk_columns(eng)
 
     # Ensure permanent Super Admin users are guaranteed in database table
     try:

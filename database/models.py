@@ -657,11 +657,18 @@ class DocumentChunk(Base):
 
     id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
     document_id: Mapped[str] = mapped_column(GUID(), ForeignKey("source_documents.id", ondelete="CASCADE"), nullable=False, index=True)
+    slice_id: Mapped[Optional[str]] = mapped_column(String(150), nullable=True, index=True)
     chunk_index: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    pdf_page: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    textbook_page: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    page_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # Backward compat with pdf_page
+    chapter_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, index=True)
     section_heading: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    page_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    word_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    embedding: Mapped[Optional[List[float]]] = mapped_column(JSONType, nullable=True)
+    embedding_model: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
