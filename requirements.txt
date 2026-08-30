@@ -9,6 +9,10 @@ pyarrow>=15.0.0
 pandas>=2.0.0
 requests>=2.31.0
 tqdm>=4.66.0
+# GCP & Document AI Processing
+pypdf>=5.0.0
+google-cloud-documentai>=3.0.0
+google-cloud-storage>=2.14.0
 
 # Validation & Types
 pydantic>=2.5.0

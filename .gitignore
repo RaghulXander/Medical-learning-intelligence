@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.gcp.example
 
 # Python Caches & Virtual Environments
 __pycache__/
@@ -50,9 +51,15 @@ data/medical_exam.db
 # External cloned repositories (e.g. MedMCQA original clone)
 datasets/
 
-# Large Raw Datasets (Immutable external data - reproduce via scripts/import_medmcqa.py)
-data/raw/*
+# Large Raw Datasets & Reference PDFs (Immutable local files)
+data/raw/medmcqa/*.parquet
+data/raw/medmcqa/*.json
+data/raw/medmcqa/*.jsonl
 !data/raw/medmcqa/.gitkeep
+data/raw/reference_documents/*.pdf
+data/processed/reference_documents/slices/*.pdf
+data/processed/reference_documents/raw_docai/*.json
+data/processed/reference_documents/normalized/*.json
 
 # Large Processed Datasets (Reproduce via scripts/run_pipeline.py)
 data/processed/pathology/*.jsonl
@@ -65,3 +72,4 @@ data/processed/pathology/*.csv
 
 # Documentation Exceptions
 !data/README.md
+!data/processed/reference_documents/registry.json

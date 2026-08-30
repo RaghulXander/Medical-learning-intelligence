@@ -24,6 +24,13 @@ class Settings:
     cors_allowed_origins: Tuple[str, ...]
     redis_url: str
     release_sha: str
+    gcp_project_id: str = "doc-egde-rag"
+    gcp_location: str = "us"
+    gcp_processor_id: str = "a4fbeaa389c5955d"
+    gcp_raw_bucket: str = "doc-egde-rag-rag-raw"
+    gcp_processed_bucket: str = "doc-egde-rag-rag-processed"
+    docai_max_online_pages: int = 15
+    docai_mock_fallback: bool = True
 
     @property
     def is_production_like(self) -> bool:
@@ -52,6 +59,12 @@ class Settings:
 def get_settings() -> Settings:
     app_env = os.getenv("APP_ENV", "development").strip().lower()
     default_origins = "http://localhost:3000,http://127.0.0.1:3000"
+    mock_fallback = os.getenv("DOCAI_MOCK_FALLBACK", "true").strip().lower() in ("true", "1", "yes")
+    try:
+        max_online_pages = int(os.getenv("DOCAI_MAX_ONLINE_PAGES", "15"))
+    except ValueError:
+        max_online_pages = 15
+
     settings = Settings(
         app_env=app_env,
         jwt_secret_key=os.getenv("JWT_SECRET_KEY", DEVELOPMENT_JWT_SECRET),
@@ -64,6 +77,13 @@ def get_settings() -> Settings:
             "RELEASE_SHA",
             os.getenv("RENDER_GIT_COMMIT", os.getenv("COMMIT_SHA", "development")),
         ).strip(),
+        gcp_project_id=os.getenv("GCP_PROJECT_ID", "doc-egde-rag").strip(),
+        gcp_location=os.getenv("GCP_LOCATION", "us").strip(),
+        gcp_processor_id=os.getenv("GCP_PROCESSOR_ID", "a4fbeaa389c5955d").strip(),
+        gcp_raw_bucket=os.getenv("GCP_RAW_BUCKET", "doc-egde-rag-rag-raw").strip(),
+        gcp_processed_bucket=os.getenv("GCP_PROCESSED_BUCKET", "doc-egde-rag-rag-processed").strip(),
+        docai_max_online_pages=max_online_pages,
+        docai_mock_fallback=mock_fallback,
     )
     settings.validate()
     return settings

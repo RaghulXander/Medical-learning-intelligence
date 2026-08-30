@@ -1,0 +1,32 @@
+{
+  "slice_id": "robbins_pathologic_basis_11th_p0001_p0015_pilot",
+  "parent_doc_id": "54f0176a-1cf6-5d0a-bf9b-e0e58d0b644f",
+  "parent_doc_title": "Robbins & Cotran Pathologic Basis of Disease",
+  "parent_sha256": "c43661f8d57ee7a29382d030a42620d270d7cb90f52c32817fe6bebae5e10129",
+  "start_page_1based": 1,
+  "end_page_1based": 15,
+  "page_count": 15,
+  "slice_file_path": "R:\\Repositories\\medical-learning-intelligence\\data\\processed\\reference_documents\\slices\\robbins_pathologic_basis_11th_p0001_p0015_pilot.pdf",
+  "slice_file_name": "robbins_pathologic_basis_11th_p0001_p0015_pilot.pdf",
+  "slice_sha256": "cf30cdd9925de0bb8b81d45d69f9caab1f5d9a0c1fdd420e65f27d726837ef6c",
+  "page_offset_map": {
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "10": 10,
+    "11": 11,
+    "12": 12,
+    "13": 13,
+    "14": 14,
+    "15": 15
+  },
+  "created_at": "2026-08-30T14:38:27.705043+00:00",
+  "status": "CREATED",
+  "metadata": {}
+}

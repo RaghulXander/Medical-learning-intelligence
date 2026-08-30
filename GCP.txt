@@ -1,0 +1,64 @@
+Use `gcloud config set project [PROJECT_ID]` to change to a different project.
+raghuljayan@cloudshell:~ (doc-egde-rag)$ export DOCEDGE_P_ID="doc-egde-rag"
+raghuljayan@cloudshell:~ (doc-egde-rag)$ gcloud projects describe "$DOCEDGE_P_ID"
+
+gcloud auth login
+
+ gcloud services enable documentai.googleapis.com --project=doc-egde-rag
+
+ gcloud services enable storage.googleapis.com 
+
+  export DOCEDGE_RAW_BUCKET="${DOCEDGE_P_ID}-rag-raw"
+ export DOCEDGE_PROCESSED_BUCKET="${DOCEDGE_P_ID}-rag-processed"
+
+
+gcloud storage buckets create "gs://${DOCEDGE_RAW_BUCKET}" "gs://${DOCEDGE_PROCESSED_BUCKET}" \
+  --project="${DOCEDGE_P_ID}" \
+  --location=US \
+  --default-storage-class=STANDARD \
+  --uniform-bucket-level-access \
+  --public-access-prevention
+
+
+
+Name docedge-layout-parser
+ID a4fbeaa389c5955d
+Status Enabled
+Processor Type Layout Parser
+Prediction
+Prediction endpoint 
+https://us-documentai.googleapis.com/v1/projects/249137456895/locations/us/processors/a4fbeaa389c5955d:process 
+
+
+raghuljayan@cloudshell:~ (doc-egde-rag)$ gcloud iam service-accounts create docedge-ingestion \
+  --project="${DOCEDGE_P_ID}" \
+  --description="Service account for DocEdge document ingestion" \
+  --display-name="DocEdge Ingestion"
+Created service account [docedge-ingestion].
+Service account email: docedge-ingestion@doc-egde-rag.iam.gserviceaccount.com
+raghuljayan@cloudshell:~ (doc-egde-rag)$ 
+                                         export DOCEDGE_INGESTION_SA="docedge-ingestion@${DOCEDGE_P_ID}.iam.gserviceaccount.com"
+
+gcloud projects add-iam-policy-binding "${DOCEDGE_P_ID}" \
+  --member="serviceAccount:${DOCEDGE_INGESTION_SA}" \
+  --role="roles/documentai.apiUser"
+
+gcloud storage buckets add-iam-policy-binding "gs://${DOCEDGE_RAW_BUCKET}" \
+  --member="serviceAccount:${DOCEDGE_INGESTION_SA}" \
+  --role="roles/storage.objectViewer"
+
+  gcloud storage buckets add-iam-policy-binding "gs://${DOCEDGE_PROCESSING_OUTPUT_BUCKET}" \
+  --member="serviceAccount:${DOCEDGE_INGESTION_SA}" \
+  --role="roles/storage.objectUser"
+
+
+  raghuljayan@cloudshell:~ (doc-egde-rag)$ echo "PROJECT_ID=${DOCEDGE_P_ID}"
+echo "RAW_BUCKET=doc-egde-rag-rag-raw"
+echo "PROCESSING_OUTPUT_BUCKET=doc-egde-rag-rag-processed"${DOCEDGE_P_ID}"
+gcloud storage buckets describe gs://doc-egde-rag-rag-raw --format="value(name)" 
+gcloud storage buckets describe gs://doc-egde-rag-rag-processed --format="value(name)"
+PROJECT_ID=doc-egde-ragdescribe gs://doc-egde-rag-rag-raw --format="value(name)" 
+RAW_BUCKET=doc-egde-rag-rag-raw gs://doc-egde-rag-rag-processed --format="value(name)"
+PROCESSING_OUTPUT_BUCKET=doc-egde-rag-rag-processed
+doc-egde-rag-rag-raw
+doc-egde-rag-rag-processed
