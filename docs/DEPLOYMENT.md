@@ -6,6 +6,7 @@ The production-alpha topology is:
 - FastAPI container on Render
 - PostgreSQL on Neon
 - Native preview/production artifacts through Expo EAS
+- MkDocs engineering documentation on GitHub Pages
 
 ## 1. Render API
 
@@ -178,7 +179,34 @@ Expo tracks this as a Bun-monorepo false positive. CI therefore runs
 `expo install --check`, native TypeScript validation and the EAS build itself
 instead of suppressing actual package-version incompatibilities.
 
-## 6. Production-alpha smoke test
+## 6. GitHub Pages documentation
+
+The engineering portal is published at:
+
+```text
+https://raghulxander.github.io/Medical-learning-intelligence/
+```
+
+The **Deploy Documentation** workflow builds MkDocs and publishes the generated
+artifact after every push to `main`. It can also be run manually from the
+repository's Actions tab. Source documentation belongs in `docs/`; `site/` is a
+local build artifact and must remain uncommitted.
+
+For the initial deployment, open **Settings → Pages** in GitHub and set **Source**
+to **GitHub Actions**. Future pushes require no manual deployment step. A code
+change only changes the published documentation when the corresponding Markdown
+or MkDocs configuration is updated in the same push.
+
+Preview documentation locally with:
+
+```bash
+python -m mkdocs serve
+```
+
+Then open `http://127.0.0.1:8000`. The local preview is useful while writing,
+but GitHub Pages is the shared, durable copy.
+
+## 7. Production-alpha smoke test
 
 1. Open the stable Vercel URL in a private window.
 2. Register and complete onboarding.
@@ -189,7 +217,7 @@ instead of suppressing actual package-version incompatibilities.
 7. Confirm `/api/ready` reports database readiness.
 8. Confirm imported questions are not silently promoted to `APPROVED`.
 
-## 7. Before public launch
+## 8. Before public launch
 
 - Replace sleeping/free compute if cold starts are unacceptable.
 - Establish automated backups and perform a recorded restore test.
