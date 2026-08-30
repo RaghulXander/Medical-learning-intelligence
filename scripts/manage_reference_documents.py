@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from backend.ingestion.document_registry import DocumentRegistry
 from backend.ingestion.pdf_splitter import PDFSplitter
+from backend.ingestion.provenance_manifest import ProvenanceManifestAuditor
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("manage_reference_documents")
@@ -188,6 +189,37 @@ def cmd_split(args: argparse.Namespace) -> None:
     logger.info(f"   Page Map:   {len(manifest.page_offset_map)} page mappings stored in manifest.")
 
 
+def cmd_audit(args: argparse.Namespace) -> None:
+    """Audits book provenance manifest and evaluates the hard embedding gate."""
+    registry = DocumentRegistry()
+    auditor = ProvenanceManifestAuditor()
+    pages_per_chunk = getattr(args, "pages_per_chunk", 15)
+
+    manifest = auditor.generate_manifest(
+        doc_id_or_short_name=args.doc,
+        registry=registry,
+        pages_per_chunk=pages_per_chunk,
+    )
+
+    status_icon = "✅" if manifest.is_ready_for_embedding else "❌"
+    logger.info(f"\n=======================================================")
+    logger.info(f"{status_icon} Provenance Audit: {manifest.title} ({manifest.short_name})")
+    logger.info(f"=======================================================")
+    logger.info(f"   Status:                 {manifest.status}")
+    logger.info(f"   Total Physical Pages:   {manifest.total_pdf_pages}")
+    logger.info(f"   Completed Chunks:       {manifest.completed_chunks} / {manifest.expected_chunks}")
+    logger.info(f"   Missing Pages:          {len(manifest.missing_pages)}")
+    logger.info(f"   Duplicate Pages:        {len(manifest.duplicate_pages)}")
+    logger.info(f"   Evidence Blocks:        {manifest.total_evidence_blocks:,}")
+    logger.info(f"   Total Words:            {manifest.total_words:,}")
+    logger.info(f"   Embedding Gate:         {'ALLOWED (READY)' if manifest.is_ready_for_embedding else 'BLOCKED (STOP)'}")
+    logger.info(f"   Manifest Report:        data/processed/reference_documents/provenance_manifests/{manifest.short_name}_provenance_manifest.md")
+
+    if args.enforce and not manifest.is_ready_for_embedding:
+        logger.error("🛑 Hard gate enforcement triggered: document is not ready for embedding.")
+        sys.exit(1)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Reference Document Registry & Slicing Tool")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -215,6 +247,13 @@ def main():
     split_parser.add_argument("--end", type=int, default=15, help="1-based end page")
     split_parser.add_argument("--suffix", default=None, help="Optional suffix for slice ID")
     split_parser.set_defaults(func=cmd_split)
+
+    # audit
+    audit_parser = subparsers.add_parser("audit", help="Audit book provenance manifest and evaluate embedding gate")
+    audit_parser.add_argument("--doc", required=True, help="Document ID or short_name (e.g. robbins_review)")
+    audit_parser.add_argument("--pages-per-chunk", type=int, default=15, help="Pages per chunk (default: 15)")
+    audit_parser.add_argument("--enforce", action="store_true", default=False, help="Exit with non-zero code if gate fails")
+    audit_parser.set_defaults(func=cmd_audit)
 
     args = parser.parse_args()
     args.func(args)

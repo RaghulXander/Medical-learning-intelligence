@@ -17,6 +17,11 @@ from backend.ingestion.document_registry import (
 from backend.ingestion.gcp_docai_client import DocumentAIClient
 from backend.ingestion.medical_normalizer import MedicalNormalizer, PageEvidenceBlock
 from backend.ingestion.pdf_splitter import PDFSplitter
+from backend.ingestion.provenance_manifest import (
+    BookProvenanceManifest,
+    ProvenanceGateError,
+    ProvenanceManifestAuditor,
+)
 from backend.ingestion.quality_report import QualityReport, QualityReportGenerator
 from backend.ingestion.universal_ingestor import UniversalQuestionIngestor
 
@@ -33,6 +38,9 @@ __all__ = [
     "NormalizedDocumentSlice",
     "MedicalNormalizer",
     "PageEvidenceBlock",
+    "BookProvenanceManifest",
+    "ProvenanceManifestAuditor",
+    "ProvenanceGateError",
     "QualityReport",
     "QualityReportGenerator",
     "UniversalQuestionIngestor",

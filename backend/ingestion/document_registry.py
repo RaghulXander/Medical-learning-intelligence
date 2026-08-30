@@ -276,6 +276,10 @@ class DocumentRegistry:
             doc_id = self.short_name_index[short_lower]
             return self.documents.get(doc_id)
 
+        for doc in self.documents.values():
+            if doc.short_name.lower() == short_lower:
+                return doc
+
         return None
 
     def list_documents(self) -> List[RegisteredDocument]:
