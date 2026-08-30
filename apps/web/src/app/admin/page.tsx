@@ -322,6 +322,13 @@ export default function AdminDashboardPage() {
             <LayoutGrid className="h-4 w-4" />
             <span>Landing CMS</span>
           </Link>
+          <Link
+            href="/admin/mobile-layout"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white"
+          >
+            <LayoutGrid className="h-4 w-4" />
+            <span>Native Layout</span>
+          </Link>
           <button
             type="button"
             onClick={() => setActiveTab('QUESTIONS')}
