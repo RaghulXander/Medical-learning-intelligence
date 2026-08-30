@@ -112,7 +112,15 @@ class DocumentAIClient:
         opts = ClientOptions(
             api_endpoint=f"{self.location}-documentai.googleapis.com"
         )
-        client = documentai.DocumentProcessorServiceClient(client_options=opts)
+
+        creds = None
+        creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        if creds_path and Path(creds_path).exists():
+            from google.oauth2 import service_account
+            creds = service_account.Credentials.from_service_account_file(creds_path)
+            client = documentai.DocumentProcessorServiceClient(client_options=opts, credentials=creds)
+        else:
+            client = documentai.DocumentProcessorServiceClient(client_options=opts)
 
         with open(pdf_path, "rb") as f:
             content = f.read()
