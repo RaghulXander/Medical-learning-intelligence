@@ -13,7 +13,7 @@ export class MobileUiApi {
     return this.client.request(`/api/mobile-ui/screens/${screenKey}?${query.toString()}`);
   }
 
-  async getScreenForEditing(screenKey: 'home'): Promise<MobileScreenResponse & { source: 'database' | 'bundled' }> {
+  async getScreenForEditing(screenKey: 'home'): Promise<{ version: number | null; document: MobileScreenDocument; source: 'database' | 'bundled' }> {
     return this.client.request(`/api/mobile-ui/admin/screens/${screenKey}`);
   }
 
