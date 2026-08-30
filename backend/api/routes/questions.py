@@ -128,8 +128,10 @@ def list_questions(
     search: Optional[str] = Query(None, description="Search term in stem or external ID"),
     topic: Optional[str] = Query(None, description="Filter by normalized topic name"),
     status: Optional[str] = Query(None, description="Filter by status (IMPORTED, HUMAN_REVIEW, APPROVED, etc.)"),
+    cohort: Optional[str] = Query(None, description="Filter by cohort (OLD_MCQ, NEW_MCQ, MULTIMODAL_IMAGE_MCQ)"),
     difficulty: Optional[str] = Query(None, description="Filter by difficulty (easy, medium, hard)"),
     cognitive_level: Optional[str] = Query(None, description="Filter by cognitive level"),
+    has_images: Optional[bool] = Query(None, description="Filter questions with images"),
     limit: int = Query(25, ge=1, le=100, description="Items per page"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
@@ -150,6 +152,12 @@ def list_questions(
 
     if topic and topic != "ALL":
         query = query.filter(Question.topic_name_normalized == topic)
+
+    if cohort and cohort.upper() != "ALL":
+        query = query.filter(Question.origin_cohort == cohort.upper())
+
+    if has_images is not None:
+        query = query.filter(Question.has_images == has_images)
 
     if status and status.upper() != "ALL":
         try:
@@ -189,7 +197,7 @@ def list_questions(
                     "source_title": ev.source.title if ev.source else "Authoritative Textbook",
                     "chapter": ev.chapter,
                     "page_range": ev.page_range,
-                    "evidence_text": ev.evidence_text,
+                    "evidence_text": ev.excerpt,
                     "verification_status": ev.verification_status.value if hasattr(ev.verification_status, "value") else str(ev.verification_status),
                 })
 
@@ -206,6 +214,10 @@ def list_questions(
             "topic_name_normalized": q.topic_name_normalized or "General Pathology",
             "topic_mapping_status": q.topic_mapping_status.value if hasattr(q.topic_mapping_status, "value") else str(q.topic_mapping_status),
             "primary_topic_id": q.primary_topic_id,
+            "origin_cohort": q.origin_cohort or "OLD_MCQ",
+            "tags": q.tags or [],
+            "has_images": q.has_images or False,
+            "image_assets": q.image_assets or [],
             "stem": q.stem,
             "options": q.options,
             "correct_option": q.correct_option,

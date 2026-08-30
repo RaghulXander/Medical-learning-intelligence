@@ -739,6 +739,14 @@ class Question(Base):
     knowledge_era: Mapped[str] = mapped_column(String(50), default="CURRENT", nullable=False)
     source_version: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
+    # Cohort & Taxonomy Tagging (e.g. OLD_MCQ vs NEW_MCQ vs MULTIMODAL_IMAGE_MCQ)
+    origin_cohort: Mapped[str] = mapped_column(String(50), default="OLD_MCQ", nullable=False, index=True)
+    tags: Mapped[List[str]] = mapped_column(JSONType, default=list, nullable=False)
+
+    # Multimodal Pathology Image Attachments
+    has_images: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
+    image_assets: Mapped[List[Dict[str, Any]]] = mapped_column(JSONType, default=list, nullable=False)
+
     # Similarity & Deduplication Hashes
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     exact_stem_hash: Mapped[str] = mapped_column(String(64), nullable=False)

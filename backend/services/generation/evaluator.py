@@ -19,12 +19,16 @@ from backend.services.generation.models import (
     EvaluationResult,
     GeneratedMCQPayload,
 )
+from backend.services.evaluation.pubmedbert_client import PubMedBERTClient
 
 
 class QuestionEvaluator:
     """
     Multi-Signal Evaluator auditing candidate MCQs against strict medical editorial standards.
     """
+
+    def __init__(self, pubmedbert_client: Optional[PubMedBERTClient] = None):
+        self.pubmedbert_client = pubmedbert_client or PubMedBERTClient()
 
     def evaluate_mcq(
         self,
@@ -57,6 +61,10 @@ class QuestionEvaluator:
         checks.append(c4)
         if not c4.passed:
             reasons.append(c4.details)
+
+        # 5. PubMedBERT MCQA Validation & Option Distribution Check
+        c5 = self._check_pubmedbert_validation(mcq)
+        checks.append(c5)
 
         # Calculate composite score
         total_score = sum(c.score for c in checks) / len(checks)
@@ -233,4 +241,30 @@ class QuestionEvaluator:
             passed=True,
             score=1.0,
             details="No duplicate stems detected in question bank.",
+        )
+
+    def _check_pubmedbert_validation(self, mcq: GeneratedMCQPayload) -> EvaluationCheck:
+        """Evaluates option distribution and answer prediction agreement with PubMedBERT."""
+        option_texts = [opt.text for opt in mcq.options]
+        pred = self.pubmedbert_client.predict(
+            stem=mcq.stem,
+            options=option_texts,
+            ground_truth=mcq.correct_option,
+        )
+
+        agrees = (pred.predicted_option == mcq.correct_option)
+        # Score calculation: base 0.8 on agreement, plus margin bonus
+        score = 0.95 if agrees else 0.60
+
+        details = (
+            f"PubMedBERT Model: {pred.model_name} | Predicted: Option {pred.predicted_option} "
+            f"(Confidence: {pred.confidence:.2%}, Margin: {pred.margin:.2f}, Entropy: {pred.entropy:.2f}) | "
+            f"Ground-Truth Agreement: {'AGREES' if agrees else 'DISAGREES'}"
+        )
+
+        return EvaluationCheck(
+            name="PubMedBERT Validation",
+            passed=True,  # In accordance with AGENTS.md, PubMedBERT is an informative signal, not hard disqualifier
+            score=score,
+            details=details,
         )
