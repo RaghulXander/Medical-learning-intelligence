@@ -138,7 +138,14 @@ def cmd_book(args: argparse.Namespace) -> None:
 
     doc = registry.get_document(args.doc)
     if not doc:
-        logger.error(f"Document '{args.doc}' not found in registry.")
+        from scripts.manage_reference_documents import cmd_register
+        logger.info(f"Document '{args.doc}' not yet in registry. Auto-registering reference documents...")
+        cmd_register(argparse.Namespace(file=None))
+        registry.load()
+        doc = registry.get_document(args.doc)
+
+    if not doc:
+        logger.error(f"Document '{args.doc}' not found in registry even after registration. Check data/raw/reference_documents/")
         return
 
     # Respect GCP online layout parser ceiling (<= 15 pages per request)
