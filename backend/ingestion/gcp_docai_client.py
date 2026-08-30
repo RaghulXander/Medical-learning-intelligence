@@ -114,10 +114,28 @@ class DocumentAIClient:
         )
 
         creds = None
-        creds_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-        if creds_path and Path(creds_path).exists():
+        project_root = Path(__file__).resolve().parent.parent.parent
+        creds_candidates = [
+            os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
+            "docedge-key.json",
+            project_root / "docedge-key.json",
+        ]
+
+        resolved_key: Optional[Path] = None
+        for candidate in creds_candidates:
+            if candidate:
+                p = Path(candidate)
+                if not p.is_absolute():
+                    p = project_root / p
+                if p.exists():
+                    resolved_key = p
+                    break
+
+        if resolved_key:
             from google.oauth2 import service_account
-            creds = service_account.Credentials.from_service_account_file(creds_path)
+            creds = service_account.Credentials.from_service_account_file(str(resolved_key))
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(resolved_key)
+            logger.info(f"🔑 Using Google Cloud credentials from: {resolved_key.name}")
             client = documentai.DocumentProcessorServiceClient(client_options=opts, credentials=creds)
         else:
             client = documentai.DocumentProcessorServiceClient(client_options=opts)

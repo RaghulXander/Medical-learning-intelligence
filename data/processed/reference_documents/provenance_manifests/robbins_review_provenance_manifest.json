@@ -9,7 +9,6 @@
   "completed_chunks": 3,
   "failed_chunks": [],
   "missing_pages": [
-    1,
     31,
     32,
     33,
@@ -498,9 +497,9 @@
   "normalization_version": "1.2.0",
   "status": "INCOMPLETE",
   "is_ready_for_embedding": false,
-  "verified_at": "2026-08-30T15:06:26.732860+00:00",
-  "total_words": 22857,
-  "total_evidence_blocks": 43,
+  "verified_at": "2026-08-30T15:23:10.920723+00:00",
+  "total_words": 22542,
+  "total_evidence_blocks": 44,
   "metadata": {
     "textbook_page_offset": 5,
     "version": 1

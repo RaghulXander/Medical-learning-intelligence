@@ -6,20 +6,20 @@
   "start_page_1based": 1,
   "end_page_1based": 15,
   "page_count": 15,
-  "total_blocks": 910,
-  "total_words": 6464,
-  "total_characters": 39971,
+  "total_blocks": 381,
+  "total_words": 6358,
+  "total_characters": 40332,
   "structure_counts": {
-    "headings": 31,
-    "paragraphs": 877,
-    "tables": 2,
+    "headings": 8,
+    "paragraphs": 361,
+    "tables": 0,
     "lists": 0,
     "figures": 0
   },
-  "average_confidence": 0.9213,
+  "average_confidence": 0.95,
   "low_confidence_block_count": 0,
   "provenance_integrity_score": 1.0,
   "provenance_verified": true,
   "anomalies": [],
-  "generated_at": "2026-08-30T15:03:29.771716+00:00"
+  "generated_at": "2026-08-30T15:20:05.660785+00:00"
 }

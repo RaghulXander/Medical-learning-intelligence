@@ -123,62 +123,76 @@ class DocumentAINormalizer:
         manifest: SliceManifest,
     ) -> NormalizedDocumentSlice:
         """Transforms raw Document AI layout JSON into a NormalizedDocumentSlice."""
-        full_text = raw_docai_data.get("text", "")
-        pages = raw_docai_data.get("pages", [])
-
         normalized_blocks: List[NormalizedBlock] = []
         md_sections: List[str] = []
 
-        for page_data in pages:
-            slice_page_num = page_data.get("pageNumber", 1)
-
-            # Map slice page index to original 1-based book page
-            original_page_num = manifest.page_offset_map.get(
-                slice_page_num,
-                manifest.start_page_1based + slice_page_num - 1,
+        # Check if response is from Document AI Layout Parser (documentLayout format)
+        if "documentLayout" in raw_docai_data:
+            normalized_blocks = self._normalize_document_layout(
+                doc_layout=raw_docai_data["documentLayout"],
+                manifest=manifest,
             )
+            for b in normalized_blocks:
+                if "HEADING" in b.block_type:
+                    md_sections.append(f"## {b.content}\n")
+                elif b.block_type == "TABLE":
+                    md_sections.append(f"{b.content}\n")
+                else:
+                    md_sections.append(f"{b.content}\n")
+        else:
+            full_text = raw_docai_data.get("text", "")
+            pages = raw_docai_data.get("pages", [])
 
-            # 1. Process Heading/Block Elements
-            for block_elem in page_data.get("blocks", []):
-                block = self._parse_layout_element(
-                    elem_dict=block_elem,
-                    full_text=full_text,
-                    default_type="HEADING_2",
-                    manifest=manifest,
-                    slice_page_num=slice_page_num,
-                    original_page_num=original_page_num,
-                )
-                if block:
-                    normalized_blocks.append(block)
-                    md_sections.append(f"## {block.content}\n")
+            for page_data in pages:
+                slice_page_num = page_data.get("pageNumber", 1)
 
-            # 2. Process Paragraphs
-            for para_elem in page_data.get("paragraphs", []):
-                block = self._parse_layout_element(
-                    elem_dict=para_elem,
-                    full_text=full_text,
-                    default_type="PARAGRAPH",
-                    manifest=manifest,
-                    slice_page_num=slice_page_num,
-                    original_page_num=original_page_num,
+                # Map slice page index to original 1-based book page
+                original_page_num = manifest.page_offset_map.get(
+                    slice_page_num,
+                    manifest.start_page_1based + slice_page_num - 1,
                 )
-                if block:
-                    normalized_blocks.append(block)
-                    md_sections.append(f"{block.content}\n")
 
-            # 3. Process Tables
-            for table_idx, table_elem in enumerate(page_data.get("tables", [])):
-                table_block = self._parse_table_element(
-                    table_elem=table_elem,
-                    full_text=full_text,
-                    manifest=manifest,
-                    slice_page_num=slice_page_num,
-                    original_page_num=original_page_num,
-                    table_idx=table_idx,
-                )
-                if table_block:
-                    normalized_blocks.append(table_block)
-                    md_sections.append(f"{table_block.content}\n")
+                # 1. Process Heading/Block Elements
+                for block_elem in page_data.get("blocks", []):
+                    block = self._parse_layout_element(
+                        elem_dict=block_elem,
+                        full_text=full_text,
+                        default_type="HEADING_2",
+                        manifest=manifest,
+                        slice_page_num=slice_page_num,
+                        original_page_num=original_page_num,
+                    )
+                    if block:
+                        normalized_blocks.append(block)
+                        md_sections.append(f"## {block.content}\n")
+
+                # 2. Process Paragraphs
+                for para_elem in page_data.get("paragraphs", []):
+                    block = self._parse_layout_element(
+                        elem_dict=para_elem,
+                        full_text=full_text,
+                        default_type="PARAGRAPH",
+                        manifest=manifest,
+                        slice_page_num=slice_page_num,
+                        original_page_num=original_page_num,
+                    )
+                    if block:
+                        normalized_blocks.append(block)
+                        md_sections.append(f"{block.content}\n")
+
+                # 3. Process Tables
+                for table_idx, table_elem in enumerate(page_data.get("tables", [])):
+                    table_block = self._parse_table_element(
+                        table_elem=table_elem,
+                        full_text=full_text,
+                        manifest=manifest,
+                        slice_page_num=slice_page_num,
+                        original_page_num=original_page_num,
+                        table_idx=table_idx,
+                    )
+                    if table_block:
+                        normalized_blocks.append(table_block)
+                        md_sections.append(f"{table_block.content}\n")
 
         # Compute summary statistics
         heading_count = sum(1 for b in normalized_blocks if "HEADING" in b.block_type)
@@ -442,3 +456,126 @@ class DocumentAINormalizer:
             "ymax": round(max(ys), 4),
             "xmax": round(max(xs), 4),
         }
+
+    def _normalize_document_layout(
+        self,
+        doc_layout: Dict[str, Any],
+        manifest: SliceManifest,
+    ) -> List[NormalizedBlock]:
+        """Recursively parses Google Cloud Layout Parser documentLayout blocks."""
+        blocks: List[NormalizedBlock] = []
+
+        def recurse_blocks(block_list: List[Dict[str, Any]]) -> None:
+            for b in block_list:
+                page_span = b.get("pageSpan", {})
+                slice_page_num = page_span.get("pageStart", 1)
+                original_page_num = manifest.page_offset_map.get(
+                    slice_page_num, manifest.start_page_1based + slice_page_num - 1
+                )
+                pdf_page = original_page_num
+                textbook_page = manifest.pdf_to_textbook_map.get(
+                    pdf_page,
+                    pdf_page - manifest.textbook_page_offset if pdf_page > manifest.textbook_page_offset else None,
+                )
+
+                # 1. Process Table Block
+                table_block = b.get("tableBlock")
+                if table_block:
+                    headers: List[str] = []
+                    for h_row in table_block.get("headerRows", []):
+                        row_cells = [c.get("text", "").strip() for c in h_row.get("cells", [])]
+                        if row_cells:
+                            headers = row_cells
+                            break
+
+                    body_rows: List[List[str]] = []
+                    for b_row in table_block.get("bodyRows", []):
+                        row_cells = [c.get("text", "").strip() for c in b_row.get("cells", [])]
+                        if row_cells:
+                            body_rows.append(row_cells)
+
+                    if headers or body_rows:
+                        col_count = max(len(headers), max((len(r) for r in body_rows), default=0))
+                        if not headers:
+                            headers = [f"Col {i+1}" for i in range(col_count)]
+                        while len(headers) < col_count:
+                            headers.append(f"Col {len(headers)+1}")
+
+                        md_lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(["---"] * col_count) + " |"]
+                        for row in body_rows:
+                            padded = row + [""] * (col_count - len(row))
+                            md_lines.append("| " + " | ".join(padded) + " |")
+
+                        table_md = "\n".join(md_lines)
+                        content_hash = hashlib.sha256(table_md.encode("utf-8")).hexdigest()
+
+                        blocks.append(
+                            NormalizedBlock(
+                                block_id=f"{manifest.slice_id}_p{original_page_num:04d}_tbl_{b.get('blockId', '0')}",
+                                block_type="TABLE",
+                                content=table_md,
+                                confidence=0.95,
+                                original_doc_id=manifest.parent_doc_id,
+                                original_doc_title=manifest.parent_doc_title,
+                                original_page_number=original_page_num,
+                                slice_id=manifest.slice_id,
+                                slice_page_number=slice_page_num,
+                                content_hash=content_hash,
+                                pdf_page=pdf_page,
+                                textbook_page=textbook_page,
+                                document_id=manifest.parent_doc_id,
+                                source=manifest.parent_doc_title,
+                                chunk_id=manifest.slice_id,
+                                table_data={"headers": headers, "rows": body_rows},
+                            )
+                        )
+
+                # 2. Process Text Block
+                text_block = b.get("textBlock")
+                if text_block:
+                    raw_text = text_block.get("text", "")
+                    cleaned_text = sanitize_extracted_text(raw_text)
+                    gcp_type = text_block.get("type", "paragraph").lower()
+
+                    is_hdr_ftr = False
+                    if "header" in gcp_type:
+                        block_type = "RUNNING_HEADER"
+                        is_hdr_ftr = True
+                    elif "footer" in gcp_type:
+                        block_type = "RUNNING_FOOTER"
+                        is_hdr_ftr = True
+                    elif "heading" in gcp_type:
+                        block_type = "HEADING_2"
+                    else:
+                        block_type = "PARAGRAPH"
+
+                    if cleaned_text:
+                        content_hash = hashlib.sha256(cleaned_text.encode("utf-8")).hexdigest()
+                        blocks.append(
+                            NormalizedBlock(
+                                block_id=f"{manifest.slice_id}_p{original_page_num:04d}_{b.get('blockId', '0')}_{content_hash[:8]}",
+                                block_type=block_type,
+                                content=cleaned_text,
+                                confidence=0.95,
+                                original_doc_id=manifest.parent_doc_id,
+                                original_doc_title=manifest.parent_doc_title,
+                                original_page_number=original_page_num,
+                                slice_id=manifest.slice_id,
+                                slice_page_number=slice_page_num,
+                                content_hash=content_hash,
+                                pdf_page=pdf_page,
+                                textbook_page=textbook_page,
+                                document_id=manifest.parent_doc_id,
+                                source=manifest.parent_doc_title,
+                                chunk_id=manifest.slice_id,
+                                is_header_or_footer=is_hdr_ftr,
+                            )
+                        )
+
+                    # Recurse children if present
+                    child_blocks = text_block.get("blocks", [])
+                    if child_blocks:
+                        recurse_blocks(child_blocks)
+
+        recurse_blocks(doc_layout.get("blocks", []))
+        return blocks
