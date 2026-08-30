@@ -160,6 +160,19 @@ class QualityReportGenerator:
                     f"Block {b.block_id} has page {b.original_page_number} exceeding parent total pages ({parent_doc.total_pages})"
                 )
 
+            # OCR corruption check
+            if "\ufffd" in b.content or "\x00" in b.content:
+                anomalies.append(f"OCR corruption detected in block {b.block_id}: contained invalid replacement characters")
+
+            # Table column integrity check
+            if b.block_type == "TABLE" and b.table_data:
+                headers = b.table_data.get("headers", [])
+                rows = b.table_data.get("rows", [])
+                if headers and rows:
+                    expected_cols = len(headers)
+                    if any(len(r) != expected_cols for r in rows):
+                        anomalies.append(f"Table {b.block_id} has ragged column count mismatch across rows")
+
             if has_doc_id and has_valid_page:
                 valid_provenance_blocks += 1
             else:

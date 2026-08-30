@@ -3,7 +3,7 @@
 **Audit Status:** ✅ PASSED (100% PROVENANCE)  
 **Parent Document:** Sternberg's Diagnostic Surgical Pathology Review (`ae721928-8248-5cca-9499-29264a91656e`)  
 **Original Page Span:** Pages 1 – 15 (15 pages)  
-**Generated At:** 2026-08-30T14:38:31.016736+00:00  
+**Generated At:** 2026-08-30T14:56:08.045483+00:00  
 
 ---
 

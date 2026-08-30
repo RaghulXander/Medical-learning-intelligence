@@ -26,7 +26,27 @@
     "14": 14,
     "15": 15
   },
-  "created_at": "2026-08-30T14:38:30.869092+00:00",
+  "textbook_page_offset": 12,
+  "textbook_start_page": null,
+  "textbook_end_page": 3,
+  "pdf_to_textbook_map": {
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": null,
+    "6": null,
+    "7": null,
+    "8": null,
+    "9": null,
+    "10": null,
+    "11": null,
+    "12": null,
+    "13": 1,
+    "14": 2,
+    "15": 3
+  },
+  "created_at": "2026-08-30T14:56:07.825456+00:00",
   "status": "CREATED",
   "metadata": {}
 }

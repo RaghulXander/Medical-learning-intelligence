@@ -3,7 +3,7 @@
 **Audit Status:** ✅ PASSED (100% PROVENANCE)  
 **Parent Document:** Robbins & Cotran Pathologic Basis of Disease (`54f0176a-1cf6-5d0a-bf9b-e0e58d0b644f`)  
 **Original Page Span:** Pages 1 – 15 (15 pages)  
-**Generated At:** 2026-08-30T14:38:29.048319+00:00  
+**Generated At:** 2026-08-30T14:56:05.525546+00:00  
 
 ---
 

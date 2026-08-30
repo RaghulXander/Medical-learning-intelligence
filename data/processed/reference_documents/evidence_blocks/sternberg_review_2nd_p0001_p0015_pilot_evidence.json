@@ -1,0 +1,308 @@
+{
+  "slice_id": "sternberg_review_2nd_p0001_p0015_pilot",
+  "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+  "source": "Sternberg's Diagnostic Surgical Pathology Review",
+  "evidence_count": 13,
+  "evidence_blocks": [
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0001_tb0000_84b6eb4e",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 1,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": null,
+      "content": "[Page 1 Content]",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 1,
+      "word_count": 3,
+      "character_count": 16,
+      "content_hash": "84b6eb4e01ed1d71a2bf6a7cc3429486eea702c812abccd8806dc32b5e1808b3",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0003_tb0000_dcecac11",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 3,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "SECOND EDITION",
+      "content": "### STERNBERG'S\n\n\nDiagnostic Surgical\n\nPathology\n\nReview\n\n\n### SECOND EDITION",
+      "headings": [
+        "STERNBERG'S",
+        "SECOND EDITION"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 5,
+      "word_count": 9,
+      "character_count": 77,
+      "content_hash": "dcecac11fb964d1acd768dc94885ba3bad43ad23718114779338ea6e58360ed1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0004_tb0000_72697ef6",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 4,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "SECOND EDITION",
+      "content": "### STERNBERG'S\n\n\nDiagnostic Surgical\n\nPathology\n\nReview\n\n\n### SECOND EDITION\n\n\nby\n\nPier Luigi Di Patre, MD\n\nAssociate Professor of Pathology\n\nTexas A&M Health Science Center College of Medicine\n\nBryan, Texas\n\nAssociate Professor of Pathology\n\nScott & White Hospital\n\nTemple, Texas\n\nDarryl Carter, MD\n\nProfessor Emeritus\n\nDepartment of Pathology\n\nYale University School of Medicine\n\nNew Haven, Connecticut\n\nConsultant\n\nDepartment of Pathology\n\nJoint Pathology Center\n\nSilver Spring, Maryland",
+      "headings": [
+        "STERNBERG'S",
+        "SECOND EDITION"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 22,
+      "word_count": 65,
+      "character_count": 491,
+      "content_hash": "72697ef6dd9f37c88211cc16a315f74814bc0ec9191e804f38df594f0368fca0",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0006_tb0000_ffe1eb76",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 6,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "RC69",
+      "content": "Acquisitions Editor: Ryan Shaw\n\nProduct Manager: Kate Marshall\n\nProduction Project Manager: Marian Bellus\n\nSenior Manufacturing Coordinator: Beth Welsh\n\nMarketing Manager: Dan Dressler\n\nDesigner: Stephen Druding\n\nProduction Services: SPi Global\n\nCopyright © 2015 by Wolters Kluwer\n\nTwo Commerce Square\n\n2001 Market Street\n\nPhiladelphia, PA 19103 USA\n\nLWW.com\n\nFirst edition © 2005, Lippincott Williams & Wilkins\n\nAll rights reserved. This book is protected by copyright. No part of this book may\n\nbe reproduced in any form by any means, including photocopying, or utilized by\n\nany information storage and retrieval system without written permission from the\n\ncopyright owner, except for brief quotations embodied in critical articles and\n\nreviews. Materials appearing in this book prepared by individuals as part of their\n\nofficial duties as U.S. government employees are not covered by the above-\n\nmentioned copyright.\n\nPrinted in China\n\nLibrary of Congress Cataloging-in-Publication Data\n\nDiPatre, Pier Luigi, author.\n\nCarter. — Second edition.\n\np. ; cm.\n\ntitle: Diagnostic surgical pathology review\n\nIncludes bibliographical references and index.\n\nISBN 978-1-4511-9211-7 (alk. paper)\n\nI. Carter, Darryl, author.II. Title.III. Title: Diagnostic surgical pathology review.\n\n[DNLM:1. Pathology, Surgical—Examination Questions.2. Diagnostic\n\nTechniques and Procedures—Examination Questions. WO 18.2]\n\n\n### RC69\n\n\n616'.047076—dc23\n\n2014035980\n\nCare has been taken to confirm the accuracy of the information presented and to\n\ndescribe generally accepted practices. However, the authors, editors, and publisher\n\nare not responsible for errors or omissions or for any consequences from",
+      "headings": [
+        "RC69"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 37,
+      "word_count": 225,
+      "character_count": 1680,
+      "content_hash": "ffe1eb76bf05f1c4efa5112cdd8b857fe3881d29f35b88f608d36250521debb7",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0007_tb0000_b92c3634",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 7,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "RC69",
+      "content": "application of the information in this book and make no warranty, expressed or\n\nimplied, with respect to the currency, completeness, or accuracy of the contents of\n\nthe publication. Application of the information in a particular situation remains the\n\nprofessional responsibility of the practitioner.\n\nThe authors, editors, and publisher have exerted every effort to ensure that drug\n\nselection and dosage set forth in this text are in accordance with current\n\nrecommendations and practice at the time of publication. However, in view of\n\nongoing research, changes in government regulations, and the constant flow of\n\ninformation relating to drug therapy and drug reactions, the reader is urged to\n\ncheck the package insert for each drug for any change in indications and dosage\n\nand for added warnings and precautions. This is particularly important when the\n\nrecommended agent is a new or infrequently employed drug.\n\nSome drugs and medical devices presented in the publication have Food and\n\nDrug Administration (FDA) clearance for limited use in restricted research\n\nsettings. It is the responsibility of the health care provider to ascertain the FDA\n\nstatus of each drug or device planned for use in their clinical practice.\n\nTo purchase additional copies of this book, call our customer service department at\n\n(800) 638-3030 or fax orders to (301) 223-2320. International customers should\n\ncall (301) 223-2300.\n\nVisit Lippincott Williams & Wilkins on the Internet: at LWW.com. Lippincott\n\nWilliams & Wilkins customer service representatives are available from 8:30 am to\n\n6 pm, EST.\n\n10 9 8 7 6 5 4 3 2 1",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 23,
+      "word_count": 252,
+      "character_count": 1610,
+      "content_hash": "b92c3634dc61fce0e4a4823035e5f08f892161abec67bd28f355376fcaa4f2f3",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0008_tb0000_8fb3f64e",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 8,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "PREFACE",
+      "content": "### PREFACE\n\n\nThe second edition of Sternberg's Diagnostic Surgical Pathology Review\n\nhas been greatly expanded to include 1,000 multiple-choice questions,\n\nabout two-thirds of which accompanied by pictures, which are this time\n\nreproduced in color from the sixth edition of Sternberg's Diagnostic\n\nSurgical Pathology, the source book. The answers and explanations to the\n\nquestions are reported at the end of each chapter in this edition. We hope\n\nthat these editorial improvements will make the Review a more effective\n\ntool for board and recertification examinations.",
+      "headings": [
+        "PREFACE"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 9,
+      "word_count": 83,
+      "character_count": 570,
+      "content_hash": "8fb3f64e2007ec3ee4d209d63feab95e4e82e9b656266f1b62cc593e0cf4c5c1",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0009_tb0000_bcaa5af2",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 9,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "ACKNOWLEDGMENTS",
+      "content": "### ACKNOWLEDGMENTS\n\n\nWe appreciate the productive collaboration with Kate Marshall, Product\n\nDevelopment Editor, and Remya Divakaran, Senior Project Manager, who\n\nprovided a most friendly and diligent assistance during manuscript\n\npreparation and book production.",
+      "headings": [
+        "ACKNOWLEDGMENTS"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 5,
+      "word_count": 33,
+      "character_count": 264,
+      "content_hash": "bcaa5af25b29c707c88e5092852e4f263bbef11056cc136e8ca6c4912110ff0c",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0010_tb0000_f43f0957",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 10,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "### CONTENTS\n\n\nPreface\n\nAcknowledgments\n\nSkin, Soft Tissue, Bone, and Joints\n\n1 Nonneoplastic Diseases of the Skin\n\n2 Nonmelanocytic Cutaneous Tumors\n\n3 Melanocytic Lesions\n\n4 Muscle Biopsy in Neuromuscular Diseases\n\n5 Disorders of Soft Tissue\n\n6 Joint Diseases\n\n7 Nonneoplastic Diseases of Bones\n\n8 Bone Tumors\n\nBreast\n\n9 Breast\n\nCentral Nervous System\n\n10 The Brain, Spinal Cord, and Meninges\n\nEndocrine System",
+      "headings": [
+        "CONTENTS"
+      ],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 17,
+      "word_count": 60,
+      "character_count": 412,
+      "content_hash": "f43f0957856b222480f62df18c9001a6ca818aefcbffcf25201e70f870ace882",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0011_tb0000_569cdde9",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 11,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "11 Neuroendocrine and Paracrine Systems\n\n12 Pituitary and Sellar Region\n\n13 Pathology of Thyroid and Parathyroid Disease\n\n14 Adrenal Glands\n\n15 Paragangliomas\n\nHematopoietic and Lymphatic Systems\n\n16 Disorders of Bone Marrow\n\n17 Lymph Nodes\n\n18 Spleen\n\nHead and Neck\n\n19 Jaws and Oral Cavity\n\n20 Salivary Glands\n\n21 Nose, Paranasal Sinuses, and Nasopharynx\n\n22 Larynx\n\n23 Ear and Temporal Bone\n\n24 Eye and Ocular Adnexa\n\nIntrathoracic Organs and Blood Vessels\n\n25 Nonneoplastic Pulmonary Disease\n\n26 Pulmonary Neoplasms\n\n27 Pleura\n\n28 Mediastinum\n\n29 Heart\n\n30 Blood Vessels",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 23,
+      "word_count": 86,
+      "character_count": 574,
+      "content_hash": "569cdde9147f9da74da5007264859922fd8c6fba3200dfcc0f3333d06dfa662b",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0012_tb0000_1fae0801",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 12,
+      "textbook_page": null,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "Alimentary Canal and Associated Organs\n\n31 Esophagus\n\n32 Stomach\n\n33 Nonneoplastic Intestinal Diseases\n\n34 Intestinal Neoplasms\n\n35 Pancreas\n\n36 Nonneoplastic Liver Disease\n\n37 Masses of the Liver\n\n38 Gallbladder, Extrahepatic Biliary Tree, and Ampulla\n\n39 Anus and Perianal Area\n\nUrinary Tract and Male Genital System\n\n40 Developmental Abnormalities of the Kidney\n\n41 Adult Renal Diseases\n\n42 Adult Renal Tumors\n\n43 Renal Neoplasms of Childhood\n\n44 Urothelial Tract: Renal Pelvis, Ureter, Urinary Bladder, and\n\nUrethra\n\n45 Prostate and Seminal Vesicles\n\n46 Nonneoplastic Diseases of the Testis\n\n47 Testicular and Paratesticular Tumors\n\n48 Penis\n\nFemale Reproductive System and Peritoneum\n\n49 Gestational Trophoblastic Disease",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 23,
+      "word_count": 101,
+      "character_count": 726,
+      "content_hash": "1fae08013d5acf192effbab023ff2c686b16a1a734a027afd8f410838b84b31a",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0013_tb0001_9bf05125",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 13,
+      "textbook_page": 1,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "50 Placenta\n\n51 Vulva and Vagina\n\n52 Cervix\n\n53 Uterine Corpus\n\n54 Ovarian Surface Epithelial–Stromal Tumors\n\n55 Sex Cord–Stromal, Steroid Cell, and Germ Cell Tumors of the\n\nOvary\n\n56 Miscellaneous Primary Tumors, Secondary Tumors, and\n\nNonneoplastic Lesions of the Ovary\n\n57 Fallopian Tube and Broad Ligament\n\n58 Peritoneum\n\nIndex",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 12,
+      "word_count": 49,
+      "character_count": 331,
+      "content_hash": "9bf05125eeb67dd34118f4241c0330888eb8965bec53d14bed19c1ee3219f3a6",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0014_tb0002_09c6260a",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 14,
+      "textbook_page": 2,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "and Joints",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 1,
+      "word_count": 2,
+      "character_count": 10,
+      "content_hash": "09c6260addfa138d0b4920566eedc89d6ff781f4a293acf723b88edde73aba4b",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    },
+    {
+      "evidence_id": "ae721928-8248-5cca-9499-29264a91656e_pdf0015_tb0003_ab54fc6b",
+      "document_id": "ae721928-8248-5cca-9499-29264a91656e",
+      "source": "Sternberg's Diagnostic Surgical Pathology Review",
+      "pdf_page": 15,
+      "textbook_page": 3,
+      "chunk_id": "sternberg_review_2nd_p0001_p0015_pilot",
+      "chapter": null,
+      "section": "CONTENTS",
+      "content": "1 Nonneoplastic Diseases\n\nof the Skin\n\n1. A skin biopsy from a 20-year-old man with eczematous dermatitis is\n\nsubmitted for histopathologic examination. Which of the following\n\nchanges would be most consistent with a diagnosis of acute spongiotic\n\ndermatitis?\n\nA. Acanthosis\n\nB. Epidermotropism\n\nC. Intraepidermal edema\n\nD. Papillomatosis\n\nE. Parakeratosis\n\n2. Which of the following morphologic changes is most consistent with\n\nallergic, rather than irritant, contact dermatitis?\n\nA. Eosinophilic infiltration\n\nB. Lymphocytic exocytosis\n\nC. Papillary dermal edema\n\nD. Perivascular lymphocytes\n\nE. Spongiosis\n\n3. A middle-aged patient presents with pruritic coin-shaped plaques over\n\nthe extensor surfaces of upper and lower limbs. A biopsy shows acute\n\nand subacute spongiotic changes, without evidence of fungal\n\norganisms on special stains. Which of the following is the most likely\n\ndiagnosis?\n\nA. Atopic dermatitis\n\nB. Dyshidrosis\n\nC. Irritant contact dermatitis",
+      "headings": [],
+      "tables": [],
+      "figures": [],
+      "raw_block_count": 26,
+      "word_count": 133,
+      "character_count": 967,
+      "content_hash": "ab54fc6bd53d08e4b60d4a6f1eac2d17ae33608c739f557ebed50e0ebaee1a6a",
+      "metadata": {
+        "start_page_1based": 1,
+        "end_page_1based": 15
+      }
+    }
+  ]
+}

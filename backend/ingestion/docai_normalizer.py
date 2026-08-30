@@ -38,19 +38,36 @@ def sanitize_extracted_text(text: Optional[str]) -> str:
 class NormalizedBlock:
     """Structured, provenance-backed content block extracted from a reference document."""
     block_id: str
-    block_type: str  # HEADING_1, HEADING_2, HEADING_3, PARAGRAPH, TABLE, LIST_ITEM, FIGURE_CAPTION
+    block_type: str  # HEADING_1, HEADING_2, HEADING_3, PARAGRAPH, TABLE, LIST_ITEM, FIGURE_CAPTION, RUNNING_HEADER, RUNNING_FOOTER
     content: str
     confidence: float
     original_doc_id: str
     original_doc_title: str
-    original_page_number: int  # 1-based absolute page in original textbook
+    original_page_number: int  # 1-based physical page in PDF
     slice_id: str
     slice_page_number: int  # 1-based local page in slice
     content_hash: str
+    pdf_page: int = 1
+    textbook_page: Optional[int] = None
+    document_id: str = ""
+    source: str = ""
+    chunk_id: str = ""
+    column_index: Optional[int] = None  # 0: left column, 1: right column, None: full-width
+    is_header_or_footer: bool = False
     bounding_box: Optional[Dict[str, float]] = None
     text_anchor: Optional[Dict[str, int]] = None
     table_data: Optional[Dict[str, Any]] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self):
+        if not self.pdf_page:
+            self.pdf_page = self.original_page_number
+        if not self.document_id:
+            self.document_id = self.original_doc_id
+        if not self.source:
+            self.source = self.original_doc_title
+        if not self.chunk_id:
+            self.chunk_id = self.slice_id
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -238,6 +255,26 @@ class DocumentAINormalizer:
 
         # Extract bounding box
         bbox = self._extract_bounding_box(layout)
+        column_index = None
+        is_header_or_footer = False
+
+        if bbox:
+            xmin = bbox.get("xmin", 0.0)
+            xmax = bbox.get("xmax", 1.0)
+            ymin = bbox.get("ymin", 0.0)
+            ymax = bbox.get("ymax", 1.0)
+
+            if xmax <= 0.55:
+                column_index = 0  # Left column
+            elif xmin >= 0.45:
+                column_index = 1  # Right column
+
+            if ymax <= 0.075:
+                is_header_or_footer = True
+                block_type = "RUNNING_HEADER"
+            elif ymin >= 0.93:
+                is_header_or_footer = True
+                block_type = "RUNNING_FOOTER"
 
         # Extract anchor range
         anchor_dict = None
@@ -247,6 +284,12 @@ class DocumentAINormalizer:
                 "start": int(segments[0].get("startIndex", "0")),
                 "end": int(segments[0].get("endIndex", "0")),
             }
+
+        pdf_page = original_page_num
+        textbook_page = manifest.pdf_to_textbook_map.get(
+            pdf_page,
+            pdf_page - manifest.textbook_page_offset if pdf_page > manifest.textbook_page_offset else None,
+        )
 
         content_hash = hashlib.sha256(cleaned_text.encode("utf-8")).hexdigest()
         block_id = f"{manifest.slice_id}_p{original_page_num:04d}_{content_hash[:8]}"
@@ -262,6 +305,13 @@ class DocumentAINormalizer:
             slice_id=manifest.slice_id,
             slice_page_number=slice_page_num,
             content_hash=content_hash,
+            pdf_page=pdf_page,
+            textbook_page=textbook_page,
+            document_id=manifest.parent_doc_id,
+            source=manifest.parent_doc_title,
+            chunk_id=manifest.slice_id,
+            column_index=column_index,
+            is_header_or_footer=is_header_or_footer,
             bounding_box=bbox,
             text_anchor=anchor_dict,
         )
@@ -325,6 +375,12 @@ class DocumentAINormalizer:
         content_hash = hashlib.sha256(table_md.encode("utf-8")).hexdigest()
         block_id = f"{manifest.slice_id}_p{original_page_num:04d}_tbl{table_idx}_{content_hash[:8]}"
 
+        pdf_page = original_page_num
+        textbook_page = manifest.pdf_to_textbook_map.get(
+            pdf_page,
+            pdf_page - manifest.textbook_page_offset if pdf_page > manifest.textbook_page_offset else None,
+        )
+
         return NormalizedBlock(
             block_id=block_id,
             block_type="TABLE",
@@ -336,6 +392,11 @@ class DocumentAINormalizer:
             slice_id=manifest.slice_id,
             slice_page_number=slice_page_num,
             content_hash=content_hash,
+            pdf_page=pdf_page,
+            textbook_page=textbook_page,
+            document_id=manifest.parent_doc_id,
+            source=manifest.parent_doc_title,
+            chunk_id=manifest.slice_id,
             bounding_box=self._extract_bounding_box(layout),
             table_data={"headers": headers, "rows": body_rows},
         )

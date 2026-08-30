@@ -3,7 +3,7 @@
 **Audit Status:** ✅ PASSED (100% PROVENANCE)  
 **Parent Document:** Robbins and Cotran Review of Pathology (`88878cf1-7c67-5194-9da2-429096669458`)  
 **Original Page Span:** Pages 1 – 15 (15 pages)  
-**Generated At:** 2026-08-30T14:38:26.151966+00:00  
+**Generated At:** 2026-08-30T14:56:01.680763+00:00  
 
 ---
 

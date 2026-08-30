@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated_at": "2026-08-30T14:38:30.869759+00:00",
+  "updated_at": "2026-08-30T14:56:07.826453+00:00",
   "document_count": 3,
   "documents": {
     "88878cf1-7c67-5194-9da2-429096669458": {
@@ -19,7 +19,8 @@
       "file_size_bytes": 79332039,
       "sha256": "f1b33a2a8809980eebd0fc1695c17d061b46cda6e057b549a0b119e2c9ed92e3",
       "total_pages": 496,
-      "registered_at": "2026-08-30T14:38:22.195795+00:00",
+      "textbook_page_offset": 5,
+      "registered_at": "2026-08-30T14:55:55.953920+00:00",
       "metadata": {},
       "slices": {
         "robbins_review_p0001_p0015_pilot": {
@@ -50,7 +51,27 @@
             "14": 14,
             "15": 15
           },
-          "created_at": "2026-08-30T14:38:25.464781+00:00",
+          "textbook_page_offset": 5,
+          "textbook_start_page": null,
+          "textbook_end_page": 10,
+          "pdf_to_textbook_map": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null,
+            "6": 1,
+            "7": 2,
+            "8": 3,
+            "9": 4,
+            "10": 5,
+            "11": 6,
+            "12": 7,
+            "13": 8,
+            "14": 9,
+            "15": 10
+          },
+          "created_at": "2026-08-30T14:56:00.851225+00:00",
           "status": "CREATED",
           "metadata": {}
         }
@@ -72,7 +93,8 @@
       "file_size_bytes": 665952780,
       "sha256": "c43661f8d57ee7a29382d030a42620d270d7cb90f52c32817fe6bebae5e10129",
       "total_pages": 1227,
-      "registered_at": "2026-08-30T14:38:24.277682+00:00",
+      "textbook_page_offset": 16,
+      "registered_at": "2026-08-30T14:55:59.082957+00:00",
       "metadata": {},
       "slices": {
         "robbins_pathologic_basis_11th_p0001_p0015_pilot": {
@@ -103,7 +125,27 @@
             "14": 14,
             "15": 15
           },
-          "created_at": "2026-08-30T14:38:27.705043+00:00",
+          "textbook_page_offset": 16,
+          "textbook_start_page": null,
+          "textbook_end_page": null,
+          "pdf_to_textbook_map": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null,
+            "6": null,
+            "7": null,
+            "8": null,
+            "9": null,
+            "10": null,
+            "11": null,
+            "12": null,
+            "13": null,
+            "14": null,
+            "15": null
+          },
+          "created_at": "2026-08-30T14:56:03.970479+00:00",
           "status": "CREATED",
           "metadata": {}
         }
@@ -125,7 +167,8 @@
       "file_size_bytes": 73530779,
       "sha256": "b3371948e14c22c9749d5583cc16e1e5bff9b7698c802eeeeac9bb8619c734ba",
       "total_pages": 1171,
-      "registered_at": "2026-08-30T14:38:24.627564+00:00",
+      "textbook_page_offset": 12,
+      "registered_at": "2026-08-30T14:55:59.630254+00:00",
       "metadata": {},
       "slices": {
         "sternberg_review_2nd_p0001_p0015_pilot": {
@@ -156,7 +199,27 @@
             "14": 14,
             "15": 15
           },
-          "created_at": "2026-08-30T14:38:30.869092+00:00",
+          "textbook_page_offset": 12,
+          "textbook_start_page": null,
+          "textbook_end_page": 3,
+          "pdf_to_textbook_map": {
+            "1": null,
+            "2": null,
+            "3": null,
+            "4": null,
+            "5": null,
+            "6": null,
+            "7": null,
+            "8": null,
+            "9": null,
+            "10": null,
+            "11": null,
+            "12": null,
+            "13": 1,
+            "14": 2,
+            "15": 3
+          },
+          "created_at": "2026-08-30T14:56:07.825456+00:00",
           "status": "CREATED",
           "metadata": {}
         }

@@ -53,18 +53,22 @@ def get_pdf_page_count(file_path: Path | str) -> int:
 
 @dataclass
 class SliceManifest:
-    """Metadata for a sliced chunk of a parent reference document."""
+    """Metadata for a sliced chunk of a parent reference document with dual page tracking."""
     slice_id: str
     parent_doc_id: str
     parent_doc_title: str
     parent_sha256: str
-    start_page_1based: int
-    end_page_1based: int
+    start_page_1based: int  # PDF physical start page (1-based)
+    end_page_1based: int    # PDF physical end page (1-based)
     page_count: int
     slice_file_path: str
     slice_file_name: str
     slice_sha256: str
-    page_offset_map: Dict[int, int] = field(default_factory=dict)
+    page_offset_map: Dict[int, int] = field(default_factory=dict)  # slice_local_page -> pdf_page
+    textbook_page_offset: int = 0
+    textbook_start_page: Optional[int] = None
+    textbook_end_page: Optional[int] = None
+    pdf_to_textbook_map: Dict[int, Optional[int]] = field(default_factory=dict)
     created_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
@@ -76,17 +80,22 @@ class SliceManifest:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> SliceManifest:
-        # Convert string keys in page_offset_map to ints if necessary
+        # Convert string keys in page maps to ints if necessary
         if "page_offset_map" in data and isinstance(data["page_offset_map"], dict):
             data["page_offset_map"] = {
                 int(k): int(v) for k, v in data["page_offset_map"].items()
+            }
+        if "pdf_to_textbook_map" in data and isinstance(data["pdf_to_textbook_map"], dict):
+            data["pdf_to_textbook_map"] = {
+                int(k): (int(v) if v is not None else None)
+                for k, v in data["pdf_to_textbook_map"].items()
             }
         return cls(**data)
 
 
 @dataclass
 class RegisteredDocument:
-    """Immutable record of an authoritative reference document."""
+    """Immutable record of an authoritative reference document with front-matter offset tracking."""
     doc_id: str
     short_name: str
     title: str
@@ -102,11 +111,18 @@ class RegisteredDocument:
     file_size_bytes: int
     sha256: str
     total_pages: int
+    textbook_page_offset: int = 0  # Number of front matter/preface pages before printed page 1
     registered_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
     metadata: Dict[str, Any] = field(default_factory=dict)
     slices: Dict[str, SliceManifest] = field(default_factory=dict)
+
+    def get_textbook_page(self, pdf_page: int) -> Optional[int]:
+        """Calculates printed textbook page from physical PDF page index."""
+        if pdf_page <= self.textbook_page_offset:
+            return None  # Front matter / preface / table of contents
+        return pdf_page - self.textbook_page_offset
 
     def to_dict(self) -> Dict[str, Any]:
         res = asdict(self)
@@ -200,9 +216,10 @@ class DocumentRegistry:
         source_type: str = "TEXTBOOK",
         speciality: str = "Pathology",
         subject: str = "Pathology",
+        textbook_page_offset: int = 0,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> RegisteredDocument:
-        """Registers a raw reference PDF file with cryptographic hash validation."""
+        """Registers a raw reference PDF file with cryptographic hash validation and page offset tracking."""
         path = Path(file_path)
         if not path.exists():
             raise FileNotFoundError(f"Cannot register non-existent file: {path}")
@@ -235,6 +252,7 @@ class DocumentRegistry:
             file_size_bytes=file_size,
             sha256=sha256,
             total_pages=total_pages,
+            textbook_page_offset=textbook_page_offset,
             registered_at=datetime.now(timezone.utc).isoformat(),
             metadata=metadata or {},
             slices=slices,

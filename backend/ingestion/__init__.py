@@ -15,6 +15,7 @@ from backend.ingestion.document_registry import (
     compute_file_sha256,
 )
 from backend.ingestion.gcp_docai_client import DocumentAIClient
+from backend.ingestion.medical_normalizer import MedicalNormalizer, PageEvidenceBlock
 from backend.ingestion.pdf_splitter import PDFSplitter
 from backend.ingestion.quality_report import QualityReport, QualityReportGenerator
 from backend.ingestion.universal_ingestor import UniversalQuestionIngestor
@@ -30,6 +31,8 @@ __all__ = [
     "DocumentAINormalizer",
     "NormalizedBlock",
     "NormalizedDocumentSlice",
+    "MedicalNormalizer",
+    "PageEvidenceBlock",
     "QualityReport",
     "QualityReportGenerator",
     "UniversalQuestionIngestor",

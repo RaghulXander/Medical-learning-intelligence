@@ -40,6 +40,7 @@ KNOWN_DOCUMENTS = [
         "year": 2014,
         "publisher": "Elsevier Saunders",
         "source_type": "REVIEW_BOOK",
+        "textbook_page_offset": 5,  # PDF Page 11 = Textbook Page 6
     },
     {
         "file_name": "Robbins_and_Cotran_Pathologic_Basis_of_Disease_11th_Edition.pdf",
@@ -50,6 +51,7 @@ KNOWN_DOCUMENTS = [
         "year": 2024,
         "publisher": "Elsevier",
         "source_type": "TEXTBOOK",
+        "textbook_page_offset": 16,  # PDF Page 17 = Textbook Page 1
     },
     {
         "file_name": "Sternberg's diagnostic surgical pathology review 2nd Ed.pdf",
@@ -60,6 +62,7 @@ KNOWN_DOCUMENTS = [
         "year": 2015,
         "publisher": "Wolters Kluwer",
         "source_type": "REVIEW_BOOK",
+        "textbook_page_offset": 12,  # PDF Page 13 = Textbook Page 1
     },
 ]
 
@@ -85,9 +88,10 @@ def cmd_register(args: argparse.Namespace) -> None:
             year=doc_meta["year"],
             publisher=doc_meta["publisher"],
             source_type=doc_meta["source_type"],
+            textbook_page_offset=doc_meta.get("textbook_page_offset", 0),
         )
         logger.info(
-            f"✅ Registered: {doc.short_name} -> ID: {doc.doc_id} (Pages: {doc.total_pages}, SHA: {doc.sha256[:12]}...)"
+            f"✅ Registered: {doc.short_name} -> ID: {doc.doc_id} (Pages: {doc.total_pages}, Front-matter offset: {doc.textbook_page_offset})"
         )
         registered_count += 1
 

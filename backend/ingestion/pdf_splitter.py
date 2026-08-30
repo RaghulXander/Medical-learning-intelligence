@@ -80,11 +80,17 @@ class PDFSplitter:
         slice_path = self.slices_dir / slice_filename
         manifest_path = self.slices_dir / f"{slice_id}_manifest.json"
 
-        # Build 1-based page offset map: local slice page (1..N) -> absolute book page
+        # Build 1-based page offset map: local slice page (1..N) -> physical PDF page
         page_offset_map: Dict[int, int] = {}
+        pdf_to_textbook_map: Dict[int, Optional[int]] = {}
+
         for local_idx in range(1, page_count + 1):
-            original_page = start_page_1based + local_idx - 1
-            page_offset_map[local_idx] = original_page
+            pdf_page = start_page_1based + local_idx - 1
+            page_offset_map[local_idx] = pdf_page
+            pdf_to_textbook_map[pdf_page] = doc.get_textbook_page(pdf_page)
+
+        textbook_start_page = doc.get_textbook_page(start_page_1based)
+        textbook_end_page = doc.get_textbook_page(end_page_1based)
 
         # Extract pages using pypdf
         reader = pypdf.PdfReader(doc.file_path)
@@ -110,6 +116,10 @@ class PDFSplitter:
             slice_file_name=slice_filename,
             slice_sha256=slice_sha256,
             page_offset_map=page_offset_map,
+            textbook_page_offset=doc.textbook_page_offset,
+            textbook_start_page=textbook_start_page,
+            textbook_end_page=textbook_end_page,
+            pdf_to_textbook_map=pdf_to_textbook_map,
             metadata=metadata or {},
         )
 
