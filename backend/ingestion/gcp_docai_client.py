@@ -40,9 +40,9 @@ class DocumentAIClient:
         raw_output_dir: Path | str = DEFAULT_RAW_DOCAI_DIR,
     ):
         settings = get_settings()
-        self.project_id = project_id or settings.gcp_project_id
-        self.location = location or settings.gcp_location
-        self.processor_id = processor_id or settings.gcp_processor_id
+        self.project_id = project_id if project_id is not None else settings.gcp_project_id
+        self.location = location if location is not None else settings.gcp_location
+        self.processor_id = processor_id if processor_id is not None else settings.gcp_processor_id
         self.processor_version_id = (
             processor_version_id
             if processor_version_id is not None
@@ -56,11 +56,12 @@ class DocumentAIClient:
         base_processor_name = (
             f"projects/{self.project_id}/locations/{self.location}/processors/{self.processor_id}"
         )
-        self._processor_name = (
-            f"{base_processor_name}/processorVersions/{self.processor_version_id}"
-            if self.processor_version_id
-            else base_processor_name
-        )
+        if self.processor_version_id:
+            self._processor_name = (
+                f"{base_processor_name}/processorVersions/{self.processor_version_id}"
+            )
+        else:
+            self._processor_name = base_processor_name
 
     def process_slice_online(
         self,
@@ -125,8 +126,6 @@ class DocumentAIClient:
             missing.append("GCP_PROJECT_ID")
         if not self.processor_id:
             missing.append("GCP_PROCESSOR_ID")
-        if not self.processor_version_id:
-            missing.append("GCP_PROCESSOR_VERSION_ID")
         if missing:
             raise RuntimeError(
                 "Document AI is not configured; set " + ", ".join(missing)

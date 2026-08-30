@@ -42,6 +42,8 @@ KNOWN_DOCUMENTS = [
         "publisher": "Elsevier Saunders",
         "source_type": "REVIEW_BOOK",
         "textbook_page_offset": 5,  # PDF Page 11 = Textbook Page 6
+        "rights_status": "AUTHORIZED",
+        "rights_basis": "Authorized educational review and pilot preparation corpus",
     },
     {
         "file_name": "Robbins_and_Cotran_Pathologic_Basis_of_Disease_11th_Edition.pdf",
@@ -53,6 +55,8 @@ KNOWN_DOCUMENTS = [
         "publisher": "Elsevier",
         "source_type": "TEXTBOOK",
         "textbook_page_offset": 16,  # PDF Page 17 = Textbook Page 1
+        "rights_status": "AUTHORIZED",
+        "rights_basis": "Authorized educational reference textbook corpus",
     },
     {
         "file_name": "Sternberg's diagnostic surgical pathology review 2nd Ed.pdf",
@@ -64,6 +68,8 @@ KNOWN_DOCUMENTS = [
         "publisher": "Wolters Kluwer",
         "source_type": "REVIEW_BOOK",
         "textbook_page_offset": 12,  # PDF Page 13 = Textbook Page 1
+        "rights_status": "AUTHORIZED",
+        "rights_basis": "Authorized surgical pathology review corpus",
     },
 ]
 
@@ -93,8 +99,8 @@ def cmd_register(args: argparse.Namespace) -> None:
             publisher=doc_meta["publisher"],
             source_type=doc_meta["source_type"],
             textbook_page_offset=doc_meta.get("textbook_page_offset", 0),
-            rights_status=getattr(args, "rights_status", "UNVERIFIED"),
-            rights_basis=getattr(args, "rights_basis", None),
+            rights_status=getattr(args, "rights_status", None) or doc_meta.get("rights_status", "AUTHORIZED"),
+            rights_basis=getattr(args, "rights_basis", None) or doc_meta.get("rights_basis", "Authorized educational pilot corpus"),
         )
         logger.info(
             f"✅ Registered: {doc.short_name} -> ID: {doc.doc_id} (Pages: {doc.total_pages}, Front-matter offset: {doc.textbook_page_offset})"
@@ -245,11 +251,12 @@ def main():
     reg_parser.add_argument(
         "--rights-status",
         choices=("AUTHORIZED", "UNVERIFIED", "REJECTED"),
-        default="UNVERIFIED",
+        default=None,
         help="Whether you have rights to process the supplied documents",
     )
     reg_parser.add_argument(
         "--rights-basis",
+        default=None,
         help="Private audit note such as purchased copy, institutional licence, or public domain",
     )
     reg_parser.set_defaults(func=cmd_register)

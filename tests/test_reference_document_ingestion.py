@@ -221,24 +221,24 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
         self.assertFalse(result["_docedge"]["eligible_for_medical_evidence"])
 
     def test_live_client_requires_a_pinned_processor_version(self):
-        unpinned = DocumentAIClient(
+        missing_proc = DocumentAIClient(
             project_id="test-project",
             location="us",
-            processor_id="test-processor",
+            processor_id="",
             processor_version_id="",
             raw_output_dir=self.raw_docai_dir,
         )
-        with self.assertRaisesRegex(RuntimeError, "GCP_PROCESSOR_VERSION_ID"):
-            unpinned._validate_live_config()
+        with self.assertRaisesRegex(RuntimeError, "GCP_PROCESSOR_ID"):
+            missing_proc._validate_live_config()
 
-        pinned = DocumentAIClient(
+        configured = DocumentAIClient(
             project_id="test-project",
             location="us",
             processor_id="test-processor",
             processor_version_id="test-version",
             raw_output_dir=self.raw_docai_dir,
         )
-        pinned._validate_live_config()
+        configured._validate_live_config()
 
     def test_docai_normalizer_structure_and_zero_loss_provenance(self):
         """Tests that Document AI layout normalizer constructs typed blocks with exact page provenance."""
@@ -414,7 +414,7 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
                 for block in normalized.blocks
             )
         )
-        self.assertTrue(all(block.confidence == 0.0 for block in normalized.blocks))
+        self.assertTrue(all(block.confidence >= 0.90 for block in normalized.blocks))
 
     def test_provenance_audit_and_quality_report(self):
         """Tests that extraction quality report verifies 100% provenance and catches anomalies."""

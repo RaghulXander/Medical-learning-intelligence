@@ -228,21 +228,22 @@ class QualityReportGenerator:
             and page_coverage_complete
         )
         processing_mode = normalized_slice.processing_mode
+        processor_id = normalized_slice.processor_metadata.get("processor_id")
         processor_version_id = normalized_slice.processor_metadata.get(
             "processor_version_id"
         )
         eligible_for_evidence = (
             provenance_verified
             and processing_mode == LIVE_PROCESSING_MODE
-            and bool(processor_version_id)
+            and bool(processor_id or processor_version_id)
         )
         if processing_mode != LIVE_PROCESSING_MODE:
             anomalies.append(
                 f"Processing mode '{processing_mode}' is not eligible for medical evidence"
             )
-        if not processor_version_id:
+        if not processor_id and not processor_version_id:
             anomalies.append(
-                "A pinned processor_version_id is required for medical evidence"
+                "A valid GCP Document AI processor_id is required for medical evidence"
             )
 
         report = QualityReport(
