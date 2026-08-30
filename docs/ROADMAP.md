@@ -19,6 +19,8 @@
 | **M12: Ontology, AI Review & Code Review** | Quality | Consolidated topic ontology; AI-assisted approve/reject/retire workflow with feedback; Python, React, React Native, and shared-component review. | **In progress** — baseline review and shared auth rules complete. |
 | **M13: Editors & Server-Driven UI** | Product Operations | Git-backed landing CMS plus reusable schema fields, revisioned question editing, versioned native layouts, safe widget delivery and EAS Update CI. | **13B–13E completed** — landing media and rollback UI remain. |
 | **M14: Surgical Pathology Knowledge Ontology** | Knowledge Architecture | Versioned, typed Surgical Pathology hierarchy; reusable morphology/IHC/molecular relationships; source provenance; Breast vertical slice; reviewed question crosswalk. | **In progress** — schema, draft core hierarchy, and initial Breast names seeded; evidence relationships and reviewed crosswalk remain. |
+| **M15A: Verified Book Import Pilot** | Knowledge Ingestion | Rights-verified Robbins pilot; pinned live parser; page receipts/calibration; stratified human gold set; provenance and extraction-quality gates. | **In progress** — ingestion foundation exists; safety gates added; live/gold-set validation remains. |
+| **M15B: Canonical Full-Book Import** | Knowledge Ingestion | GCS batch processing, resumable canonical runs, full layout/figure normalization, private evidence corpus, embeddings, and retrieval evaluation. | *Blocked on M15A acceptance.* |
 | **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 
 ---

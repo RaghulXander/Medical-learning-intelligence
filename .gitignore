@@ -7,6 +7,7 @@
 *.key.json
 *credentials*.json
 docedge-*.json
+/GCP.txt
 
 # Python Caches & Virtual Environments
 __pycache__/
@@ -61,9 +62,10 @@ data/raw/medmcqa/*.json
 data/raw/medmcqa/*.jsonl
 !data/raw/medmcqa/.gitkeep
 data/raw/reference_documents/*.pdf
-data/processed/reference_documents/slices/*.pdf
-data/processed/reference_documents/raw_docai/*.json
-data/processed/reference_documents/normalized/*.json
+# Generated/extracted textbook artifacts are private and reproducible. This includes
+# registries with local paths, slice manifests, OCR/layout JSON, evidence, and reports.
+data/processed/reference_documents/**
+!data/processed/reference_documents/.gitkeep
 
 # Large Processed Datasets (Reproduce via scripts/run_pipeline.py)
 data/processed/pathology/*.jsonl
@@ -76,4 +78,3 @@ data/processed/pathology/*.csv
 
 # Documentation Exceptions
 !data/README.md
-!data/processed/reference_documents/registry.json

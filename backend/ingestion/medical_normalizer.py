@@ -27,22 +27,25 @@ from backend.ingestion.docai_normalizer import (
     NormalizedBlock,
     NormalizedDocumentSlice,
 )
+from backend.ingestion.gcp_docai_client import MOCK_PROCESSING_MODE
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_EVIDENCE_DIR = Path("data/processed/reference_documents/evidence_blocks")
 
-# Common patterns of running headers/footers in scanned medical books
+# Generic patterns of running headers/footers. Source-specific cleanup rules belong
+# in private, rights-verified ingestion configuration rather than the repository.
 COMMON_HEADER_FOOTER_PATTERNS = [
     r"^(chapter|unit|section|part)\s+([0-9]+|[ivxlcdm]+)",
     r"^[0-9ivxlcdm]+\s+(chapter|unit|section|part)",
     r"^robbins\s+(and|&)\s+cotran",
     r"^sternberg('?s)?\s+diagnostic",
-    r"^(vip\.)?persianss\.ir",
-    r"^tahir99\s*-\s*unitedvrg",
-    r"^algrawany",
     r"^\d{1,4}\s*$",  # Lone page numbers in running margins
 ]
+
+
+class NonAuthoritativeExtractionError(RuntimeError):
+    """Raised when mock parser output is about to become medical evidence."""
 
 
 def is_running_artifact(content: str) -> bool:
@@ -102,6 +105,12 @@ class MedicalNormalizer:
         """
         Transforms a NormalizedDocumentSlice into clean, ordered, page-level evidence blocks.
         """
+        if normalized_slice.processing_mode == MOCK_PROCESSING_MODE:
+            raise NonAuthoritativeExtractionError(
+                "Mock/local parser output cannot be converted into medical evidence. "
+                "Run the slice with the configured live Document AI processor."
+            )
+
         # Group blocks by physical PDF page
         page_groups: Dict[int, List[NormalizedBlock]] = {}
         for b in normalized_slice.blocks:
@@ -190,6 +199,7 @@ class MedicalNormalizer:
                 metadata={
                     "start_page_1based": normalized_slice.start_page_1based,
                     "end_page_1based": normalized_slice.end_page_1based,
+                    "processing_mode": normalized_slice.processing_mode,
                 },
             )
             evidence_blocks.append(evidence_block)
@@ -201,6 +211,13 @@ class MedicalNormalizer:
                 "slice_id": normalized_slice.slice_id,
                 "document_id": normalized_slice.parent_doc_id,
                 "source": normalized_slice.parent_doc_title,
+                "processing_mode": normalized_slice.processing_mode,
+                "processor_metadata": normalized_slice.processor_metadata,
+                # A page receipt is distinct from a non-empty evidence block. Blank
+                # and image-only pages may be processed without yielding text.
+                "processed_pages": normalized_slice.summary_stats.get(
+                    "processed_pages", []
+                ),
                 "evidence_count": len(evidence_blocks),
                 "evidence_blocks": [eb.to_dict() for eb in evidence_blocks],
             }

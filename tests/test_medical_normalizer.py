@@ -18,6 +18,7 @@ from backend.ingestion.docai_normalizer import (
 )
 from backend.ingestion.medical_normalizer import (
     MedicalNormalizer,
+    NonAuthoritativeExtractionError,
     PageEvidenceBlock,
     is_running_artifact,
 )
@@ -33,11 +34,9 @@ class TestMedicalNormalizer(unittest.TestCase):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def test_running_artifact_detection(self):
-        """Tests that common book headers, watermarks, and margin numbers are detected as artifacts."""
+        """Tests that common book headers and margin numbers are detected as artifacts."""
         self.assertTrue(is_running_artifact("CHAPTER 2 Cellular Pathology 11"))
         self.assertTrue(is_running_artifact("UNIT I General Pathology"))
-        self.assertTrue(is_running_artifact("vip.persianss.ir"))
-        self.assertTrue(is_running_artifact("tahir99 - UnitedVRG"))
         self.assertTrue(is_running_artifact("12"))
         self.assertTrue(is_running_artifact("Robbins and Cotran Review of Pathology"))
         self.assertFalse(is_running_artifact("Hypertrophy is an increase in the size of cells resulting in an overall increase in organ size."))
@@ -220,6 +219,23 @@ class TestMedicalNormalizer(unittest.TestCase):
 
         # Correct reading flow: Left P1 -> Left P2 -> Right P1
         self.assertTrue(l1_idx < l2_idx < r1_idx)
+
+    def test_mock_parser_output_cannot_become_evidence(self):
+        """A local/mock parser result must stop before evidence persistence."""
+        norm_slice = NormalizedDocumentSlice(
+            slice_id="mock-slice",
+            parent_doc_id="doc1",
+            parent_doc_title="Synthetic Fixture",
+            start_page_1based=1,
+            end_page_1based=1,
+            total_blocks=0,
+            blocks=[],
+            markdown_text="",
+            processing_mode="MOCK_LOCAL_PYPDF",
+        )
+
+        with self.assertRaises(NonAuthoritativeExtractionError):
+            self.normalizer.normalize_slice(norm_slice)
 
 
 if __name__ == "__main__":

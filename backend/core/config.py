@@ -24,13 +24,14 @@ class Settings:
     cors_allowed_origins: Tuple[str, ...]
     redis_url: str
     release_sha: str
-    gcp_project_id: str = "doc-egde-rag"
+    gcp_project_id: str = ""
     gcp_location: str = "us"
-    gcp_processor_id: str = "a4fbeaa389c5955d"
-    gcp_raw_bucket: str = "doc-egde-rag-rag-raw"
-    gcp_processed_bucket: str = "doc-egde-rag-rag-processed"
+    gcp_processor_id: str = ""
+    gcp_processor_version_id: str = ""
+    gcp_raw_bucket: str = ""
+    gcp_processed_bucket: str = ""
     docai_max_online_pages: int = 15
-    docai_mock_fallback: bool = True
+    docai_mock_fallback: bool = False
 
     @property
     def is_production_like(self) -> bool:
@@ -54,12 +55,28 @@ class Settings:
         if errors:
             raise RuntimeError("Invalid application configuration: " + "; ".join(errors))
 
+    def validate_document_ai(self) -> None:
+        """Fail before a live request when required Document AI settings are absent."""
+        missing = []
+        if not self.gcp_project_id:
+            missing.append("GCP_PROJECT_ID")
+        if not self.gcp_processor_id:
+            missing.append("GCP_PROCESSOR_ID")
+        if not self.gcp_processor_version_id:
+            missing.append("GCP_PROCESSOR_VERSION_ID")
+        if not 1 <= self.docai_max_online_pages <= 15:
+            raise RuntimeError("DOCAI_MAX_ONLINE_PAGES must be between 1 and 15")
+        if missing:
+            raise RuntimeError(
+                "Document AI is not configured; set " + ", ".join(missing)
+            )
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     app_env = os.getenv("APP_ENV", "development").strip().lower()
     default_origins = "http://localhost:3000,http://127.0.0.1:3000"
-    mock_fallback = os.getenv("DOCAI_MOCK_FALLBACK", "true").strip().lower() in ("true", "1", "yes")
+    mock_fallback = os.getenv("DOCAI_MOCK_FALLBACK", "false").strip().lower() in ("true", "1", "yes")
     try:
         max_online_pages = int(os.getenv("DOCAI_MAX_ONLINE_PAGES", "15"))
     except ValueError:
@@ -77,11 +94,12 @@ def get_settings() -> Settings:
             "RELEASE_SHA",
             os.getenv("RENDER_GIT_COMMIT", os.getenv("COMMIT_SHA", "development")),
         ).strip(),
-        gcp_project_id=os.getenv("GCP_PROJECT_ID", "doc-egde-rag").strip(),
+        gcp_project_id=os.getenv("GCP_PROJECT_ID", "").strip(),
         gcp_location=os.getenv("GCP_LOCATION", "us").strip(),
-        gcp_processor_id=os.getenv("GCP_PROCESSOR_ID", "a4fbeaa389c5955d").strip(),
-        gcp_raw_bucket=os.getenv("GCP_RAW_BUCKET", "doc-egde-rag-rag-raw").strip(),
-        gcp_processed_bucket=os.getenv("GCP_PROCESSED_BUCKET", "doc-egde-rag-rag-processed").strip(),
+        gcp_processor_id=os.getenv("GCP_PROCESSOR_ID", "").strip(),
+        gcp_processor_version_id=os.getenv("GCP_PROCESSOR_VERSION_ID", "").strip(),
+        gcp_raw_bucket=os.getenv("GCP_RAW_BUCKET", "").strip(),
+        gcp_processed_bucket=os.getenv("GCP_PROCESSED_BUCKET", "").strip(),
         docai_max_online_pages=max_online_pages,
         docai_mock_fallback=mock_fallback,
     )

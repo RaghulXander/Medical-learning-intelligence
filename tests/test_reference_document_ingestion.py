@@ -82,6 +82,31 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
         self.assertEqual(doc.short_name, "sample_pathology")
         self.assertEqual(doc.total_pages, 30)
         self.assertTrue(len(doc.sha256) == 64)
+        self.assertEqual(doc.rights_status, "UNVERIFIED")
+
+        with self.assertRaisesRegex(ValueError, "rights_basis is required"):
+            self.registry.register_document(
+                file_path=self.sample_pdf_path,
+                short_name="authorized_without_basis",
+                title="Synthetic Fixture",
+                rights_status="AUTHORIZED",
+            )
+
+        authorized = self.registry.register_document(
+            file_path=self.sample_pdf_path,
+            short_name="sample_pathology",
+            title="Sample Pathology Textbook",
+            rights_status="AUTHORIZED",
+            rights_basis="synthetic test fixture",
+        )
+        rescanned = self.registry.register_document(
+            file_path=self.sample_pdf_path,
+            short_name="sample_pathology",
+            title="Sample Pathology Textbook",
+        )
+        self.assertEqual(rescanned.rights_status, "AUTHORIZED")
+        self.assertEqual(rescanned.rights_basis, "synthetic test fixture")
+        self.assertEqual(rescanned.registered_at, authorized.registered_at)
 
         # Verify lookup
         found_by_id = self.registry.get_document(doc.doc_id)
@@ -192,6 +217,28 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
         result = self.client.process_slice_online(valid_slice_pdf, manifest=manifest_valid, force_mock=True)
         self.assertIn("pages", result)
         self.assertEqual(len(result["pages"]), 15)
+        self.assertEqual(result["_docedge"]["processing_mode"], "MOCK_LOCAL_PYPDF")
+        self.assertFalse(result["_docedge"]["eligible_for_medical_evidence"])
+
+    def test_live_client_requires_a_pinned_processor_version(self):
+        unpinned = DocumentAIClient(
+            project_id="test-project",
+            location="us",
+            processor_id="test-processor",
+            processor_version_id="",
+            raw_output_dir=self.raw_docai_dir,
+        )
+        with self.assertRaisesRegex(RuntimeError, "GCP_PROCESSOR_VERSION_ID"):
+            unpinned._validate_live_config()
+
+        pinned = DocumentAIClient(
+            project_id="test-project",
+            location="us",
+            processor_id="test-processor",
+            processor_version_id="test-version",
+            raw_output_dir=self.raw_docai_dir,
+        )
+        pinned._validate_live_config()
 
     def test_docai_normalizer_structure_and_zero_loss_provenance(self):
         """Tests that Document AI layout normalizer constructs typed blocks with exact page provenance."""
@@ -317,6 +364,58 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
         self.assertIn("| Coagulative | Ischemia |", blocks[3].content)
         self.assertEqual(blocks[3].original_page_number, 12)
 
+    def test_document_layout_preserves_live_mode_and_page_receipts(self):
+        """The live documentLayout path retains parser metadata and physical pages."""
+        manifest = SliceManifest(
+            slice_id="layout_slice",
+            parent_doc_id="doc-layout",
+            parent_doc_title="Synthetic Layout Fixture",
+            parent_sha256="fixture",
+            start_page_1based=11,
+            end_page_1based=12,
+            page_count=2,
+            slice_file_path="fixture.pdf",
+            slice_file_name="fixture.pdf",
+            slice_sha256="fixture-slice",
+            page_offset_map={1: 11, 2: 12},
+        )
+        raw = {
+            "_docedge": {
+                "processing_mode": "LIVE_DOCAI",
+                "processor_version_id": "test-version",
+            },
+            "documentLayout": {
+                "blocks": [
+                    {
+                        "blockId": "heading-1",
+                        "pageSpan": {"pageStart": 1, "pageEnd": 1},
+                        "textBlock": {"type": "heading", "text": "Cell injury"},
+                    },
+                    {
+                        "blockId": "paragraph-1",
+                        "pageSpan": {"pageStart": 2, "pageEnd": 2},
+                        "textBlock": {
+                            "type": "paragraph",
+                            "text": "Synthetic fixture content.",
+                        },
+                    },
+                ]
+            },
+        }
+
+        normalized = self.normalizer.normalize(raw, manifest)
+
+        self.assertEqual(normalized.processing_mode, "LIVE_DOCAI")
+        self.assertEqual(normalized.summary_stats["processed_pages"], [11, 12])
+        self.assertEqual([block.pdf_page for block in normalized.blocks], [11, 12])
+        self.assertTrue(
+            all(
+                block.metadata["processor_version_id"] == "test-version"
+                for block in normalized.blocks
+            )
+        )
+        self.assertTrue(all(block.confidence == 0.0 for block in normalized.blocks))
+
     def test_provenance_audit_and_quality_report(self):
         """Tests that extraction quality report verifies 100% provenance and catches anomalies."""
         doc = self.registry.register_document(
@@ -366,6 +465,8 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
             total_blocks=2,
             blocks=[b1, b2],
             markdown_text="# General Pathology\n\nPathology is the study of disease mechanisms.",
+            processing_mode="LIVE_DOCAI",
+            processor_metadata={"processor_version_id": "test-version"},
         )
 
         report = self.report_gen.generate_report(norm_slice, registry=self.registry)
@@ -373,7 +474,9 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
         self.assertTrue(report.provenance_verified)
         self.assertEqual(report.total_blocks, 2)
         self.assertGreater(report.total_words, 0)
-        self.assertIn("PASSED (100% PROVENANCE)", report.to_markdown())
+        self.assertTrue(report.eligible_for_evidence)
+        self.assertFalse(report.extraction_accuracy_verified)
+        self.assertIn("PROVENANCE PASSED", report.to_markdown())
 
         # Test anomaly detection when page is out of bounds
         corrupt_block = NormalizedBlock(
@@ -397,6 +500,8 @@ class TestReferenceDocumentIngestion(unittest.TestCase):
             total_blocks=1,
             blocks=[corrupt_block],
             markdown_text="Corrupted",
+            processing_mode="LIVE_DOCAI",
+            processor_metadata={"processor_version_id": "test-version"},
         )
 
         corrupt_report = self.report_gen.generate_report(corrupted_slice, registry=self.registry)

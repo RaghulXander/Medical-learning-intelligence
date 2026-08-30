@@ -2,8 +2,8 @@
 scripts/process_reference_documents.py
 
 Document AI Processing, Structured Normalization, and Extraction Quality Audit CLI.
-Processes sliced PDF chunks via Google Cloud Document AI Layout Parser (with offline mock fallback),
-normalizes into domain blocks, generates quality reports, and asserts 100% provenance retention.
+Processes rights-authorized PDF slices via Google Cloud Document AI Layout Parser,
+normalizes domain blocks, and generates bounded provenance/quality reports.
 
 Usage:
   python scripts/process_reference_documents.py pilot
@@ -19,8 +19,12 @@ import logging
 import sys
 from pathlib import Path
 
-# Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from dotenv import load_dotenv
+
+# Add project root to sys.path and load its ignored local configuration.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+load_dotenv(PROJECT_ROOT / ".env")
 
 from backend.ingestion.docai_normalizer import DocumentAINormalizer
 from backend.ingestion.document_registry import DocumentRegistry
@@ -45,13 +49,19 @@ def process_single_slice(
     """End-to-end processing of a single slice: Layout Parse -> Normalize -> Medical Curation -> Quality Report."""
     manifest = registry.get_slice(slice_id)
     if not manifest:
-        logger.error(f"Slice manifest '{slice_id}' not found in registry.")
-        return
+        raise ValueError(f"Slice manifest '{slice_id}' not found in registry.")
+
+    parent_doc = registry.get_document(manifest.parent_doc_id)
+    if not parent_doc or parent_doc.rights_status != "AUTHORIZED":
+        raise PermissionError(
+            "Reference-document processing requires rights_status=AUTHORIZED and a "
+            "recorded rights basis. Re-register the legitimately obtained source with "
+            "--rights-status AUTHORIZED --rights-basis '<private audit note>'."
+        )
 
     slice_path = Path(manifest.slice_file_path)
     if not slice_path.exists():
-        logger.error(f"Slice PDF does not exist at {slice_path}")
-        return
+        raise FileNotFoundError(f"Slice PDF does not exist at {slice_path}")
 
     logger.info(f"⚡ [1/4] Parsing layout for slice '{slice_id}' ({manifest.page_count} pages)...")
     raw_docai = docai_client.process_slice_online(
@@ -72,21 +82,30 @@ def process_single_slice(
         f"{normalized_slice.summary_stats.get('table_count')} tables)"
     )
 
-    logger.info(f"🩺 [3/4] Curating page-level evidence blocks & two-column reading flow...")
-    evidence_blocks = med_normalizer.normalize_slice(normalized_slice)
-    logger.info(f"   Generated {len(evidence_blocks)} page-level evidence blocks (PDF & textbook calibrated)")
-
-    logger.info(f"📊 [4/4] Auditing extraction quality and provenance retention...")
+    logger.info(f"📊 [3/4] Auditing extraction quality and provenance retention...")
     report = report_gen.generate_report(
         normalized_slice=normalized_slice,
         registry=registry,
     )
 
-    status_icon = "✅" if report.provenance_verified else "❌"
+    status_icon = "✅" if report.eligible_for_evidence else "🛑"
     logger.info(
         f"{status_icon} Quality Report Generated: Integrity Score = {report.provenance_integrity_score * 100:.1f}%, "
         f"Avg Confidence = {report.average_confidence * 100:.2f}%, Words = {report.total_words:,}"
     )
+
+    if not report.eligible_for_evidence:
+        logger.warning(
+            "[4/4] Evidence generation blocked: mode=%s, provenance=%s, page_coverage=%s",
+            report.processing_mode,
+            report.provenance_verified,
+            report.page_coverage_complete,
+        )
+        return
+
+    logger.info(f"🩺 [4/4] Curating page-level evidence blocks & two-column reading flow...")
+    evidence_blocks = med_normalizer.normalize_slice(normalized_slice)
+    logger.info(f"   Generated {len(evidence_blocks)} page-level evidence blocks (PDF & textbook calibrated)")
 
 
 def cmd_process(args: argparse.Namespace) -> None:

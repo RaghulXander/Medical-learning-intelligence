@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional, Set
 
 from backend.ingestion.document_registry import DocumentRegistry, RegisteredDocument
 from backend.ingestion.medical_normalizer import DEFAULT_EVIDENCE_DIR
+from backend.ingestion.gcp_docai_client import LIVE_PROCESSING_MODE
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +55,9 @@ class BookProvenanceManifest:
     )
     total_words: int = 0
     total_evidence_blocks: int = 0
+    processing_modes: List[str] = field(default_factory=list)
+    processor_version_ids: List[str] = field(default_factory=list)
+    rights_verified: bool = False
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -89,6 +93,9 @@ class BookProvenanceManifest:
 | **Missing Pages** | 0 | {missing_summary} | {'✅ 0' if not self.missing_pages else '❌ Missing: ' + str(self.missing_pages[:10])} |
 | **Duplicate Pages** | 0 | {len(self.duplicate_pages)} | {'✅ 0' if not self.duplicate_pages else '⚠️ Duplicates: ' + str(self.duplicate_pages)} |
 | **Dual Page Calibration** | Valid | {self.page_mapping_valid} | {'✅ Verified' if self.page_mapping_valid else '❌ Invalid'} |
+| **Processing Modes** | LIVE_DOCAI only | {', '.join(self.processing_modes) or 'None'} | {'✅ Verified' if self.processing_modes == [LIVE_PROCESSING_MODE] else '❌ Non-live/unknown output'} |
+| **Processor Version** | One pinned version | {', '.join(self.processor_version_ids) or 'None'} | {'✅ Pinned' if len(self.processor_version_ids) == 1 else '❌ Missing/mixed'} |
+| **Source Rights** | AUTHORIZED | {self.rights_verified} | {'✅ Attested' if self.rights_verified else '❌ Unverified'} |
 
 ---
 
@@ -161,6 +168,8 @@ class ProvenanceManifestAuditor:
         total_words = 0
         total_evidence_blocks = 0
         page_mapping_valid = True
+        processing_modes: Set[str] = set()
+        processor_version_ids: Set[str] = set()
 
         for ev_file in evidence_files:
             try:
@@ -170,14 +179,31 @@ class ProvenanceManifestAuditor:
                 slice_id = ev_data.get("slice_id", "")
                 completed_chunk_ids.add(slice_id)
                 blocks = ev_data.get("evidence_blocks", [])
+                processing_mode = ev_data.get("processing_mode", "UNSPECIFIED")
+                processing_modes.add(processing_mode)
+                processor_version_id = ev_data.get("processor_metadata", {}).get(
+                    "processor_version_id"
+                )
+                if processor_version_id:
+                    processor_version_ids.add(str(processor_version_id))
+
+                processed_pages = ev_data.get("processed_pages")
+                if not isinstance(processed_pages, list):
+                    # Backward compatibility for old artifacts. New artifacts must
+                    # carry explicit page receipts so blank pages count as processed.
+                    processed_pages = [b.get("pdf_page") for b in blocks]
+
+                for pdf_p in processed_pages:
+                    if isinstance(pdf_p, int):
+                        covered_pages.add(pdf_p)
+                        page_occurrence_count[pdf_p] = (
+                            page_occurrence_count.get(pdf_p, 0) + 1
+                        )
 
                 for b in blocks:
                     pdf_p = b.get("pdf_page")
                     tb_p = b.get("textbook_page")
                     if pdf_p is not None:
-                        covered_pages.add(pdf_p)
-                        page_occurrence_count[pdf_p] = page_occurrence_count.get(pdf_p, 0) + 1
-
                         # Validate textbook calibration consistency
                         expected_tb = doc.get_textbook_page(pdf_p)
                         if tb_p != expected_tb:
@@ -200,13 +226,43 @@ class ProvenanceManifestAuditor:
         duplicate_pages = sorted([p for p, count in page_occurrence_count.items() if count > 1])
 
         completed_chunks = len(completed_chunk_ids)
+        sorted_processing_modes = sorted(processing_modes)
+        sorted_processor_version_ids = sorted(processor_version_ids)
+        live_only = sorted_processing_modes == [LIVE_PROCESSING_MODE]
+        processor_version_pinned = len(sorted_processor_version_ids) == 1
+        rights_verified = (
+            doc.rights_status == "AUTHORIZED" and bool(doc.rights_basis)
+        )
+
+        if not live_only:
+            ocr_anomalies.append(
+                "Only LIVE_DOCAI artifacts may pass the embedding gate; found "
+                f"{sorted_processing_modes or ['NONE']}"
+            )
+        if not rights_verified:
+            ocr_anomalies.append(
+                "Source rights are not attested; rights_status=AUTHORIZED and a rights basis are required"
+            )
+        if not processor_version_pinned:
+            ocr_anomalies.append(
+                "Exactly one pinned processor version is required across the canonical run"
+            )
 
         # Gate Evaluation Rules:
         # 1. 0 missing pages
         # 2. 0 failed chunks
         # 3. completed_chunks == expected_chunks
         # 4. page_mapping_valid is True
-        if len(missing_pages) == 0 and len(failed_chunks) == 0 and completed_chunks == expected_chunks and page_mapping_valid:
+        if (
+            len(missing_pages) == 0
+            and len(failed_chunks) == 0
+            and len(duplicate_pages) == 0
+            and completed_chunks == expected_chunks
+            and page_mapping_valid
+            and live_only
+            and processor_version_pinned
+            and rights_verified
+        ):
             status = "PASSED"
             is_ready = True
         elif completed_chunks < expected_chunks or len(missing_pages) > 0:
@@ -235,6 +291,9 @@ class ProvenanceManifestAuditor:
             is_ready_for_embedding=is_ready,
             total_words=total_words,
             total_evidence_blocks=total_evidence_blocks,
+            processing_modes=sorted_processing_modes,
+            processor_version_ids=sorted_processor_version_ids,
+            rights_verified=rights_verified,
             metadata={
                 "textbook_page_offset": doc.textbook_page_offset,
                 "version": doc.version,

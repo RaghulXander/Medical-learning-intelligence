@@ -17,6 +17,14 @@ class SettingsTests(unittest.TestCase):
             settings = get_settings()
             self.assertNotIn("*", settings.cors_allowed_origins)
             self.assertIn("http://localhost:3000", settings.cors_allowed_origins)
+            self.assertFalse(settings.docai_mock_fallback)
+
+    def test_document_ai_live_configuration_fails_closed(self):
+        with patch.dict(os.environ, {"APP_ENV": "development"}, clear=True):
+            reset_settings_cache()
+            settings = get_settings()
+            with self.assertRaisesRegex(RuntimeError, "Document AI is not configured"):
+                settings.validate_document_ai()
 
     def test_production_rejects_development_defaults(self):
         with patch.dict(

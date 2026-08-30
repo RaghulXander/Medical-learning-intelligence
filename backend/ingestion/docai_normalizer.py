@@ -89,6 +89,8 @@ class NormalizedDocumentSlice:
     blocks: List[NormalizedBlock]
     markdown_text: str
     summary_stats: Dict[str, Any] = field(default_factory=dict)
+    processing_mode: str = "UNSPECIFIED"
+    processor_metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -101,10 +103,13 @@ class NormalizedDocumentSlice:
             "blocks": [b.to_dict() for b in self.blocks],
             "markdown_text": self.markdown_text,
             "summary_stats": self.summary_stats,
+            "processing_mode": self.processing_mode,
+            "processor_metadata": self.processor_metadata,
         }
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> NormalizedDocumentSlice:
+        data = dict(data)
         blocks_raw = data.pop("blocks", [])
         blocks = [NormalizedBlock.from_dict(b) for b in blocks_raw]
         return cls(blocks=blocks, **data)
@@ -123,14 +128,25 @@ class DocumentAINormalizer:
         manifest: SliceManifest,
     ) -> NormalizedDocumentSlice:
         """Transforms raw Document AI layout JSON into a NormalizedDocumentSlice."""
+        full_text = raw_docai_data.get("text", "")
+        pages = raw_docai_data.get("pages", [])
+        processor_metadata = dict(raw_docai_data.get("_docedge", {}))
+        processing_mode = processor_metadata.get("processing_mode", "UNSPECIFIED")
         normalized_blocks: List[NormalizedBlock] = []
         md_sections: List[str] = []
+        processed_pages: List[int] = []
 
         # Check if response is from Document AI Layout Parser (documentLayout format)
         if "documentLayout" in raw_docai_data:
             normalized_blocks = self._normalize_document_layout(
                 doc_layout=raw_docai_data["documentLayout"],
                 manifest=manifest,
+                processing_metadata=processor_metadata,
+            )
+            processed_pages.extend(
+                self._document_layout_processed_pages(
+                    raw_docai_data["documentLayout"], manifest
+                )
             )
             for b in normalized_blocks:
                 if "HEADING" in b.block_type:
@@ -151,6 +167,7 @@ class DocumentAINormalizer:
                     slice_page_num,
                     manifest.start_page_1based + slice_page_num - 1,
                 )
+                processed_pages.append(original_page_num)
 
                 # 1. Process Heading/Block Elements
                 for block_elem in page_data.get("blocks", []):
@@ -161,6 +178,7 @@ class DocumentAINormalizer:
                         manifest=manifest,
                         slice_page_num=slice_page_num,
                         original_page_num=original_page_num,
+                        processing_metadata=processor_metadata,
                     )
                     if block:
                         normalized_blocks.append(block)
@@ -175,6 +193,7 @@ class DocumentAINormalizer:
                         manifest=manifest,
                         slice_page_num=slice_page_num,
                         original_page_num=original_page_num,
+                        processing_metadata=processor_metadata,
                     )
                     if block:
                         normalized_blocks.append(block)
@@ -189,6 +208,7 @@ class DocumentAINormalizer:
                         slice_page_num=slice_page_num,
                         original_page_num=original_page_num,
                         table_idx=table_idx,
+                        processing_metadata=processor_metadata,
                     )
                     if table_block:
                         normalized_blocks.append(table_block)
@@ -216,6 +236,8 @@ class DocumentAINormalizer:
             "original_pages_covered": sorted(
                 list(set(b.original_page_number for b in normalized_blocks))
             ),
+            "processed_pages": sorted(set(processed_pages)),
+            "processing_mode": processing_mode,
         }
 
         normalized_doc = NormalizedDocumentSlice(
@@ -228,6 +250,8 @@ class DocumentAINormalizer:
             blocks=normalized_blocks,
             markdown_text=composite_markdown,
             summary_stats=summary_stats,
+            processing_mode=processing_mode,
+            processor_metadata=processor_metadata,
         )
 
         # Save to disk
@@ -245,6 +269,7 @@ class DocumentAINormalizer:
         manifest: SliceManifest,
         slice_page_num: int,
         original_page_num: int,
+        processing_metadata: Dict[str, Any],
     ) -> Optional[NormalizedBlock]:
         """Extracts text, confidence, and bounding box for a layout block."""
         layout = elem_dict.get("layout", {})
@@ -328,6 +353,7 @@ class DocumentAINormalizer:
             is_header_or_footer=is_header_or_footer,
             bounding_box=bbox,
             text_anchor=anchor_dict,
+            metadata=dict(processing_metadata),
         )
 
     def _parse_table_element(
@@ -338,6 +364,7 @@ class DocumentAINormalizer:
         slice_page_num: int,
         original_page_num: int,
         table_idx: int,
+        processing_metadata: Dict[str, Any],
     ) -> Optional[NormalizedBlock]:
         """Extracts structured table grid and converts to Markdown."""
         layout = table_elem.get("layout", {})
@@ -413,6 +440,7 @@ class DocumentAINormalizer:
             chunk_id=manifest.slice_id,
             bounding_box=self._extract_bounding_box(layout),
             table_data={"headers": headers, "rows": body_rows},
+            metadata=dict(processing_metadata),
         )
 
     def _extract_text_from_anchor(
@@ -461,6 +489,7 @@ class DocumentAINormalizer:
         self,
         doc_layout: Dict[str, Any],
         manifest: SliceManifest,
+        processing_metadata: Dict[str, Any],
     ) -> List[NormalizedBlock]:
         """Recursively parses Google Cloud Layout Parser documentLayout blocks."""
         blocks: List[NormalizedBlock] = []
@@ -514,7 +543,7 @@ class DocumentAINormalizer:
                                 block_id=f"{manifest.slice_id}_p{original_page_num:04d}_tbl_{b.get('blockId', '0')}",
                                 block_type="TABLE",
                                 content=table_md,
-                                confidence=0.95,
+                                confidence=float(b.get("confidence", 0.0)),
                                 original_doc_id=manifest.parent_doc_id,
                                 original_doc_title=manifest.parent_doc_title,
                                 original_page_number=original_page_num,
@@ -527,6 +556,7 @@ class DocumentAINormalizer:
                                 source=manifest.parent_doc_title,
                                 chunk_id=manifest.slice_id,
                                 table_data={"headers": headers, "rows": body_rows},
+                                metadata=dict(processing_metadata),
                             )
                         )
 
@@ -556,7 +586,7 @@ class DocumentAINormalizer:
                                 block_id=f"{manifest.slice_id}_p{original_page_num:04d}_{b.get('blockId', '0')}_{content_hash[:8]}",
                                 block_type=block_type,
                                 content=cleaned_text,
-                                confidence=0.95,
+                                confidence=float(b.get("confidence", 0.0)),
                                 original_doc_id=manifest.parent_doc_id,
                                 original_doc_title=manifest.parent_doc_title,
                                 original_page_number=original_page_num,
@@ -569,6 +599,7 @@ class DocumentAINormalizer:
                                 source=manifest.parent_doc_title,
                                 chunk_id=manifest.slice_id,
                                 is_header_or_footer=is_hdr_ftr,
+                                metadata=dict(processing_metadata),
                             )
                         )
 
@@ -579,3 +610,31 @@ class DocumentAINormalizer:
 
         recurse_blocks(doc_layout.get("blocks", []))
         return blocks
+
+    def _document_layout_processed_pages(
+        self,
+        doc_layout: Dict[str, Any],
+        manifest: SliceManifest,
+    ) -> List[int]:
+        """Collect page receipts explicitly represented by documentLayout blocks."""
+        slice_pages: set[int] = set()
+
+        def recurse(block_list: List[Dict[str, Any]]) -> None:
+            for block in block_list:
+                page_span = block.get("pageSpan", {})
+                start = page_span.get("pageStart")
+                end = page_span.get("pageEnd", start)
+                if isinstance(start, int):
+                    safe_end = end if isinstance(end, int) and end >= start else start
+                    slice_pages.update(range(start, safe_end + 1))
+                text_block = block.get("textBlock", {})
+                recurse(text_block.get("blocks", []))
+
+        recurse(doc_layout.get("blocks", []))
+        return [
+            manifest.page_offset_map.get(
+                page,
+                manifest.start_page_1based + page - 1,
+            )
+            for page in sorted(slice_pages)
+        ]

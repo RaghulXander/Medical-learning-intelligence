@@ -3,7 +3,8 @@ backend/ingestion/quality_report.py
 
 Extraction Quality and Provenance Audit Engine.
 Evaluates OCR/layout confidence, structural element distribution, character/word density,
-and performs 100% mathematical verification that source and page provenance are never lost.
+and verifies source/page provenance. It does not claim medical extraction accuracy;
+that requires a human-reviewed ground-truth sample.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from typing import Any, Dict, List, Optional
 
 from backend.ingestion.docai_normalizer import NormalizedDocumentSlice
 from backend.ingestion.document_registry import DocumentRegistry
+from backend.ingestion.gcp_docai_client import LIVE_PROCESSING_MODE
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +41,14 @@ class QualityReport:
     structure_counts: Dict[str, int]
     average_confidence: float
     low_confidence_block_count: int
+    valid_provenance_block_count: int
+    processed_page_count: int
     provenance_integrity_score: float  # 1.0 = 100% provenance verification
     provenance_verified: bool
+    page_coverage_complete: bool
+    processing_mode: str
+    eligible_for_evidence: bool
+    extraction_accuracy_verified: bool
     anomalies: List[str]
     generated_at: str = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
@@ -51,16 +59,23 @@ class QualityReport:
 
     def to_markdown(self) -> str:
         """Renders report as a clean GitHub-flavored markdown document."""
-        status_badge = "✅ PASSED (100% PROVENANCE)" if self.provenance_verified else "❌ FAILED"
+        status_badge = (
+            "✅ PROVENANCE PASSED"
+            if self.provenance_verified
+            else "❌ PROVENANCE FAILED"
+        )
+        evidence_status = "✅ ELIGIBLE" if self.eligible_for_evidence else "🛑 BLOCKED"
         anomaly_list = (
             "\n".join(f"- ⚠️ {a}" for a in self.anomalies)
             if self.anomalies
-            else "- *None detected. Extraction clean and verified.*"
+            else "- *No automated anomalies detected.*"
         )
 
         md = f"""# Document AI Extraction Quality Report: `{self.slice_id}`
 
 **Audit Status:** {status_badge}  
+**Evidence Gate:** {evidence_status}
+**Processing Mode:** `{self.processing_mode}`
 **Parent Document:** {self.parent_doc_title} (`{self.parent_doc_id}`)  
 **Original Page Span:** Pages {self.start_page_1based} – {self.end_page_1based} ({self.page_count} pages)  
 **Generated At:** {self.generated_at}  
@@ -72,9 +87,8 @@ class QualityReport:
 | Provenance Metric | Value | Threshold / Target | Status |
 |---|---|---|---|
 | **Provenance Integrity Score** | **{self.provenance_integrity_score * 100:.1f}%** | 100.0% | {"✅ Verified" if self.provenance_verified else "❌ Violated"} |
-| **Blocks with Parent Doc ID** | {self.total_blocks} / {self.total_blocks} | 100% | ✅ OK |
-| **Blocks with 1-based Book Page** | {self.total_blocks} / {self.total_blocks} | 100% | ✅ OK |
-| **Page Offset Bound Check** | {self.start_page_1based} <= p <= {self.end_page_1based} | In Range | ✅ OK |
+| **Blocks with Valid Source/Page** | {self.valid_provenance_block_count} / {self.total_blocks} | 100% | {"✅ OK" if self.valid_provenance_block_count == self.total_blocks and self.total_blocks else "❌ Violated"} |
+| **Page Processing Coverage** | {self.processed_page_count} / {self.page_count} pages | 100% | {"✅ Complete" if self.page_coverage_complete else "❌ Incomplete"} |
 
 ---
 
@@ -85,7 +99,7 @@ class QualityReport:
 | **Total Extracted Blocks** | {self.total_blocks} | Structured units |
 | **Total Word Count** | {self.total_words:,} | Extracted tokens |
 | **Total Character Count** | {self.total_characters:,} | Normalized characters |
-| **Average Layout Confidence** | **{self.average_confidence * 100:.2f}%** | Layout Parser OCR |
+| **Average Parser Confidence** | **{self.average_confidence * 100:.2f}%** | Parser-reported; not medical accuracy |
 | **Low Confidence Blocks (<75%)** | {self.low_confidence_block_count} | Flagged for review |
 
 ### Structural Element Distribution
@@ -100,6 +114,10 @@ class QualityReport:
 ## 3. Anomaly & Quality Findings
 
 {anomaly_list}
+
+## 4. Interpretation Boundary
+
+`extraction_accuracy_verified = {str(self.extraction_accuracy_verified).lower()}`. Automated provenance checks only prove that retained blocks point to a registered source and physical PDF page. They do not prove that OCR text, tables, figures, reading order, or medical meaning are correct. A stratified human-reviewed gold sample is required before this flag may become true.
 """
         return md
 
@@ -132,7 +150,7 @@ class QualityReportGenerator:
         }
 
         avg_confidence = (
-            sum(b.confidence for b in blocks) / total_blocks if total_blocks else 1.0
+            sum(b.confidence for b in blocks) / total_blocks if total_blocks else 0.0
         )
         low_confidence_count = sum(1 for b in blocks if b.confidence < 0.75)
 
@@ -144,7 +162,9 @@ class QualityReportGenerator:
         if registry:
             parent_doc = registry.get_document(normalized_slice.parent_doc_id)
 
-        pages_found = set()
+        pages_found = set(
+            normalized_slice.summary_stats.get("processed_pages", [])
+        )
 
         for b in blocks:
             pages_found.add(b.original_page_number)
@@ -188,9 +208,9 @@ class QualityReportGenerator:
             )
         )
         missing_pages = expected_pages - pages_found
-        if missing_pages and total_blocks > 0:
+        if missing_pages:
             anomalies.append(
-                f"Pages with no extracted text blocks: {sorted(list(missing_pages))}"
+                f"Pages with no processing receipt: {sorted(list(missing_pages))}"
             )
 
         if low_confidence_count > 0:
@@ -201,7 +221,29 @@ class QualityReportGenerator:
         provenance_score = (
             valid_provenance_blocks / total_blocks if total_blocks else 1.0
         )
-        provenance_verified = provenance_score == 1.0 and total_blocks > 0
+        page_coverage_complete = not missing_pages
+        provenance_verified = (
+            provenance_score == 1.0
+            and total_blocks > 0
+            and page_coverage_complete
+        )
+        processing_mode = normalized_slice.processing_mode
+        processor_version_id = normalized_slice.processor_metadata.get(
+            "processor_version_id"
+        )
+        eligible_for_evidence = (
+            provenance_verified
+            and processing_mode == LIVE_PROCESSING_MODE
+            and bool(processor_version_id)
+        )
+        if processing_mode != LIVE_PROCESSING_MODE:
+            anomalies.append(
+                f"Processing mode '{processing_mode}' is not eligible for medical evidence"
+            )
+        if not processor_version_id:
+            anomalies.append(
+                "A pinned processor_version_id is required for medical evidence"
+            )
 
         report = QualityReport(
             report_id=f"qr_{normalized_slice.slice_id}",
@@ -217,8 +259,14 @@ class QualityReportGenerator:
             structure_counts=structure_counts,
             average_confidence=round(avg_confidence, 4),
             low_confidence_block_count=low_confidence_count,
+            valid_provenance_block_count=valid_provenance_blocks,
+            processed_page_count=len(expected_pages & pages_found),
             provenance_integrity_score=round(provenance_score, 4),
             provenance_verified=provenance_verified,
+            page_coverage_complete=page_coverage_complete,
+            processing_mode=processing_mode,
+            eligible_for_evidence=eligible_for_evidence,
+            extraction_accuracy_verified=False,
             anomalies=anomalies,
         )
 

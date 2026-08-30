@@ -56,6 +56,8 @@ class TestProvenanceManifest(unittest.TestCase):
             file_size_bytes=1000,
             sha256="abc123sha",
             total_pages=30,
+            rights_status="AUTHORIZED",
+            rights_basis="synthetic test fixture",
             textbook_page_offset=5,  # PDF Page 6 = Textbook Page 1
         )
         self.registry.documents[self.doc.doc_id] = self.doc
@@ -72,6 +74,9 @@ class TestProvenanceManifest(unittest.TestCase):
             "slice_id": "test_book_p0001_p0015",
             "document_id": "test_book_doc_id",
             "source": "Test Pathology Book",
+            "processing_mode": "LIVE_DOCAI",
+            "processor_metadata": {"processor_version_id": "test-version"},
+            "processed_pages": list(range(1, 16)),
             "evidence_blocks": [
                 {
                     "evidence_id": f"ev_{p}",
@@ -111,6 +116,9 @@ class TestProvenanceManifest(unittest.TestCase):
             "slice_id": "test_book_p0001_p0015",
             "document_id": "test_book_doc_id",
             "source": "Test Pathology Book",
+            "processing_mode": "LIVE_DOCAI",
+            "processor_metadata": {"processor_version_id": "test-version"},
+            "processed_pages": list(range(1, 16)),
             "evidence_blocks": [
                 {
                     "evidence_id": f"ev_{p}",
@@ -127,6 +135,9 @@ class TestProvenanceManifest(unittest.TestCase):
             "slice_id": "test_book_p0016_p0030",
             "document_id": "test_book_doc_id",
             "source": "Test Pathology Book",
+            "processing_mode": "LIVE_DOCAI",
+            "processor_metadata": {"processor_version_id": "test-version"},
+            "processed_pages": list(range(16, 31)),
             "evidence_blocks": [
                 {
                     "evidence_id": f"ev_{p}",
@@ -167,6 +178,9 @@ class TestProvenanceManifest(unittest.TestCase):
             "slice_id": "test_book_p0001_p0015",
             "document_id": "test_book_doc_id",
             "source": "Test Pathology Book",
+            "processing_mode": "LIVE_DOCAI",
+            "processor_metadata": {"processor_version_id": "test-version"},
+            "processed_pages": [10],
             "evidence_blocks": [
                 {
                     "evidence_id": "ev_10",
@@ -183,6 +197,56 @@ class TestProvenanceManifest(unittest.TestCase):
         manifest = self.auditor.generate_manifest("test_book", registry=self.registry)
         self.assertFalse(manifest.page_mapping_valid)
         self.assertFalse(manifest.is_ready_for_embedding)
+
+    def test_mock_artifacts_never_pass_embedding_gate(self):
+        """Complete page coverage from a local mock parser remains non-authoritative."""
+        for start, end in ((1, 15), (16, 30)):
+            payload = {
+                "slice_id": f"test_book_p{start:04d}_p{end:04d}",
+                "document_id": self.doc.doc_id,
+                "source": self.doc.title,
+                "processing_mode": "MOCK_LOCAL_PYPDF",
+                "processor_metadata": {"processor_version_id": "test-version"},
+                "processed_pages": list(range(start, end + 1)),
+                "evidence_blocks": [],
+            }
+            path = self.evidence_dir / f"test_book_p{start:04d}_p{end:04d}_evidence.json"
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(payload, f)
+
+        manifest = self.auditor.generate_manifest("test_book", registry=self.registry)
+        self.assertEqual(manifest.status, "FAILED")
+        self.assertFalse(manifest.is_ready_for_embedding)
+        self.assertEqual(manifest.processing_modes, ["MOCK_LOCAL_PYPDF"])
+
+    def test_overlapping_runs_are_blocked_as_duplicate_pages(self):
+        """Pilot and canonical artifacts cannot be silently merged."""
+        payloads = [
+            ("test_book_p0001_p0015", 1, 15),
+            ("test_book_p0001_p0015_pilot", 1, 15),
+            ("test_book_p0016_p0030", 16, 30),
+        ]
+        for slice_id, start, end in payloads:
+            payload = {
+                "slice_id": slice_id,
+                "document_id": self.doc.doc_id,
+                "source": self.doc.title,
+                "processing_mode": "LIVE_DOCAI",
+                "processor_metadata": {"processor_version_id": "test-version"},
+                "processed_pages": list(range(start, end + 1)),
+                "evidence_blocks": [],
+            }
+            with open(
+                self.evidence_dir / f"{slice_id}_evidence.json",
+                "w",
+                encoding="utf-8",
+            ) as f:
+                json.dump(payload, f)
+
+        manifest = self.auditor.generate_manifest("test_book", registry=self.registry)
+        self.assertEqual(manifest.status, "FAILED")
+        self.assertFalse(manifest.is_ready_for_embedding)
+        self.assertEqual(manifest.duplicate_pages, list(range(1, 16)))
 
 
 if __name__ == "__main__":

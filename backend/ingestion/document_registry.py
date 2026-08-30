@@ -111,6 +111,8 @@ class RegisteredDocument:
     file_size_bytes: int
     sha256: str
     total_pages: int
+    rights_status: str = "UNVERIFIED"  # AUTHORIZED, UNVERIFIED, REJECTED
+    rights_basis: Optional[str] = None
     textbook_page_offset: int = 0  # Number of front matter/preface pages before printed page 1
     version: int = 1  # Ingestion calibration version (bump if page calibration changes)
     registered_at: str = field(
@@ -218,6 +220,8 @@ class DocumentRegistry:
         speciality: str = "Pathology",
         subject: str = "Pathology",
         textbook_page_offset: int = 0,
+        rights_status: str = "UNVERIFIED",
+        rights_basis: Optional[str] = None,
         version: int = 1,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> RegisteredDocument:
@@ -238,6 +242,21 @@ class DocumentRegistry:
         existing = self.documents.get(doc_id)
         slices = existing.slices if existing else {}
 
+        normalized_rights_status = rights_status.strip().upper()
+        if normalized_rights_status not in {"AUTHORIZED", "UNVERIFIED", "REJECTED"}:
+            raise ValueError(
+                "rights_status must be AUTHORIZED, UNVERIFIED, or REJECTED"
+            )
+        if normalized_rights_status == "AUTHORIZED" and not rights_basis:
+            raise ValueError(
+                "rights_basis is required when rights_status is AUTHORIZED"
+            )
+        if existing and normalized_rights_status == "UNVERIFIED":
+            # A routine re-scan/registration must not silently erase a prior rights
+            # decision. Explicit REJECTED remains available when access is revoked.
+            normalized_rights_status = existing.rights_status
+            rights_basis = existing.rights_basis
+
         doc = RegisteredDocument(
             doc_id=doc_id,
             short_name=short_name,
@@ -254,10 +273,20 @@ class DocumentRegistry:
             file_size_bytes=file_size,
             sha256=sha256,
             total_pages=total_pages,
+            rights_status=normalized_rights_status,
+            rights_basis=rights_basis,
             textbook_page_offset=textbook_page_offset,
             version=version,
-            registered_at=datetime.now(timezone.utc).isoformat(),
-            metadata=metadata or {},
+            registered_at=(
+                existing.registered_at
+                if existing
+                else datetime.now(timezone.utc).isoformat()
+            ),
+            metadata=(
+                metadata
+                if metadata is not None
+                else (existing.metadata if existing else {})
+            ),
             slices=slices,
         )
 

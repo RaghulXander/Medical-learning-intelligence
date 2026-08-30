@@ -72,8 +72,11 @@ def cmd_register(args: argparse.Namespace) -> None:
     """Registers raw PDF files from data/raw/reference_documents/ into the registry."""
     registry = DocumentRegistry()
     registered_count = 0
+    requested_known_doc = getattr(args, "doc", None)
 
     for doc_meta in KNOWN_DOCUMENTS:
+        if requested_known_doc and doc_meta["short_name"] != requested_known_doc:
+            continue
         pdf_path = RAW_DOCS_DIR / doc_meta["file_name"]
         if not pdf_path.exists():
             logger.warning(f"File not found: {pdf_path}. Skipping.")
@@ -90,6 +93,8 @@ def cmd_register(args: argparse.Namespace) -> None:
             publisher=doc_meta["publisher"],
             source_type=doc_meta["source_type"],
             textbook_page_offset=doc_meta.get("textbook_page_offset", 0),
+            rights_status=getattr(args, "rights_status", "UNVERIFIED"),
+            rights_basis=getattr(args, "rights_basis", None),
         )
         logger.info(
             f"✅ Registered: {doc.short_name} -> ID: {doc.doc_id} (Pages: {doc.total_pages}, Front-matter offset: {doc.textbook_page_offset})"
@@ -106,6 +111,8 @@ def cmd_register(args: argparse.Namespace) -> None:
                 short_name=short_name,
                 title=args.title or custom_path.stem,
                 source_type=args.source_type or "TEXTBOOK",
+                rights_status=getattr(args, "rights_status", "UNVERIFIED"),
+                rights_basis=getattr(args, "rights_basis", None),
             )
             logger.info(f"✅ Registered custom file: {doc.short_name} (Pages: {doc.total_pages})")
             registered_count += 1
@@ -227,9 +234,24 @@ def main():
     # register
     reg_parser = subparsers.add_parser("register", help="Register raw reference PDFs")
     reg_parser.add_argument("--file", help="Optional path to custom PDF file")
+    reg_parser.add_argument(
+        "--doc",
+        choices=tuple(doc["short_name"] for doc in KNOWN_DOCUMENTS),
+        help="Register only one known local reference document",
+    )
     reg_parser.add_argument("--short-name", help="Short name for custom PDF")
     reg_parser.add_argument("--title", help="Title for custom PDF")
     reg_parser.add_argument("--source-type", default="TEXTBOOK", help="Source type (TEXTBOOK, REVIEW_BOOK, etc.)")
+    reg_parser.add_argument(
+        "--rights-status",
+        choices=("AUTHORIZED", "UNVERIFIED", "REJECTED"),
+        default="UNVERIFIED",
+        help="Whether you have rights to process the supplied documents",
+    )
+    reg_parser.add_argument(
+        "--rights-basis",
+        help="Private audit note such as purchased copy, institutional licence, or public domain",
+    )
     reg_parser.set_defaults(func=cmd_register)
 
     # verify

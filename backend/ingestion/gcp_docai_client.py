@@ -1,19 +1,20 @@
 """
 backend/ingestion/gcp_docai_client.py
 
-Google Cloud Document AI Layout Parser Client.
-Supports online (<=15 pages) and batch processing pipelines with automatic page-limit
-enforcement, GCS integration, and deterministic offline mock layout parsing for CI/dev.
+Google Cloud Document AI Layout Parser online client.
+
+Batch/GCS processing is intentionally not claimed here until that path is implemented.
+The local parser exists only for tests and development and is always labelled so its
+output cannot be mistaken for authoritative medical evidence.
 """
 
 from __future__ import annotations
 
-import io
 import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import pypdf
 
@@ -23,29 +24,42 @@ from backend.ingestion.document_registry import SliceManifest
 logger = logging.getLogger(__name__)
 
 DEFAULT_RAW_DOCAI_DIR = Path("data/processed/reference_documents/raw_docai")
+LIVE_PROCESSING_MODE = "LIVE_DOCAI"
+MOCK_PROCESSING_MODE = "MOCK_LOCAL_PYPDF"
 
 
 class DocumentAIClient:
-    """Client for Google Cloud Document AI Layout Parser with offline fallback."""
+    """Client for online Layout Parser calls with an explicitly marked test parser."""
 
     def __init__(
         self,
         project_id: Optional[str] = None,
         location: Optional[str] = None,
         processor_id: Optional[str] = None,
+        processor_version_id: Optional[str] = None,
         raw_output_dir: Path | str = DEFAULT_RAW_DOCAI_DIR,
     ):
         settings = get_settings()
         self.project_id = project_id or settings.gcp_project_id
         self.location = location or settings.gcp_location
         self.processor_id = processor_id or settings.gcp_processor_id
+        self.processor_version_id = (
+            processor_version_id
+            if processor_version_id is not None
+            else settings.gcp_processor_version_id
+        )
         self.max_online_pages = settings.docai_max_online_pages
         self.mock_fallback = settings.docai_mock_fallback
         self.raw_output_dir = Path(raw_output_dir)
         self.raw_output_dir.mkdir(parents=True, exist_ok=True)
 
-        self._processor_name = (
+        base_processor_name = (
             f"projects/{self.project_id}/locations/{self.location}/processors/{self.processor_id}"
+        )
+        self._processor_name = (
+            f"{base_processor_name}/processorVersions/{self.processor_version_id}"
+            if self.processor_version_id
+            else base_processor_name
         )
 
     def process_slice_online(
@@ -82,22 +96,54 @@ class DocumentAIClient:
 
         if not force_mock:
             try:
+                self._validate_live_config()
                 result_dict = self._call_gcp_documentai(path)
+                result_dict["_docedge"] = self._processing_metadata(
+                    LIVE_PROCESSING_MODE, slice_id
+                )
                 with open(raw_json_path, "w", encoding="utf-8") as f:
                     json.dump(result_dict, f, indent=2, ensure_ascii=False)
                 return result_dict
             except Exception as e:
-                logger.warning(
-                    f"GCP Document AI API call failed: {e}. Checking mock fallback..."
-                )
                 if not self.mock_fallback:
                     raise
+                logger.error(
+                    "Live Document AI failed; using explicitly configured non-authoritative "
+                    "local fallback: %s",
+                    e,
+                )
 
-        # Generate realistic offline layout representation
+        # Generate a non-authoritative local representation for tests/development.
         result_dict = self._generate_mock_layout_doc(path, reader, manifest)
         with open(raw_json_path, "w", encoding="utf-8") as f:
             json.dump(result_dict, f, indent=2, ensure_ascii=False)
         return result_dict
+
+    def _validate_live_config(self) -> None:
+        missing = []
+        if not self.project_id:
+            missing.append("GCP_PROJECT_ID")
+        if not self.processor_id:
+            missing.append("GCP_PROCESSOR_ID")
+        if not self.processor_version_id:
+            missing.append("GCP_PROCESSOR_VERSION_ID")
+        if missing:
+            raise RuntimeError(
+                "Document AI is not configured; set " + ", ".join(missing)
+            )
+
+    def _processing_metadata(self, mode: str, slice_id: str) -> Dict[str, Any]:
+        return {
+            "processing_mode": mode,
+            "slice_id": slice_id,
+            "project_id": self.project_id if mode == LIVE_PROCESSING_MODE else None,
+            "location": self.location if mode == LIVE_PROCESSING_MODE else None,
+            "processor_id": self.processor_id if mode == LIVE_PROCESSING_MODE else None,
+            "processor_version_id": (
+                self.processor_version_id if mode == LIVE_PROCESSING_MODE else None
+            ),
+            "eligible_for_medical_evidence": mode == LIVE_PROCESSING_MODE,
+        }
 
     def _call_gcp_documentai(self, pdf_path: Path) -> Dict[str, Any]:
         """Performs live synchronous RPC call to Google Cloud Document AI Layout Parser."""
@@ -113,31 +159,19 @@ class DocumentAIClient:
             api_endpoint=f"{self.location}-documentai.googleapis.com"
         )
 
-        creds = None
-        project_root = Path(__file__).resolve().parent.parent.parent
-        creds_candidates = [
-            os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
-            "docedge-key.json",
-            project_root / "docedge-key.json",
-        ]
-
-        resolved_key: Optional[Path] = None
-        for candidate in creds_candidates:
-            if candidate:
-                p = Path(candidate)
-                if not p.is_absolute():
-                    p = project_root / p
-                if p.exists():
-                    resolved_key = p
-                    break
-
-        if resolved_key:
+        credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+        if credentials_path:
+            resolved_key = Path(credentials_path).expanduser().resolve()
+            if not resolved_key.exists():
+                raise FileNotFoundError(
+                    "GOOGLE_APPLICATION_CREDENTIALS points to a missing file"
+                )
             from google.oauth2 import service_account
             creds = service_account.Credentials.from_service_account_file(str(resolved_key))
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(resolved_key)
-            logger.info(f"🔑 Using Google Cloud credentials from: {resolved_key.name}")
             client = documentai.DocumentProcessorServiceClient(client_options=opts, credentials=creds)
         else:
+            # Application Default Credentials are preferred on Cloud Shell, local
+            # gcloud development, and GCP runtimes with attached service accounts.
             client = documentai.DocumentProcessorServiceClient(client_options=opts)
 
         with open(pdf_path, "rb") as f:
@@ -162,8 +196,9 @@ class DocumentAIClient:
         manifest: Optional[SliceManifest],
     ) -> Dict[str, Any]:
         """
-        Synthesizes a compliant Google Cloud Document AI Document JSON structure
-        from PDF page text for offline execution and tests.
+        Builds a Document-like JSON structure from local PDF text for tests only.
+
+        It does not invent tables, figures, diagnoses, or any other medical content.
         """
         full_text_parts: List[str] = []
         pages_data: List[Dict[str, Any]] = []
@@ -173,10 +208,6 @@ class DocumentAIClient:
             page_text = page.extract_text() or ""
             # Clean up whitespace
             lines = [line.strip() for line in page_text.splitlines() if line.strip()]
-            if not lines:
-                lines = [f"[Page {page_idx + 1} Content]"]
-
-            page_start_offset = current_offset
             page_paragraphs: List[Dict[str, Any]] = []
             page_blocks: List[Dict[str, Any]] = []
             page_tables: List[Dict[str, Any]] = []
@@ -213,7 +244,8 @@ class DocumentAIClient:
                                 }
                             ]
                         },
-                        "confidence": 0.96 if is_heading else 0.92,
+                        # pypdf does not provide an OCR/layout confidence score.
+                        "confidence": 0.0,
                         "boundingPoly": {
                             "normalizedVertices": [
                                 {"x": 0.1, "y": y_min},
@@ -231,63 +263,6 @@ class DocumentAIClient:
                 else:
                     page_paragraphs.append(elem_dict)
 
-            # Synthesize table if page mentions "Table" or "Summary"
-            if any("table" in l.lower() or "summary" in l.lower() for l in lines):
-                table_elem = {
-                    "layout": {
-                        "confidence": 0.90,
-                        "boundingPoly": {
-                            "normalizedVertices": [
-                                {"x": 0.1, "y": 0.5},
-                                {"x": 0.9, "y": 0.5},
-                                {"x": 0.9, "y": 0.8},
-                                {"x": 0.1, "y": 0.8},
-                            ]
-                        },
-                    },
-                    "headerRows": [
-                        {
-                            "cells": [
-                                {
-                                    "layout": {
-                                        "textAnchor": {
-                                            "content": "Feature / Marker"
-                                        }
-                                    }
-                                },
-                                {
-                                    "layout": {
-                                        "textAnchor": {
-                                            "content": "Diagnostic Finding"
-                                        }
-                                    }
-                                },
-                            ]
-                        }
-                    ],
-                    "bodyRows": [
-                        {
-                            "cells": [
-                                {
-                                    "layout": {
-                                        "textAnchor": {
-                                            "content": "Morphology / IHC"
-                                        }
-                                    }
-                                },
-                                {
-                                    "layout": {
-                                        "textAnchor": {
-                                            "content": "Positive / Specific expression"
-                                        }
-                                    }
-                                },
-                            ]
-                        }
-                    ],
-                }
-                page_tables.append(table_elem)
-
             page_dict = {
                 "pageNumber": page_idx + 1,
                 "dimension": {"width": 612.0, "height": 792.0, "unit": "point"},
@@ -304,9 +279,11 @@ class DocumentAIClient:
             "text": full_text,
             "pages": pages_data,
             "mimeType": "application/pdf",
-            "metadata": {
-                "mock_generated": True,
+            "_docedge": {
+                **self._processing_metadata(
+                    MOCK_PROCESSING_MODE,
+                    manifest.slice_id if manifest else pdf_path.stem,
+                ),
                 "source_file": pdf_path.name,
-                "slice_id": manifest.slice_id if manifest else pdf_path.stem,
             },
         }
