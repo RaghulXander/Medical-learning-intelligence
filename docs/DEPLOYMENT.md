@@ -122,11 +122,34 @@ remote-content failure does not leave the dashboard blank.
 Create separate OAuth clients as required:
 
 - Web: authorize the stable Vercel production origin.
-- Android: package `ai.docedge.student` plus the EAS signing SHA-1.
+- Android: package `ai.docedge.student` plus the EAS signing SHA-1. The Android
+  client identifies the signed app and is not passed as a JavaScript variable.
 - iOS: bundle identifier `ai.docedge.student`.
 
-Add every ID-token audience accepted from clients to Render's
-`GOOGLE_CLIENT_IDS`. Do not add OAuth client secrets to web or mobile bundles.
+The native client requests its backend ID token for the **Web OAuth client ID**.
+Set that ID as `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` in EAS and include the same ID
+in Render's comma-separated `GOOGLE_CLIENT_IDS`. Do not add OAuth client secrets
+to web or mobile bundles.
+
+The installed Android application uses native Google Sign-In. It requires a new
+EAS build and cannot run inside Expo Go. Password authentication remains usable
+in Expo Go. A Google `DEVELOPER_ERROR` normally means that the Android OAuth
+client does not match both the package and the certificate SHA-1.
+The integration starts a new `1.0.1` update runtime so older `1.0.0` binaries
+cannot receive JavaScript that imports a native module they do not contain.
+
+Android configuration checklist:
+
+1. Run `eas credentials -p android`, select the preview profile and copy the
+   signing certificate's **SHA-1** fingerprint.
+2. In the same Google Cloud project as the Web OAuth client, create an Android
+   OAuth client for package `ai.docedge.student` and that SHA-1.
+3. Put the **Web** OAuth client ID—not the Android ID—in EAS as
+   `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` for preview and production.
+4. Put the same Web client ID in Render's `GOOGLE_CLIENT_IDS`. Keep any Web
+   client ID used by the Next.js application in that comma-separated list too.
+5. If the OAuth consent screen is still in Testing mode, add the account used on
+   the phone under Test users.
 
 ## 5. Expo/EAS native builds
 
@@ -135,9 +158,8 @@ Configure preview values before building:
 
 ```text
 EXPO_PUBLIC_API_URL=https://<render-service>.onrender.com
-EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=<Android OAuth client ID>
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=<iOS OAuth client ID when used>
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=<web OAuth client ID for Expo web>
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=<Web OAuth client ID used by the backend>
 ```
 
 Create these as EAS project environment variables for both `preview` and
@@ -161,6 +183,24 @@ Build a shareable Android alpha APK:
 cd apps/mobile
 eas build --platform android --profile preview --clear-cache
 ```
+
+The current pilot distribution target is a signed APK attached to a GitHub
+prerelease. The manually triggered **Android Beta Release** workflow uses the
+`github-beta` EAS profile, calculates a SHA-256 checksum, and publishes both
+artifacts. Configure `EXPO_TOKEN` in GitHub's protected `preview` environment,
+then follow the [Android beta distribution runbook](ANDROID_BETA_DISTRIBUTION.md).
+
+Build the signed Android App Bundle for Google Play only after the preview gate
+passes and store publication is re-prioritized:
+
+```bash
+cd apps/mobile
+eas build --platform android --profile production
+```
+
+For the first Play upload, listing copy, graphics, privacy/deletion work,
+reviewer access, testing tracks, and promotion gates, follow the
+[Android beta and Google Play listing runbook](PLAY_STORE_LISTING.md).
 
 Uninstall stale alpha APKs when validating a native configuration change.
 Android will reject an APK when an installed copy of `ai.docedge.student` was

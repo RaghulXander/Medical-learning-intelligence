@@ -4,7 +4,7 @@
  * Doctor sign-in screen with email credentials and Google identity options.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -17,14 +17,11 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 import { Stethoscope, Lock, Mail, AlertCircle, Sparkles } from 'lucide-react-native';
 import { useAuth } from '../../lib/auth/auth-context';
 import { Button } from '../../components/ui/Button';
 import { validateLoginInput } from '@medical/shared';
-
-WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -34,44 +31,9 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const handledGoogleResponse = useRef<unknown>(null);
-
-  const googleAndroidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID;
+  const googleSignInInProgress = useRef(false);
   const googleIosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
   const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
-  const [googleRequest, googleResponse, promptGoogleAsync] = Google.useIdTokenAuthRequest({
-    androidClientId: googleAndroidClientId,
-    iosClientId: googleIosClientId,
-    webClientId: googleWebClientId,
-    selectAccount: true,
-  });
-
-  useEffect(() => {
-    if (!googleResponse || handledGoogleResponse.current === googleResponse) return;
-    handledGoogleResponse.current = googleResponse;
-
-    if (googleResponse.type !== 'success') {
-      setLoading(false);
-      if (googleResponse.type === 'error') {
-        setError(googleResponse.error?.message || 'Google Sign-In failed.');
-      }
-      return;
-    }
-
-    const idToken =
-      googleResponse.params.id_token || googleResponse.authentication?.idToken;
-    if (!idToken) {
-      setError('Google did not return an ID token. Check the mobile OAuth client configuration.');
-      setLoading(false);
-      return;
-    }
-
-    googleSignIn(idToken)
-      .catch((err: any) => {
-        setError(err?.message || 'Google Sign-In failed.');
-      })
-      .finally(() => setLoading(false));
-  }, [googleResponse, googleSignIn]);
 
   const handleLogin = async () => {
     const validation = validateLoginInput({ email, password });
@@ -94,15 +56,56 @@ export default function LoginScreen() {
 
   const handleGoogleSignIn = async () => {
     setError(null);
-    if (!googleRequest) {
-      setError('Google Sign-In is not configured for this build.');
+    if (Constants.appOwnership === 'expo') {
+      setError('Google Sign-In requires a development or preview build; it is not available in Expo Go.');
       return;
     }
+    if (!googleWebClientId) {
+      setError('Google Sign-In is missing EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID in this build.');
+      return;
+    }
+    if (googleSignInInProgress.current) {
+      return;
+    }
+    googleSignInInProgress.current = true;
     setLoading(true);
     try {
-      await promptGoogleAsync();
+      const {
+        GoogleSignin,
+        isSuccessResponse,
+      } = await import('@react-native-google-signin/google-signin');
+
+      GoogleSignin.configure({
+        webClientId: googleWebClientId,
+        iosClientId: Platform.OS === 'ios' ? googleIosClientId : undefined,
+        offlineAccess: false,
+      });
+
+      if (Platform.OS === 'android') {
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      }
+
+      const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response)) return;
+
+      const idToken = response.data.idToken || (await GoogleSignin.getTokens()).idToken;
+      if (!idToken) {
+        throw new Error('Google did not return an ID token. Confirm that the configured client ID is a Web OAuth client.');
+      }
+      await googleSignIn(idToken);
     } catch (err: any) {
-      setError(err?.message || 'Google Sign-In failed.');
+      const nativeCode = String(err?.code ?? '');
+      if (nativeCode === '10' || nativeCode === 'DEVELOPER_ERROR') {
+        setError(
+          'Google rejected this Android build. Match package ai.docedge.student and the EAS signing SHA-1 in the Google Android OAuth client.'
+        );
+      } else if (nativeCode === '7' || nativeCode === 'NETWORK_ERROR') {
+        setError('Google Sign-In could not reach Google. Check the phone network and try again.');
+      } else {
+        setError(err?.message || 'Google Sign-In failed.');
+      }
+    } finally {
+      googleSignInInProgress.current = false;
       setLoading(false);
     }
   };
@@ -186,7 +189,7 @@ export default function LoginScreen() {
               title="Sign in with Google"
               variant="outline"
               size="md"
-              disabled={loading || !googleRequest}
+              disabled={loading}
               onPress={handleGoogleSignIn}
               icon={<Sparkles size={16} color="#38bdf8" />}
             />

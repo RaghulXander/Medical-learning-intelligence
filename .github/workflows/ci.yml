@@ -104,9 +104,11 @@ jobs:
         working-directory: apps/mobile
         env:
           EXPO_PUBLIC_API_URL: https://mobile-ci.invalid
+          EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: mobile-ci.apps.googleusercontent.com
         run: |
           bunx expo export --platform android --output-dir "$RUNNER_TEMP/mobile-export"
           grep -R -a -q "https://mobile-ci.invalid" "$RUNNER_TEMP/mobile-export"
+          grep -R -a -q "mobile-ci.apps.googleusercontent.com" "$RUNNER_TEMP/mobile-export"
 
   backend-image:
     runs-on: ubuntu-latest

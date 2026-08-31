@@ -21,6 +21,8 @@
 | **M14: Surgical Pathology Knowledge Ontology** | Knowledge Architecture | Versioned, typed Surgical Pathology hierarchy; reusable morphology/IHC/molecular relationships; source provenance; Breast vertical slice; reviewed question crosswalk. | **In progress** — schema, draft core hierarchy, and initial Breast names seeded; evidence relationships and reviewed crosswalk remain. |
 | **M15A: Verified Book Import Pilot** | Knowledge Ingestion | Rights-verified Robbins pilot; pinned live parser; page receipts/calibration; stratified human gold set; provenance and extraction-quality gates. | **In progress** — ingestion foundation exists; safety gates added; live/gold-set validation remains. |
 | **M15B: Canonical Full-Book Import** | Knowledge Ingestion | GCS batch processing, resumable canonical runs, full layout/figure normalization, private evidence corpus, embeddings, and retrieval evaluation. | *Blocked on M15A acceptance.* |
+| **M16: Evidence-Bound Learning Content** | Knowledge Product | Evidence-bound MCQ/short-note generation, validation, editorial review, and rights-safe media outputs. | *Future — blocked on M15 evidence acceptance.* |
+| **M17: Android Direct Beta & Stabilization** | Release Quality | Signed GitHub APK prereleases, checksums, diagnostics, privacy/deletion, trusted pilot, wider invited beta, release gates, and rollback; Play/F-Droid deferred. | **In progress** — icon package, EAS beta profile, release workflow, and runbook are ready; secrets/source audit, compliance, diagnostics, and device QA remain. |
 | **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 
 ---

@@ -1,0 +1,82 @@
+name: Android Beta Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Versioned beta tag, for example android-beta-v1.0.2
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-beta-release
+  cancel-in-progress: false
+
+jobs:
+  validate-build-release:
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Validate release tag
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^android-beta-v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Use a tag such as android-beta-v1.0.2 or android-beta-v1.0.2-rc.1"
+            exit 1
+          fi
+          app_version="$(jq -r '.expo.version' apps/mobile/app.json)"
+          if [[ "$RELEASE_TAG" != "android-beta-v${app_version}" && "$RELEASE_TAG" != "android-beta-v${app_version}-"* ]]; then
+            echo "Release tag must match app version ${app_version}"
+            exit 1
+          fi
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build shared packages
+        run: |
+          bun --filter @medical/shared build
+          bun --filter @medical/api-client build
+
+      - name: Validate Expo dependencies
+        working-directory: apps/mobile
+        run: bunx expo install --check
+
+      - name: Typecheck mobile application
+        run: bun --filter mobile typecheck
+
+      - name: Build and download signed beta APK
+        working-directory: apps/mobile
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          build_json="$(eas build --platform android --profile github-beta --non-interactive --wait --json)"
+          artifact_url="$(printf '%s' "$build_json" | jq -er '(if type == "array" then .[0] else . end) | (.artifacts.buildUrl // .artifacts.applicationArchiveUrl)')"
+          apk_path="../../docedge-ai-${RELEASE_TAG}.apk"
+          curl --fail --location --silent --show-error "$artifact_url" --output "$apk_path"
+          sha256sum "$apk_path" > "$apk_path.sha256"
+
+      - name: Publish GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          apk_path="docedge-ai-${RELEASE_TAG}.apk"
+          gh release create "$RELEASE_TAG" "$apk_path" "$apk_path.sha256" \
+            --target "$GITHUB_SHA" \
+            --title "DocEdge AI ${RELEASE_TAG#android-beta-v}" \
+            --prerelease \
+            --generate-notes

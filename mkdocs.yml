@@ -44,6 +44,8 @@ nav:
   - Development:
       - Local development: LOCAL_DEVELOPMENT.md
       - Deployment: DEPLOYMENT.md
+      - Android beta distribution: ANDROID_BETA_DISTRIBUTION.md
+      - Future Play Store listing: PLAY_STORE_LISTING.md
       - Milestone 12 code review: reviews/M12_CODE_REVIEW.md
   - Product and data:
       - Product requirements: PRD.md

@@ -174,6 +174,11 @@ bun run docs:serve
 - [Milestone 12](MileStones/MileStone12.md): ontology, AI review workflow, and Python/React/React Native consolidation *(in progress)*.
 - [Milestone 13](MileStones/MileStone13.md): reusable schema editors, Git-backed landing CMS, revisioned question editing, server-driven native widgets and EAS Update delivery.
 - [Milestone 14](MileStones/MileStone14.md): versioned Surgical Pathology ontology, diagnostic entity relationships, provenance, and reviewed question mapping.
+- [Milestone 15](MileStones/MileStone15.md): rights-verified book import and a provenance/quality gate before evidence-backed generation.
+- Milestone 16: evidence-bound learning-content generation after the Milestone 15 acceptance gate.
+- [Milestone 17](MileStones/MileStone17.md): signed Android APK releases through GitHub, pilot stabilization, invited beta, privacy, diagnostics, and release gates.
+
+Use [docs/ANDROID_BETA_DISTRIBUTION.md](docs/ANDROID_BETA_DISTRIBUTION.md) for the current GitHub APK beta workflow. The [Play Store listing runbook](docs/PLAY_STORE_LISTING.md) is retained for a later store launch.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and the specifications in [`MileStones/`](MileStones/) for detailed scope.
 
