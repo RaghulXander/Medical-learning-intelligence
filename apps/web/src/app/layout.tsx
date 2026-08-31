@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
-import { Navbar } from '@/components/navbar';
-import { Footer } from '@/components/footer';
 import { AuthProvider } from '@/lib/auth-context';
+import { SiteChrome } from '@/components/site-chrome';
 
 export const metadata: Metadata = {
   title: 'DocEdge — Medical Exam AI & Pathology Intelligence',
@@ -24,9 +23,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </AuthProvider>
       </body>
     </html>

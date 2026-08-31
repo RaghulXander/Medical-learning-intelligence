@@ -8,9 +8,24 @@ import React, { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { AuthProvider, useAuth } from '../lib/auth/auth-context';
 import { isOnboardingComplete } from '@medical/shared';
+import { mobileRuntimeConfig } from '../lib/api/runtime-config';
+
+export { ErrorBoundary } from 'expo-router';
+
+function ConfigurationError({ message }: { message: string }) {
+  return (
+    <View style={styles.configurationContainer}>
+      <Text style={styles.configurationTitle}>Build configuration missing</Text>
+      <Text style={styles.configurationMessage}>{message}</Text>
+      <Text style={styles.configurationHint}>
+        This is a build configuration problem, not an account or phone problem.
+      </Text>
+    </View>
+  );
+}
 
 function NavigationGuard() {
   const { user, isLoading } = useAuth();
@@ -68,6 +83,15 @@ function NavigationGuard() {
 }
 
 export default function RootLayout() {
+  if (mobileRuntimeConfig.error) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="light" backgroundColor="#020617" />
+        <ConfigurationError message={mobileRuntimeConfig.error} />
+      </SafeAreaProvider>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
@@ -84,5 +108,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#020617',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  configurationContainer: {
+    flex: 1,
+    backgroundColor: '#020617',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 28,
+  },
+  configurationTitle: {
+    color: '#fb7185',
+    fontSize: 22,
+    fontWeight: '900',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  configurationMessage: {
+    color: '#e2e8f0',
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: 'center',
+  },
+  configurationHint: {
+    color: '#94a3b8',
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 14,
+    textAlign: 'center',
   },
 });

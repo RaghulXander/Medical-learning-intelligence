@@ -100,6 +100,13 @@ jobs:
         run: bunx expo install --check
       - name: Typecheck mobile
         run: bun --filter mobile typecheck
+      - name: Export Android release bundle
+        working-directory: apps/mobile
+        env:
+          EXPO_PUBLIC_API_URL: https://mobile-ci.invalid
+        run: |
+          bunx expo export --platform android --output-dir "$RUNNER_TEMP/mobile-export"
+          grep -R -a -q "https://mobile-ci.invalid" "$RUNNER_TEMP/mobile-export"
 
   backend-image:
     runs-on: ubuntu-latest

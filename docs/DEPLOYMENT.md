@@ -140,6 +140,21 @@ EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=<iOS OAuth client ID when used>
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=<web OAuth client ID for Expo web>
 ```
 
+Create these as EAS project environment variables for both `preview` and
+`production`; do not rely on the repository's root `.env`. The mobile app reads
+them at bundle time and EAS cloud workers do not inherit local shell values.
+`EXPO_PUBLIC_*` values are embedded in the client and therefore must never hold
+private keys or OAuth client secrets.
+
+The profiles explicitly select their matching EAS environments. Confirm them
+before building:
+
+```bash
+cd apps/mobile
+eas env:list --environment preview
+eas env:list --environment production
+```
+
 Build a shareable Android alpha APK:
 
 ```bash
@@ -148,6 +163,18 @@ eas build --platform android --profile preview --clear-cache
 ```
 
 Uninstall stale alpha APKs when validating a native configuration change.
+Android will reject an APK when an installed copy of `ai.docedge.student` was
+signed by a different key, or when its version code is newer. Preview builds now
+auto-increment their version code, but a differently signed existing copy still
+has to be uninstalled first.
+
+If installation succeeds but the app closes, capture the actual native failure
+instead of relying on Metro's development logs:
+
+```bash
+adb logcat -c
+adb logcat | grep -E "AndroidRuntime|ReactNativeJS|ai.docedge.student"
+```
 
 ### EAS Update channels
 

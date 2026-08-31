@@ -91,6 +91,51 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* The admin workspace owns its theme independently from the learner-facing UI. */
+.admin-workspace {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 14%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+  --secondary: 217 33% 20%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 18%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 33% 22%;
+  --input: 217 33% 20%;
+  color-scheme: dark;
+}
+
+.admin-workspace.admin-theme-light {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --secondary: 210 40% 93%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 93%;
+  --muted-foreground: 215 16% 42%;
+  --border: 214 32% 87%;
+  --input: 214 32% 91%;
+  color-scheme: light;
+}
+
+.admin-workspace .glass-panel,
+.admin-workspace .glass-card {
+  background: hsl(var(--card) / 0.94);
+  border-color: hsl(var(--border));
+}
+
+.admin-workspace input,
+.admin-workspace select,
+.admin-workspace textarea {
+  color-scheme: inherit;
+}
+
 .glow-cyan {
   box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.35);
 }

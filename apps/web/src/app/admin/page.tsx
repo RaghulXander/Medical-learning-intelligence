@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Search,
   CheckCircle2,
@@ -11,13 +12,9 @@ import {
   RefreshCw,
   LayoutGrid,
   Columns,
-  FileCheck,
   ShieldCheck,
   ShieldAlert,
-  Users,
-  Crown,
   Lock,
-  BarChart3,
   Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,10 +28,14 @@ import { AuthModal } from '@/components/auth/auth-modal';
 
 export default function AdminDashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const searchParams = useSearchParams();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+  const isAdmin = user?.role === 'ADMIN' || isSuperAdmin;
 
-  // Active Admin Tab: 'QUESTIONS' | 'USERS' | 'STATS'
-  const [activeTab, setActiveTab] = useState<'QUESTIONS' | 'USERS' | 'STATS'>('QUESTIONS');
+  const requestedView = searchParams.get('view');
+  const activeTab: 'QUESTIONS' | 'USERS' | 'STATS' =
+    requestedView === 'users' ? 'USERS' : requestedView === 'stats' ? 'STATS' : 'QUESTIONS';
 
   // ---------------------------------------------------------------------------
   // TAB 1: Questions State
@@ -93,6 +94,8 @@ export default function AdminDashboardPage() {
 
   // Load available topics on mount
   useEffect(() => {
+    if (!isAdmin) return;
+
     async function loadTopics() {
       try {
         const data = await questionsApi.listTopics();
@@ -102,7 +105,7 @@ export default function AdminDashboardPage() {
       }
     }
     loadTopics();
-  }, []);
+  }, [isAdmin]);
 
   // Fetch questions
   const fetchQuestions = useCallback(async () => {
@@ -127,10 +130,10 @@ export default function AdminDashboardPage() {
   }, [debouncedSearch, selectedTopic, statusFilter, page]);
 
   useEffect(() => {
-    if (activeTab === 'QUESTIONS') {
+    if (isAdmin && activeTab === 'QUESTIONS') {
       fetchQuestions();
     }
-  }, [fetchQuestions, activeTab]);
+  }, [fetchQuestions, activeTab, isAdmin]);
 
   // Fetch users for RBAC management
   const fetchUsers = useCallback(async () => {
@@ -153,14 +156,14 @@ export default function AdminDashboardPage() {
   }, [debouncedUserSearch, roleFilter, usersPage]);
 
   useEffect(() => {
-    if (activeTab === 'USERS') {
+    if (isAdmin && activeTab === 'USERS') {
       fetchUsers();
     }
-  }, [fetchUsers, activeTab]);
+  }, [fetchUsers, activeTab, isAdmin]);
 
   // Fetch statistics
   useEffect(() => {
-    if (activeTab === 'STATS') {
+    if (isAdmin && activeTab === 'STATS') {
       setStatsLoading(true);
       adminApi
         .getStats()
@@ -168,7 +171,7 @@ export default function AdminDashboardPage() {
         .catch(console.error)
         .finally(() => setStatsLoading(false));
     }
-  }, [activeTab]);
+  }, [activeTab, isAdmin]);
 
   const handleUpdateStatus = async (questionId: string, newStatus: string) => {
     try {
@@ -226,14 +229,11 @@ export default function AdminDashboardPage() {
   // ---------------------------------------------------------------------------
   // RBAC Authentication Guard
   // ---------------------------------------------------------------------------
-  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
-  const isAdmin = user?.role === 'ADMIN' || isSuperAdmin;
-
   if (authLoading) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
         <div className="animate-spin h-10 w-10 border-3 border-sky-500 border-t-transparent rounded-full mb-3" />
-        <h3 className="text-base font-bold text-white">Verifying Admin Access Permissions...</h3>
+        <h3 className="text-base font-bold text-foreground">Verifying Admin Access Permissions...</h3>
       </div>
     );
   }
@@ -241,12 +241,12 @@ export default function AdminDashboardPage() {
   if (!user) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center p-4">
-        <Card className="glass-card max-w-md p-8 text-center border-white/10 space-y-4">
+        <Card className="glass-card max-w-md p-8 text-center border-border space-y-4">
           <div className="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mx-auto text-sky-400">
             <Lock className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold text-white">Admin Privileges Required</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-xl font-bold text-foreground">Admin Privileges Required</h2>
+          <p className="text-xs text-muted-foreground">
             Access to the Question Bank, Editorial Review, and User Governance is restricted to verified Administrators.
           </p>
           <Button variant="gradient" onClick={() => setAuthModalOpen(true)} className="w-full gap-2 font-bold">
@@ -266,15 +266,15 @@ export default function AdminDashboardPage() {
           <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
             <ShieldAlert className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold text-white">Access Forbidden (403)</h2>
-          <p className="text-xs text-slate-300">
+          <h2 className="text-xl font-bold text-foreground">Access Forbidden (403)</h2>
+          <p className="text-xs text-foreground/80">
             Your account ({user.email}) is currently assigned the role <Badge variant="destructive">{user.role}</Badge>.
           </p>
-          <p className="text-xs text-slate-400">
-            Contact a Super Administrator (<strong className="text-white">raghuldpi95@gmail.com</strong>) to request administrative privileges.
+          <p className="text-xs text-muted-foreground">
+            Contact a Super Administrator (<strong className="text-foreground">raghuldpi95@gmail.com</strong>) to request administrative privileges.
           </p>
           <Link href="/student" className="inline-block w-full">
-            <Button variant="outline" className="w-full border-white/10 text-xs">
+            <Button variant="outline" className="w-full border-border text-xs">
               Return to Student Hub
             </Button>
           </Link>
@@ -287,108 +287,22 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="container px-4 sm:px-8 py-6 max-w-7xl mx-auto space-y-6">
-      {/* Admin Top Header & Tab Navigation */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">
-              Administration & Governance Center
-            </h1>
-            {isSuperAdmin ? (
-              <Badge variant="verified" className="bg-purple-500/20 text-purple-300 border-purple-500/40 text-xs flex items-center gap-1">
-                <Crown className="h-3 w-3 text-purple-400" />
-                <span>Super Administrator</span>
-              </Badge>
-            ) : (
-              <Badge variant="verified" className="text-xs">
-                Admin
-              </Badge>
-            )}
-          </div>
-          <p className="text-xs text-slate-400">
-            Curate ground truth question banks, manage role-based permissions, and inspect platform metrics.
-          </p>
-        </div>
-
-        {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-white/[0.04] border border-white/10">
-          <Link
-            href="/admin/content"
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white"
-          >
-            <LayoutGrid className="h-4 w-4" />
-            <span>Landing CMS</span>
-          </Link>
-          <Link
-            href="/admin/mobile-layout"
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:bg-white/[0.06] hover:text-white"
-          >
-            <LayoutGrid className="h-4 w-4" />
-            <span>Native Layout</span>
-          </Link>
-          <button
-            type="button"
-            onClick={() => setActiveTab('QUESTIONS')}
-            className={cn(
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
-              activeTab === 'QUESTIONS'
-                ? 'bg-sky-500 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            )}
-          >
-            <FileCheck className="h-4 w-4" />
-            <span>Question Bank</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('USERS')}
-            className={cn(
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
-              activeTab === 'USERS'
-                ? 'bg-sky-500 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            )}
-          >
-            <Users className="h-4 w-4" />
-            <span>User Governance</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('STATS')}
-            className={cn(
-              'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all',
-              activeTab === 'STATS'
-                ? 'bg-sky-500 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            )}
-          >
-            <BarChart3 className="h-4 w-4" />
-            <span>Overview Stats</span>
-          </button>
-        </div>
-      </div>
-
       {/* ======================================================================= */}
       {/* TAB 1: QUESTION BANK MANAGEMENT */}
       {/* ======================================================================= */}
       {activeTab === 'QUESTIONS' && (
         <div className="space-y-6 animate-fade-in">
           {/* Controls Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-white/10 bg-slate-900/60">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-border bg-card/60">
             <div className="flex flex-wrap items-center gap-3 flex-1">
               <div className="relative min-w-[220px] max-w-sm flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search question stem, keywords..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-background/80 border border-border text-foreground text-xs placeholder:text-muted-foreground focus:outline-none focus:border-sky-500"
                 />
               </div>
 
@@ -398,7 +312,7 @@ export default function AdminDashboardPage() {
                   setSelectedTopic(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 max-w-[200px]"
+                className="h-9 px-3 rounded-xl bg-background/80 border border-border text-foreground text-xs focus:outline-none focus:border-sky-500 max-w-[200px]"
               >
                 <option value="ALL">All Topics</option>
                 {topics.map((t) => (
@@ -414,7 +328,7 @@ export default function AdminDashboardPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500"
+                className="h-9 px-3 rounded-xl bg-background/80 border border-border text-foreground text-xs focus:outline-none focus:border-sky-500"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="IMPORTED">IMPORTED</option>
@@ -426,13 +340,13 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/10">
+              <div className="flex items-center p-1 rounded-xl bg-muted/40 border border-border">
                 <button
                   type="button"
                   onClick={() => setViewMode('SPLIT')}
                   className={cn(
                     'p-1.5 rounded-lg text-xs transition-colors',
-                    viewMode === 'SPLIT' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'
+                    viewMode === 'SPLIT' ? 'bg-sky-500 text-white' : 'text-muted-foreground hover:text-foreground'
                   )}
                   title="Split Review Mode"
                 >
@@ -443,7 +357,7 @@ export default function AdminDashboardPage() {
                   onClick={() => setViewMode('TABLE')}
                   className={cn(
                     'p-1.5 rounded-lg text-xs transition-colors',
-                    viewMode === 'TABLE' ? 'bg-sky-500 text-white' : 'text-slate-400 hover:text-white'
+                    viewMode === 'TABLE' ? 'bg-sky-500 text-white' : 'text-muted-foreground hover:text-foreground'
                   )}
                   title="Full Table View"
                 >
@@ -455,7 +369,7 @@ export default function AdminDashboardPage() {
                 variant="outline"
                 size="sm"
                 onClick={fetchQuestions}
-                className="h-9 border-white/10 text-xs gap-1 text-slate-300"
+                className="h-9 border-border text-xs gap-1 text-foreground/80"
               >
                 <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} />
                 <span>Refresh</span>
@@ -468,7 +382,7 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
               {/* Left Question List */}
               <div className="lg:col-span-5 space-y-2 max-h-[750px] overflow-y-auto pr-1">
-                <div className="flex items-center justify-between text-xs text-slate-400 pb-2">
+                <div className="flex items-center justify-between text-xs text-muted-foreground pb-2">
                   <span>
                     Showing {questions.length} of {totalCount} Questions
                   </span>
@@ -476,9 +390,9 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {loading ? (
-                  <div className="p-8 text-center text-xs text-slate-400">Loading questions...</div>
+                  <div className="p-8 text-center text-xs text-muted-foreground">Loading questions...</div>
                 ) : questions.length === 0 ? (
-                  <div className="p-8 text-center text-xs text-slate-400">No questions found matching criteria.</div>
+                  <div className="p-8 text-center text-xs text-muted-foreground">No questions found matching criteria.</div>
                 ) : (
                   questions.map((q, idx) => (
                     <div
@@ -488,11 +402,11 @@ export default function AdminDashboardPage() {
                         'p-3.5 rounded-xl border text-left cursor-pointer transition-all space-y-1.5',
                         selectedIndex === idx
                           ? 'border-sky-500 bg-sky-500/10 shadow-md'
-                          : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                          : 'border-border bg-muted/20 hover:border-border hover:bg-muted/40'
                       )}
                     >
                       <div className="flex items-center justify-between text-[10px]">
-                        <span className="font-mono text-slate-400 truncate max-w-[120px]">{q.id}</span>
+                        <span className="font-mono text-muted-foreground truncate max-w-[120px]">{q.id}</span>
                         <Badge
                           variant={
                             q.status === 'APPROVED'
@@ -506,8 +420,8 @@ export default function AdminDashboardPage() {
                           {q.status}
                         </Badge>
                       </div>
-                      <p className="text-xs font-semibold text-white line-clamp-2">{q.stem}</p>
-                      <div className="flex items-center justify-between text-[10px] text-slate-400">
+                      <p className="text-xs font-semibold text-foreground line-clamp-2">{q.stem}</p>
+                      <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                         <span className="truncate max-w-[140px]">{q.primary_topic_id || 'General'}</span>
                         <span className="uppercase">{q.difficulty || 'medium'}</span>
                       </div>
@@ -516,23 +430,23 @@ export default function AdminDashboardPage() {
                 )}
 
                 {/* Pagination Controls */}
-                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                <div className="flex items-center justify-between pt-3 border-t border-border">
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
-                    className="h-8 text-xs border-white/10"
+                    className="h-8 text-xs border-border"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" /> Previous
                   </Button>
-                  <span className="text-xs text-slate-400">Page {page}</span>
+                  <span className="text-xs text-muted-foreground">Page {page}</span>
                   <Button
                     variant="outline"
                     size="sm"
                     disabled={questions.length < pageSize}
                     onClick={() => setPage(page + 1)}
-                    className="h-8 text-xs border-white/10"
+                    className="h-8 text-xs border-border"
                   >
                     Next <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
@@ -542,9 +456,9 @@ export default function AdminDashboardPage() {
               {/* Right Deep Review Pane */}
               <div className="lg:col-span-7">
                 {selectedQuestion ? (
-                  <Card className="glass-card p-6 border-white/10 space-y-6 sticky top-24 bg-slate-900/85">
+                  <Card className="glass-card p-6 border-border space-y-6 sticky top-24 bg-card/85">
                     {/* Header */}
-                    <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+                    <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <Badge variant="outline" className="text-[10px] font-mono">
@@ -554,7 +468,7 @@ export default function AdminDashboardPage() {
                             {selectedQuestion.status}
                           </Badge>
                         </div>
-                        <h3 className="text-sm font-bold text-white">{selectedQuestion.primary_topic_id}</h3>
+                        <h3 className="text-sm font-bold text-foreground">{selectedQuestion.primary_topic_id}</h3>
                       </div>
 
                       {/* Review Action Buttons */}
@@ -587,15 +501,15 @@ export default function AdminDashboardPage() {
 
                     {/* Question Stem */}
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-400 mb-1">Question Stem:</h4>
-                      <p className="text-sm font-bold text-white leading-relaxed p-3.5 rounded-xl bg-slate-950/70 border border-white/5">
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-1">Question Stem:</h4>
+                      <p className="text-sm font-bold text-foreground leading-relaxed p-3.5 rounded-xl bg-background/70 border border-border/70">
                         {selectedQuestion.stem}
                       </p>
                     </div>
 
                     {/* Options */}
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-400 mb-2">Options:</h4>
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-2">Options:</h4>
                       <div className="space-y-2">
                         {Array.isArray(selectedQuestion.options)
                           ? selectedQuestion.options.map((opt: any) => {
@@ -607,10 +521,10 @@ export default function AdminDashboardPage() {
                                     'p-3 rounded-xl border text-xs flex items-center gap-3',
                                     isCorrect
                                       ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold'
-                                      : 'bg-white/[0.02] border-white/5 text-slate-300'
+                                      : 'bg-muted/20 border-border/70 text-foreground/80'
                                   )}
                                 >
-                                  <span className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center font-bold text-[10px]">
+                                  <span className="w-5 h-5 rounded-md bg-muted/60 flex items-center justify-center font-bold text-[10px]">
                                     {opt.key}
                                   </span>
                                   <span className="flex-1">{opt.text}</span>
@@ -627,10 +541,10 @@ export default function AdminDashboardPage() {
                                     'p-3 rounded-xl border text-xs flex items-center gap-3',
                                     isCorrect
                                       ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold'
-                                      : 'bg-white/[0.02] border-white/5 text-slate-300'
+                                      : 'bg-muted/20 border-border/70 text-foreground/80'
                                   )}
                                 >
-                                  <span className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center font-bold text-[10px]">
+                                  <span className="w-5 h-5 rounded-md bg-muted/60 flex items-center justify-center font-bold text-[10px]">
                                     {k}
                                   </span>
                                   <span className="flex-1">{String(text)}</span>
@@ -643,22 +557,22 @@ export default function AdminDashboardPage() {
 
                     {/* Explanation */}
                     <div>
-                      <h4 className="text-xs font-semibold text-slate-400 mb-1">Clinical Explanation & Rationale:</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed p-3.5 rounded-xl bg-slate-950/70 border border-white/5">
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-1">Clinical Explanation & Rationale:</h4>
+                      <p className="text-xs text-foreground/80 leading-relaxed p-3.5 rounded-xl bg-background/70 border border-border/70">
                         {selectedQuestion.explanation || 'No detailed rationale attached.'}
                       </p>
                     </div>
                   </Card>
                 ) : (
-                  <div className="p-12 text-center text-xs text-slate-400">Select a question to inspect.</div>
+                  <div className="p-12 text-center text-xs text-muted-foreground">Select a question to inspect.</div>
                 )}
               </div>
             </div>
           ) : (
             /* FULL TABLE VIEW */
-            <div className="p-4 rounded-2xl glass-card border border-white/10 overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="border-b border-white/10 text-slate-400 uppercase text-[10px]">
+            <div className="p-4 rounded-2xl glass-card border border-border overflow-x-auto">
+              <table className="w-full text-left text-xs text-foreground/80">
+                <thead className="border-b border-border text-muted-foreground uppercase text-[10px]">
                   <tr>
                     <th className="py-2.5 px-3">ID</th>
                     <th className="py-2.5 px-3">Stem Preview</th>
@@ -667,11 +581,11 @@ export default function AdminDashboardPage() {
                     <th className="py-2.5 px-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border/70">
                   {questions.map((q) => (
-                    <tr key={q.id} className="hover:bg-white/[0.03] transition-colors">
-                      <td className="py-3 px-3 font-mono text-[10px] text-slate-400 truncate max-w-[90px]">{q.id}</td>
-                      <td className="py-3 px-3 font-medium text-white max-w-md truncate">{q.stem}</td>
+                    <tr key={q.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="py-3 px-3 font-mono text-[10px] text-muted-foreground truncate max-w-[90px]">{q.id}</td>
+                      <td className="py-3 px-3 font-medium text-foreground max-w-md truncate">{q.stem}</td>
                       <td className="py-3 px-3 truncate max-w-[140px]">{q.primary_topic_id || 'General'}</td>
                       <td className="py-3 px-3">
                         <Badge
@@ -739,16 +653,16 @@ export default function AdminDashboardPage() {
           )}
 
           {/* User Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-white/10 bg-slate-900/60">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl glass-card border border-border bg-card/60">
             <div className="flex flex-wrap items-center gap-3 flex-1">
               <div className="relative min-w-[240px] max-w-sm flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search user name, doctor email..."
                   value={usersSearch}
                   onChange={(e) => setUsersSearch(e.target.value)}
-                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-background/80 border border-border text-foreground text-xs placeholder:text-muted-foreground focus:outline-none focus:border-sky-500"
                 />
               </div>
 
@@ -758,7 +672,7 @@ export default function AdminDashboardPage() {
                   setRoleFilter(e.target.value);
                   setUsersPage(1);
                 }}
-                className="h-9 px-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500"
+                className="h-9 px-3 rounded-xl bg-background/80 border border-border text-foreground text-xs focus:outline-none focus:border-sky-500"
               >
                 <option value="ALL">All Roles</option>
                 <option value="SUPER_ADMIN">Super Admins</option>
@@ -773,7 +687,7 @@ export default function AdminDashboardPage() {
               variant="outline"
               size="sm"
               onClick={fetchUsers}
-              className="h-9 border-white/10 text-xs gap-1 text-slate-300"
+              className="h-9 border-border text-xs gap-1 text-foreground/80"
             >
               <RefreshCw className={cn('h-3.5 w-3.5', usersLoading && 'animate-spin')} />
               <span>Refresh Users</span>
@@ -781,18 +695,18 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Users Table */}
-          <Card className="glass-card p-4 sm:p-6 border-white/10 overflow-x-auto">
-            <div className="flex items-center justify-between text-xs text-slate-400 pb-3 mb-2 border-b border-white/10">
+          <Card className="glass-card p-4 sm:p-6 border-border overflow-x-auto">
+            <div className="flex items-center justify-between text-xs text-muted-foreground pb-3 mb-2 border-b border-border">
               <span>
-                Registered Users: <strong className="text-white">{usersTotal}</strong>
+                Registered Users: <strong className="text-foreground">{usersTotal}</strong>
               </span>
               <span>
-                Signed in as: <strong className="text-white">{user.email}</strong> ({user.role})
+                Signed in as: <strong className="text-foreground">{user.email}</strong> ({user.role})
               </span>
             </div>
 
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="border-b border-white/10 text-slate-400 uppercase text-[10px]">
+            <table className="w-full text-left text-xs text-foreground/80">
+              <thead className="border-b border-border text-muted-foreground uppercase text-[10px]">
                 <tr>
                   <th className="py-2.5 px-3">User & Email</th>
                   <th className="py-2.5 px-3">Exam Access</th>
@@ -803,16 +717,16 @@ export default function AdminDashboardPage() {
                   <th className="py-2.5 px-3 text-right">Assign Role</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-border/70">
                 {usersList.map((u) => {
                   const isProtectedSuperAdmin = u.is_protected;
 
                   return (
-                    <tr key={u.id} className="hover:bg-white/[0.03] transition-colors">
+                    <tr key={u.id} className="hover:bg-muted/30 transition-colors">
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-2">
                           <div>
-                            <div className="font-bold text-white flex items-center gap-1.5">
+                            <div className="font-bold text-foreground flex items-center gap-1.5">
                               <span>{u.name}</span>
                               {isProtectedSuperAdmin && (
                                 <Badge variant="verified" className="text-[9px] bg-purple-500/20 text-purple-300 border-purple-500/40">
@@ -820,7 +734,7 @@ export default function AdminDashboardPage() {
                                 </Badge>
                               )}
                             </div>
-                            <span className="text-[11px] text-slate-400">{u.email}</span>
+                            <span className="text-[11px] text-muted-foreground">{u.email}</span>
                           </div>
                         </div>
                       </td>
@@ -851,12 +765,12 @@ export default function AdminDashboardPage() {
                         </Badge>
                       </td>
 
-                      <td className="py-3 px-3 text-[11px] text-slate-400">
+                      <td className="py-3 px-3 text-[11px] text-muted-foreground">
                         {u.residency_stage ? `${u.residency_stage}` : 'Resident'}
                         {u.medical_college ? ` • ${u.medical_college}` : ''}
                       </td>
 
-                      <td className="py-3 px-3 font-semibold text-white">
+                      <td className="py-3 px-3 font-semibold text-foreground">
                         {u.total_attempts} Tests
                       </td>
 
@@ -870,7 +784,7 @@ export default function AdminDashboardPage() {
                               ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
                               : u.role === 'REVIEWER'
                               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                              : 'bg-white/10 text-slate-300'
+                              : 'bg-muted/60 text-foreground/80'
                           )}
                         >
                           {u.role}
@@ -885,7 +799,7 @@ export default function AdminDashboardPage() {
                             value={u.role}
                             disabled={roleUpdatingUserId === u.id || (!isSuperAdmin && (u.role === 'ADMIN' || u.role === 'SUPER_ADMIN'))}
                             onChange={(e) => handleUpdateRole(u.id, e.target.value)}
-                            className="h-8 px-2.5 rounded-lg bg-slate-950/90 border border-white/10 text-white text-xs focus:outline-none focus:border-sky-500 transition-colors"
+                            className="h-8 px-2.5 rounded-lg bg-background/90 border border-border text-foreground text-xs focus:outline-none focus:border-sky-500 transition-colors"
                           >
                             <option value="USER">USER (Student)</option>
                             <option value="REVIEWER">REVIEWER</option>
@@ -910,47 +824,47 @@ export default function AdminDashboardPage() {
       {activeTab === 'STATS' && (
         <div className="space-y-6 animate-fade-in">
           {statsLoading || !statsData ? (
-            <div className="p-12 text-center text-xs text-slate-400">Loading system metrics...</div>
+            <div className="p-12 text-center text-xs text-muted-foreground">Loading system metrics...</div>
           ) : (
             <div className="space-y-6">
               {/* Stat Counters */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Card className="glass-card p-6 border-white/10 text-center">
-                  <span className="text-xs text-slate-400 uppercase font-semibold">Total Registered Users</span>
-                  <div className="text-3xl sm:text-4xl font-extrabold text-white mt-1">{statsData.total_users}</div>
+                <Card className="glass-card p-6 border-border text-center">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold">Total Registered Users</span>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-foreground mt-1">{statsData.total_users}</div>
                 </Card>
 
-                <Card className="glass-card p-6 border-white/10 text-center">
-                  <span className="text-xs text-slate-400 uppercase font-semibold">Total Curated Questions</span>
+                <Card className="glass-card p-6 border-border text-center">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold">Total Curated Questions</span>
                   <div className="text-3xl sm:text-4xl font-extrabold text-sky-400 mt-1">{statsData.total_questions}</div>
                 </Card>
 
-                <Card className="glass-card p-6 border-white/10 text-center">
-                  <span className="text-xs text-slate-400 uppercase font-semibold">Diagnostic Mock Attempts</span>
+                <Card className="glass-card p-6 border-border text-center">
+                  <span className="text-xs text-muted-foreground uppercase font-semibold">Diagnostic Mock Attempts</span>
                   <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 mt-1">{statsData.total_attempts}</div>
                 </Card>
               </div>
 
               {/* Status & Roles Breakdown */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="glass-card p-6 border-white/10 space-y-4">
-                  <h3 className="text-sm font-bold text-white">Questions by Status</h3>
+                <Card className="glass-card p-6 border-border space-y-4">
+                  <h3 className="text-sm font-bold text-foreground">Questions by Status</h3>
                   <div className="space-y-2 text-xs">
                     {Object.entries(statsData.questions_by_status || {}).map(([st, cnt]: any) => (
-                      <div key={st} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
-                        <span className="font-semibold text-slate-300">{st}</span>
+                      <div key={st} className="flex items-center justify-between p-2.5 rounded-xl bg-muted/20 border border-border/70">
+                        <span className="font-semibold text-foreground/80">{st}</span>
                         <Badge variant="outline" className="text-xs">{cnt}</Badge>
                       </div>
                     ))}
                   </div>
                 </Card>
 
-                <Card className="glass-card p-6 border-white/10 space-y-4">
-                  <h3 className="text-sm font-bold text-white">Users by RBAC Role</h3>
+                <Card className="glass-card p-6 border-border space-y-4">
+                  <h3 className="text-sm font-bold text-foreground">Users by RBAC Role</h3>
                   <div className="space-y-2 text-xs">
                     {Object.entries(statsData.users_by_role || {}).map(([r, cnt]: any) => (
-                      <div key={r} className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
-                        <span className="font-semibold text-slate-300">{r}</span>
+                      <div key={r} className="flex items-center justify-between p-2.5 rounded-xl bg-muted/20 border border-border/70">
+                        <span className="font-semibold text-foreground/80">{r}</span>
                         <Badge variant="verified" className="text-xs">{cnt}</Badge>
                       </div>
                     ))}

@@ -11,8 +11,8 @@
     "build:preview:android": "eas build --platform android --profile preview",
     "build:preview:ios": "eas build --platform ios --profile preview",
     "build:production": "eas build --platform all --profile production",
-    "update:preview": "eas update --channel preview",
-    "update:production": "eas update --channel production",
+    "update:preview": "eas update --channel preview --environment preview",
+    "update:production": "eas update --channel production --environment production",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

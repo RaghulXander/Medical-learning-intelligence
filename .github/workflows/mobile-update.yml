@@ -49,4 +49,4 @@ jobs:
         env:
           UPDATE_CHANNEL: ${{ inputs.channel }}
           UPDATE_MESSAGE: ${{ inputs.message }}
-        run: eas update --channel "$UPDATE_CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
+        run: eas update --channel "$UPDATE_CHANNEL" --environment "$UPDATE_CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive

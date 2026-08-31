@@ -18,10 +18,10 @@ function Badge({ className, variant = 'default', ...props }: BadgeProps) {
     default:
       'border-transparent bg-sky-500/20 text-sky-300 border border-sky-500/30',
     secondary:
-      'border-transparent bg-slate-800 text-slate-300 border border-white/[0.08]',
+      'border-border bg-secondary text-secondary-foreground border',
     destructive:
       'border-transparent bg-red-500/15 text-red-300 border border-red-500/30',
-    outline: 'text-slate-300 border border-white/10 bg-white/[0.02]',
+    outline: 'text-muted-foreground border border-border bg-background/20',
     success:
       'border-emerald-500/30 bg-emerald-500/15 text-emerald-300 border font-medium',
     warning:

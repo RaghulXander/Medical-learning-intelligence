@@ -141,12 +141,12 @@ export default function CmsAdminPage() {
     }
   };
 
-  if (authLoading || loading) return <div className="min-h-[60vh] grid place-items-center text-slate-300">Loading CMS…</div>;
+  if (authLoading || loading) return <div className="min-h-[60vh] grid place-items-center text-foreground/80">Loading CMS…</div>;
   if (!isAdmin) return (
     <div className="min-h-[60vh] grid place-items-center p-6">
       <Card className="glass-card max-w-md p-8 text-center">
         <ShieldAlert className="mx-auto mb-4 h-10 w-10 text-amber-300" />
-        <h1 className="text-xl font-bold text-white">CMS administrator access required</h1>
+        <h1 className="text-xl font-bold text-foreground">CMS administrator access required</h1>
       </Card>
     </div>
   );
@@ -157,11 +157,11 @@ export default function CmsAdminPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <Link href="/admin" className="mb-2 inline-flex items-center gap-1 text-xs text-sky-300"><ArrowLeft className="h-3 w-3" /> Admin</Link>
-          <h1 className="text-3xl font-bold text-white">Landing Page CMS</h1>
+          <h1 className="text-3xl font-bold text-foreground">Landing Page CMS</h1>
           <div className="mt-2 flex gap-2"><Badge variant="secondary">Source: {source}</Badge><Badge variant={parsedDraft.success ? 'verified' : 'destructive'}>{parsedDraft.success ? 'Valid' : 'Invalid'}</Badge>{hasChanges && <Badge variant="outline">Unsaved changes</Badge>}</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <label className="inline-flex h-10 cursor-pointer items-center rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-slate-200 hover:bg-white/[0.08]">
+          <label className="inline-flex h-10 cursor-pointer items-center rounded-xl border border-border bg-muted/30 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/80">
             Import
             <input type="file" accept="application/json,.json" className="hidden" onChange={(event) => { void importJson(event.target.files?.[0]); event.target.value = ''; }} />
           </label>
@@ -178,17 +178,17 @@ export default function CmsAdminPage() {
         <Card className="glass-card h-fit p-3">
           <div className="space-y-2">
             {sections.map((section, index) => (
-              <button key={section.id} type="button" onClick={() => setActiveId(section.id)} className={`w-full rounded-lg border p-3 text-left ${activeSection?.id === section.id ? 'border-sky-500/50 bg-sky-500/10' : 'border-white/10 bg-slate-950/30'}`}>
-                <div className="flex items-center justify-between"><span className="text-sm font-semibold text-white">{widgetLabels[section.type]}</span><span className={section.enabled ? 'text-emerald-300' : 'text-slate-500'}>{section.enabled ? 'On' : 'Off'}</span></div>
+              <button key={section.id} type="button" onClick={() => setActiveId(section.id)} className={`w-full rounded-lg border p-3 text-left ${activeSection?.id === section.id ? 'border-sky-500/50 bg-sky-500/10' : 'border-border bg-background/30'}`}>
+                <div className="flex items-center justify-between"><span className="text-sm font-semibold text-foreground">{widgetLabels[section.type]}</span><span className={section.enabled ? 'text-emerald-300' : 'text-muted-foreground/80'}>{section.enabled ? 'On' : 'Off'}</span></div>
                 <div className="mt-2 flex gap-1">
-                  <span onClick={(event) => { event.stopPropagation(); moveSection(section.id, -1); }} className={`rounded border border-white/10 p-1 ${index === 0 ? 'opacity-30' : ''}`}><ArrowUp className="h-3 w-3" /></span>
-                  <span onClick={(event) => { event.stopPropagation(); moveSection(section.id, 1); }} className={`rounded border border-white/10 p-1 ${index === sections.length - 1 ? 'opacity-30' : ''}`}><ArrowDown className="h-3 w-3" /></span>
+                  <span onClick={(event) => { event.stopPropagation(); moveSection(section.id, -1); }} className={`rounded border border-border p-1 ${index === 0 ? 'opacity-30' : ''}`}><ArrowUp className="h-3 w-3" /></span>
+                  <span onClick={(event) => { event.stopPropagation(); moveSection(section.id, 1); }} className={`rounded border border-border p-1 ${index === sections.length - 1 ? 'opacity-30' : ''}`}><ArrowDown className="h-3 w-3" /></span>
                 </div>
               </button>
             ))}
           </div>
-          <div className="mt-4 flex gap-2 border-t border-white/10 pt-4">
-            <select value={addType} onChange={(event) => setAddType(event.target.value as WidgetType)} className="min-w-0 flex-1 rounded-md border border-white/10 bg-slate-950 px-2 text-xs text-white">
+          <div className="mt-4 flex gap-2 border-t border-border pt-4">
+            <select value={addType} onChange={(event) => setAddType(event.target.value as WidgetType)} className="min-w-0 flex-1 rounded-md border border-border bg-background px-2 text-xs text-foreground">
               {(Object.keys(widgetLabels) as WidgetType[]).map((type) => <option key={type} value={type}>{widgetLabels[type]}</option>)}
             </select>
             <Button size="sm" variant="outline" onClick={addSection}><Plus className="h-4 w-4" /></Button>
@@ -198,15 +198,15 @@ export default function CmsAdminPage() {
         <div className="space-y-6">
           {activeSection && (
             <Card className="glass-card p-5">
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
-                <div><h2 className="text-xl font-bold text-white">{widgetLabels[activeSection.type]}</h2><p className="text-xs text-slate-400">{activeSection.id}</p></div>
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+                <div><h2 className="text-xl font-bold text-foreground">{widgetLabels[activeSection.type]}</h2><p className="text-xs text-muted-foreground">{activeSection.id}</p></div>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => updateSection(activeSection.id, (section) => ({ ...section, enabled: !section.enabled }))}>{activeSection.enabled ? 'Hide' : 'Show'}</Button>
                   <Button size="sm" variant="destructive" disabled={sections.length <= 1} onClick={() => { replaceSections(sections.filter((section) => section.id !== activeSection.id)); setActiveId(null); }}>Remove</Button>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-xs font-semibold text-slate-300">Audience<select value={activeSection.audience} onChange={(event) => updateSection(activeSection.id, (section) => ({ ...section, audience: event.target.value as LandingSection['audience'] }))} className="mt-1.5 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white"><option value="ALL">Everyone</option><option value="GUEST">Guests</option><option value="AUTHENTICATED">Signed-in users</option></select></label>
+                <label className="text-xs font-semibold text-foreground/80">Audience<select value={activeSection.audience} onChange={(event) => updateSection(activeSection.id, (section) => ({ ...section, audience: event.target.value as LandingSection['audience'] }))} className="mt-1.5 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"><option value="ALL">Everyone</option><option value="GUEST">Guests</option><option value="AUTHENTICATED">Signed-in users</option></select></label>
               </div>
               <div className="mt-6">
                 <SchemaFieldEditor
@@ -223,8 +223,8 @@ export default function CmsAdminPage() {
 
           {parsedDraft.success && (
             <Card className="glass-card overflow-hidden">
-              <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3 text-sm font-semibold text-white"><Eye className="h-4 w-4" />Live preview</div>
-              <div className="max-h-[720px] overflow-y-auto bg-slate-950">
+              <div className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm font-semibold text-foreground"><Eye className="h-4 w-4" />Live preview</div>
+              <div className="max-h-[720px] overflow-y-auto bg-background">
                 <LandingPageRenderer document={parsedDraft.data} isAuthenticated={false} diagnosticLoading={false} onStartDiagnostic={() => setStatusMessage('Preview mode: diagnostic launch is disabled.')} />
               </div>
             </Card>
