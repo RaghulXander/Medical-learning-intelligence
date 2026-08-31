@@ -1,16 +1,10 @@
 # Milestone 5 — Universal Assessment Engine & Modern Examination Platform
 
-> [!NOTE]
-> **Status: 100% COMPLETED & FULLY VERIFIED**  
-> All Stage 5A (Core Functional Engine) and Stage 5B (Medical Aspirant Polish & Mobile WebView Experience) specifications are implemented, tested, and validated.
-
----
-
 ## 1. Core Architectural Principle: Universal Assessment Engine
 
 > [!IMPORTANT]
 > **Zero Hardcoded Exam Silos**: Do **not** create separate engine classes (e.g. `NEETUGExamEngine`, `NEETPGExamEngine`, `NEETSSExamEngine`).  
-> A single **Universal Assessment Engine** (`backend/services/assessment_service.py`) drives all exams entirely via declarative blueprints, multi-section partitioning, navigation policies, and marking schemes.
+> Implement a single **Universal Assessment Engine** driven entirely by declarative blueprints, sections, navigation policies, and marking schemes.
 
 ```
                     UNIVERSAL ASSESSMENT ENGINE
@@ -103,16 +97,16 @@ erDiagram
 
 ## 3. Supported Assessment Presets & Granularities
 
-| Assessment Type | Typical Q Count | Duration | Marking Scheme | Sections | Navigation Policy | Target Depth | Status |
-|---|---|---|---|---|---|---|---|
-| **NEET-SS Grand Mock** | 150 Qs | 150 mins | $+4 / -1$ (600M) | Part A (Feeder) / Part B (Super-Specialty) | Free / Section-Locked | `super_specialty` | ✅ Active |
-| **NEET-PG Grand Mock** | 200 Qs | 210 mins | $+4 / -1$ (800M) | Clinical / Para-Clinical / Pre-Clinical | Free | `postgraduate` | ✅ Active |
-| **INI-CET Mock** | 200 Qs | 180 mins | $+1 / -0.33$ (200M) | Multi-Disciplinary Vignettes | Free | `postgraduate` | ✅ Active |
-| **Subject Mastery (SWT)** | 100 Qs | 100 mins | $+4 / -1$ | Single Section | Free | Configurable | ✅ Active |
-| **Topic Test (TLT)** | 50 Qs | 50 mins | $+4 / -1$ | Single Section | Free | Configurable | ✅ Active |
-| **Subtopic Micro-Quiz (SLT)** | 20 Qs | 20 mins | $+4 / -1$ | Single Section | Free | Configurable | ✅ Active |
-| **Daily Dose / Rapid Fire** | 10 Qs | 10 mins | $+4 / -1$ or $+1 / 0$ | Single Section | Free | High-Yield Mix | ✅ Active |
-| **Custom Practice (BYOT)** | 10 – 150 Qs | User Set | User Set | User Set | User Set | Multi-Select | ✅ Active |
+| Assessment Type | Typical Q Count | Duration | Marking Scheme | Sections | Navigation Policy | Target Depth |
+|---|---|---|---|---|---|---|
+| **NEET-SS Grand Mock** | 150 Qs | 150 mins | $+4 / -1$ (600M) | Part A (Feeder) / Part B (Super-Specialty) | Free / Section-Locked | `super_specialty` |
+| **NEET-PG Grand Mock** | 200 Qs | 210 mins | $+4 / -1$ (800M) | Clinical / Para-Clinical / Pre-Clinical | Free | `postgraduate` |
+| **INI-CET Mock** | 200 Qs | 180 mins | $+1 / -0.33$ (200M) | Multi-Disciplinary Vignettes | Free | `postgraduate` |
+| **Subject Mastery (SWT)** | 100 Qs | 100 mins | $+4 / -1$ | Single Section | Free | Configurable |
+| **Topic Test (TLT)** | 50 Qs | 50 mins | $+4 / -1$ | Single Section | Free | Configurable |
+| **Subtopic Micro-Quiz (SLT)** | 20 Qs | 20 mins | $+4 / -1$ | Single Section | Free | Configurable |
+| **Daily Dose / Rapid Fire** | 10 Qs | 10 mins | $+4 / -1$ or $+1 / 0$ | Single Section | Free | High-Yield Mix |
+| **Custom Practice (BYOT)** | 10 – 150 Qs | User Set | User Set | User Set | User Set | Multi-Select |
 
 ---
 
@@ -134,42 +128,44 @@ $$\text{Final Score} = (\text{Correct Count} \times M_{\text{correct}}) - (\text
 
 ---
 
-## 5. UI Architecture & Mobile WebView Native Experience
+## 5. UI Architecture (`ixartz/SaaS-Boilerplate` + Shadcn UI)
 
-Built on Next.js 14 App Router, Tailwind CSS, Lucide icons, full dark/light glassmorphism support, and complete mobile-first touch responsiveness:
+Built on Next.js 14/15 App Router, Tailwind CSS, Radix UI primitives, Lucide icons, and full dark/light theme support:
 
 ```
-frontend/ (apps/web)
-├── src/app/
-│   ├── student/
-│   │   ├── page.tsx            # Student Hub: Presets, Streak, High-Yield Drills
-│   │   ├── new/page.tsx        # Universal Blueprint Generator (BYOT / Custom Test)
-│   │   ├── exam/[attemptId]/
-│   │   │   └── page.tsx        # Fullscreen Exam Runner: Prometric Palette, Strike Tool, Zoom
-│   │   ├── results/[attemptId]/
-│   │   │   └── page.tsx        # Diagnostic Scorecard & 1-Click Remediation Generator
-│   │   └── review/[attemptId]/
-│   │       └── page.tsx        # Deep Question Review Canvas with Robbins/WHO Evidence
-│   └── admin/
-│       └── page.tsx            # Editorial Question Inspector & Status Curation Desk
+frontend/
+├── app/
+│   ├── (dashboard)/
+│   │   ├── exams/
+│   │   │   ├── page.tsx            # Exam hub: Presets, Active tests, History
+│   │   │   ├── new/page.tsx        # Universal Blueprint Generator (BYOT)
+│   │   │   └── [id]/
+│   │   │       ├── results/page.tsx # Diagnostic Scorecard & Analytics
+│   │   │       └── review/page.tsx  # Deep Question Review with Evidence
+│   └── (exam-runner)/
+│       └── exams/[id]/take/page.tsx # Distraction-Free Fullscreen Runner
 │
-└── apps/student-native/
-    └── src/index.ts            # Native Mobile Shell & WebView Embedding URL Resolvers
+├── components/
+│   ├── exam/
+│   │   ├── question-canvas.tsx      # Medical stem + rich option cards + strike-through
+│   │   ├── question-palette.tsx     # Prometric 5-state question grid
+│   │   ├── countdown-timer.tsx      # Auto-pulsing sticky timer
+│   │   ├── section-tabs.tsx         # Multi-section switcher
+│   │   └── scorecard-hero.tsx       # Marks hero card + accuracy rings
+│   └── ui/                          # Button, Dialog, Combobox, Slider, Tabs
 ```
 
-### 5.1 Prometric / NBE Standard 5-State Question Palette
-* ⚪ **Not Visited** (`bg-slate-900/60 border-slate-700 text-slate-400`)
-* 🔴 **Not Answered / Visited** (`bg-rose-500/20 border-rose-500 text-rose-300 font-bold`)
-* 🟢 **Answered** (`bg-emerald-500 border-emerald-400 text-white font-bold shadow-md`)
-* 🟣 **Marked for Review** (`bg-purple-500/25 border-purple-500 text-purple-200 font-bold`)
-* 🟣🟢 **Answered & Marked** (`bg-purple-500/30 border-purple-400 text-purple-100 ring-2 ring-emerald-400`).
+### 5.1 Prometric / NBE Standard Question Palette
+* ⚪ **Not Visited** (`text-slate-400 border-slate-700`)
+* 🔴 **Not Answered** (`bg-rose-500/20 text-rose-400 border-rose-500`)
+* 🟢 **Answered** (`bg-emerald-500/20 text-emerald-400 border-emerald-500`)
+* 🟣 **Marked for Review** (`bg-purple-500/20 text-purple-400 border-purple-500`)
+* 🟣🟢 **Answered & Marked** (`bg-purple-500/20 border-purple-500 with emerald badge`).
 
-### 5.2 Medical Aspirant Power Tools (Richer than Marrow / Pre-PG)
-* **Distractor Elimination Tool (Strike-Through)**: Aspirants can tap the eye-off icon on each option card to strike out eliminated answers (`line-through opacity-40`).
-* **Font Size Zoom (`A- / A / A+`)**: Dynamically zoom clinical vignettes and options on mobile and desktop screens.
-* **1-Click Weak Subtopic Remediation**: Results page automatically identifies sub-50% accuracy areas and provides an instant button to launch a 15-MCQ drill.
-* **Offline & Interruption Resilience**: Immediate `localStorage` answer caching + background `PATCH /api/assessments/attempts/{id}/heartbeat` every 15s.
-* **Mobile-First Bottom Action Drawer**: Dedicated touch bar on mobile viewports with quick palette slider, mark for review, and strike mode.
+### 5.2 Offline & Interruption Resilience
+* **Zero Latency Local Sync**: Immediate `localStorage` answer caching.
+* **Background Heartbeat**: `PATCH /api/assessments/attempts/{id}/heartbeat` every 20 seconds.
+* **Session Resume**: Seamlessly recovers interrupted sessions with verified remaining time.
 
 ---
 
@@ -269,42 +265,20 @@ CREATE INDEX IF NOT EXISTS idx_attempt_questions_attempt ON attempt_questions(at
 
 ## 7. API Endpoints Specification
 
-| Method | Endpoint | Description | Status |
-|---|---|---|---|
-| `GET` | `/api/assessments/presets` | List standard 1-click presets (NEET-SS, NEET-PG, Daily Dose, etc.). | ✅ Verified |
-| `POST` | `/api/assessments` | Generates a new assessment from blueprint & freezes question snapshots. | ✅ Verified |
-| `POST` | `/api/assessments/{id}/start` | Initiates user attempt, starts timer, returns sanitized question payload. | ✅ Verified |
-| `GET` | `/api/assessments/attempts/{id}` | Fetches active attempt state (stripping answers and explanations). | ✅ Verified |
-| `PATCH` | `/api/assessments/attempts/{id}/heartbeat` | Background sync: persists answers, review marks, elapsed time. | ✅ Verified |
-| `POST` | `/api/assessments/attempts/{id}/submit` | Calculates score, marks, accuracy, analytics, and locks attempt. | ✅ Verified |
-| `GET` | `/api/assessments/attempts/{id}/results` | Returns diagnostic scorecard, marks summary, topic velocity metrics. | ✅ Verified |
-| `GET` | `/api/assessments/attempts/{id}/review` | Returns deep review canvas with ground truth, explanations, and evidence. | ✅ Verified |
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/assessments/presets` | List standard 1-click presets (NEET-SS, NEET-PG, Daily Dose, etc.). |
+| `POST` | `/api/assessments` | Generates a new assessment from blueprint & freezes question snapshots. |
+| `POST` | `/api/assessments/{id}/start` | Initiates user attempt, starts timer, returns sanitized question payload. |
+| `GET` | `/api/assessments/attempts/{id}` | Fetches active attempt state (stripping answers and explanations). |
+| `PATCH` | `/api/assessments/attempts/{id}/heartbeat` | Background sync: persists answers, review marks, elapsed time. |
+| `POST` | `/api/assessments/attempts/{id}/submit` | Calculates score, marks, accuracy, analytics, and locks attempt. |
+| `GET` | `/api/assessments/attempts/{id}/results` | Returns diagnostic scorecard, marks summary, topic velocity metrics. |
+| `GET` | `/api/assessments/attempts/{id}/review` | Returns deep review canvas with ground truth, explanations, and evidence. |
 
 ---
 
-## 8. Verification & Test Suite Execution
+## 8. Phased Implementation Roadmap
 
-### Automated Backend Tests
-```bash
-python -m unittest discover tests
-```
-**Results**:
-- `Ran 25 tests in 1.028s — OK (100% Green)`
-- Full coverage of Assessment Engine, Blueprint Sampling, Answer Secrecy, Prometric 5-state calculation, NEET +4/-1 scoring, and INI-CET scoring.
-
-### Workspace TypeScript Typecheck
-```bash
-bun run typecheck
-```
-**Results**:
-- `@medical/shared`: 0 errors
-- `@medical/api-client`: 0 errors
-- `student-native`: 0 errors
-- `web`: 0 errors
-
----
-
-## 9. Transition to Next Milestone
-
-**Milestone 5 is Complete.**  
-The foundation is now fully set for **Milestone 6: AI Question Generation & PubMedBERT MCQA Evaluator Integration**.
+* **Stage 5A (Core Functional Engine)**: Blueprint generator, single/multi-section runner, Prometric palette, heartbeat auto-save, $+4/-1$ & $+1/-0.33$ scoring, and review canvas.
+* **Stage 5B (Medical Aspirant Polish)**: Option strike-through tool, tutor/practice pause rules, font size zoom (`A+/A-`), and 1-click weak subtopic remediation test button.

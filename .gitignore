@@ -67,6 +67,8 @@ data/raw/reference_documents/*.pdf
 data/processed/reference_documents/**
 !data/processed/reference_documents/.gitkeep
 
+data/processed/images/*
+
 # Large Processed Datasets (Reproduce via scripts/run_pipeline.py)
 data/processed/pathology/*.jsonl
 data/processed/pathology/*.parquet
