@@ -23,6 +23,7 @@
 | **M15B: Canonical Full-Book Import** | Knowledge Ingestion | GCS batch processing, resumable canonical runs, full layout/figure normalization, private evidence corpus, embeddings, and retrieval evaluation. | *Blocked on M15A acceptance.* |
 | **M16: Evidence-Bound Learning Content** | Knowledge Product | Evidence-bound MCQ/short-note generation, validation, editorial review, and rights-safe media outputs. | **M16A approved / in progress** — A0–A2 engineering foundation complete; human retrieval benchmark and M15 evidence acceptance gate real embeddings and MCQ generation. |
 | **M17: Android Direct Beta & Stabilization** | Release Quality | Signed GitHub APK prereleases, checksums, diagnostics, privacy/deletion, trusted pilot, wider invited beta, release gates, and rollback; Play/F-Droid deferred. | **In progress** — icon package, EAS beta profile, release workflow, and runbook are ready; secrets/source audit, compliance, diagnostics, and device QA remain. |
+| **M18: Portable Pathology Image Curation** | Multimodal Knowledge | PDF-independent inventory and cleanup of extracted book images; private reviewed catalog; source/page/text linkage; 30-question image-grounded pilot. | **Deferred to extraction machine** — detailed AI-agent handoff is ready; 18A–18C require only the private extracted-image bundle and existing PostgreSQL text corpus; 18D remains gated by M16 retrieval accuracy. |
 | **M50: Payments & Subscriptions** | Commercialization | Pricing, checkout, billing, renewals, invoices, and payment-provider webhooks. | *Future* |
 
 ---

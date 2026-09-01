@@ -82,8 +82,10 @@ The initial cognitive and difficulty targets are:
 | Difficulty | 15% easy, 50% medium, 35% hard |
 | Format | 40% direct SBA, 35% clinicopathologic vignette, 25% integrated molecular/IHC/interpretation |
 
-Image-dependent questions are excluded from this text-only quota until licensed,
-verified image assets exist. Robbins Review may inform exam style and topic gaps,
+Image-dependent questions are excluded from the initial text-only pilot until
+Milestone 18 produces private, reviewed, provenance-linked image assets. Its
+30-question image pilot counts within the mature 900-question target. Robbins
+Review may inform exam style and topic gaps,
 but existing copyrighted questions must not be copied or lightly paraphrased.
 
 ## Current baseline
