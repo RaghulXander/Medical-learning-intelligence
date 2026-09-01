@@ -9,6 +9,10 @@
     "jsx": "react-jsx",
     "strict": true,
     "moduleResolution": "bundler",
+    "types": [
+      "node",
+      "react"
+    ],
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
