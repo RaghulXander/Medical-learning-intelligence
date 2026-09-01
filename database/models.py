@@ -29,6 +29,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON, TypeDecorator, String as SQLString
+from pgvector.sqlalchemy import VECTOR
 
 from backend.domain.surgical_pathology_ontology import (
     OntologyMappingMethod,
@@ -73,6 +74,7 @@ class GUID(TypeDecorator):
 
 # Cross-database JSON type (JSONB on PostgreSQL, JSON on SQLite)
 JSONType = JSON().with_variant(JSONB, "postgresql")
+EmbeddingVectorType = VECTOR(768).with_variant(JSON(), "sqlite")
 
 
 def make_enum(enum_cls):
@@ -157,6 +159,14 @@ class VerificationStatus(str, enum.Enum):
     AI_SUGGESTED = "AI_SUGGESTED"
     HUMAN_VERIFIED = "HUMAN_VERIFIED"
     REJECTED = "REJECTED"
+
+
+class EmbeddingRunStatus(str, enum.Enum):
+    CREATED = "CREATED"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    SUPERSEDED = "SUPERSEDED"
 
 
 class ReviewerType(str, enum.Enum):
@@ -675,6 +685,78 @@ class DocumentChunk(Base):
     # Relationships
     document: Mapped["SourceDocument"] = relationship("SourceDocument", back_populates="chunks")
     evidence_links: Mapped[List["QuestionEvidence"]] = relationship("QuestionEvidence", back_populates="chunk")
+    embedding_records: Mapped[List["DocumentChunkEmbedding"]] = relationship(
+        "DocumentChunkEmbedding",
+        back_populates="chunk",
+        cascade="all, delete-orphan",
+    )
+
+
+# -----------------------------------------------------------------------------
+# 7A. Versioned embedding runs and immutable chunk vectors
+# -----------------------------------------------------------------------------
+class EmbeddingRun(Base):
+    __tablename__ = "embedding_runs"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    provider: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    model_id: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
+    model_version: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    dimension: Mapped[int] = mapped_column(Integer, nullable=False, default=768)
+    document_task_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="RETRIEVAL_DOCUMENT"
+    )
+    query_task_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="RETRIEVAL_QUERY"
+    )
+    chunking_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[EmbeddingRunStatus] = mapped_column(
+        make_enum(EmbeddingRunStatus),
+        nullable=False,
+        default=EmbeddingRunStatus.CREATED,
+        index=True,
+    )
+    expected_chunk_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    completed_chunk_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    failed_chunk_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    config_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    error_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    embeddings: Mapped[List["DocumentChunkEmbedding"]] = relationship(
+        "DocumentChunkEmbedding",
+        back_populates="run",
+        cascade="all, delete-orphan",
+    )
+
+
+class DocumentChunkEmbedding(Base):
+    __tablename__ = "document_chunk_embeddings"
+    __table_args__ = (
+        UniqueConstraint("run_id", "chunk_id", name="uq_document_chunk_embedding_run_chunk"),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    run_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("embedding_runs.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    chunk_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("document_chunks.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    embedding: Mapped[List[float]] = mapped_column(EmbeddingVectorType, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    run: Mapped["EmbeddingRun"] = relationship("EmbeddingRun", back_populates="embeddings")
+    chunk: Mapped["DocumentChunk"] = relationship(
+        "DocumentChunk", back_populates="embedding_records"
+    )
 
 
 # -----------------------------------------------------------------------------

@@ -3,8 +3,11 @@ backend/services/embedding_service.py
 
 Modular Vector Embedding Service for Pathology Evidence Retrieval.
 Provides unified embedding generation with support for:
-1. Google Gemini `text-embedding-004` (768-dim dense semantic embeddings)
+1. Google Gemini embeddings (768-dim dense semantic embeddings)
 2. Deterministic unit-normalized mock embeddings for testing and offline environments.
+
+Configured remote providers fail closed: an SDK or API failure is never replaced
+with a mock vector that could be mistaken for production evidence.
 """
 
 from __future__ import annotations
@@ -21,8 +24,12 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_EMBEDDING_MODEL = "text-embedding-004"
+DEFAULT_EMBEDDING_MODEL = "gemini-embedding-001"
 DEFAULT_EMBEDDING_DIM = 768
+
+
+class EmbeddingProviderError(RuntimeError):
+    """Raised when a configured embedding provider cannot return valid vectors."""
 
 
 def cosine_similarity(vec_a: List[float], vec_b: List[float]) -> float:
@@ -125,23 +132,38 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
         api_key: Optional[str] = None,
         model_name: str = DEFAULT_EMBEDDING_MODEL,
         dimension: int = DEFAULT_EMBEDDING_DIM,
+        task_type: str = "RETRIEVAL_DOCUMENT",
+        vertex_ai: bool = False,
+        project: Optional[str] = None,
+        location: Optional[str] = None,
     ):
         self._api_key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self._model_name = model_name
         self._dim = dimension
+        self._task_type = task_type
+        self._vertex_ai = vertex_ai
+        self._project = project or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT_ID")
+        self._location = location or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
         self._client = None
         self._init_client()
 
     def _init_client(self):
         try:
             from google import genai
-            if self._api_key:
+            if self._vertex_ai:
+                if not self._project:
+                    raise ValueError("A GCP project is required for Vertex AI embeddings")
+                self._client = genai.Client(
+                    vertexai=True,
+                    project=self._project,
+                    location=self._location,
+                )
+            elif self._api_key:
                 self._client = genai.Client(api_key=self._api_key)
             else:
-                self._client = genai.Client()
-        except Exception as e:
-            logger.warning(f"Google GenAI SDK init warning: {e}")
-            self._client = None
+                raise ValueError("An API key is required outside Vertex AI mode")
+        except Exception as exc:
+            raise EmbeddingProviderError("Google GenAI embedding client initialization failed") from exc
 
     @property
     def model_name(self) -> str:
@@ -151,20 +173,26 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
     def dimension(self) -> int:
         return self._dim
 
+    @property
+    def task_type(self) -> str:
+        return self._task_type
+
     def embed_text(self, text: str) -> List[float]:
         res = self.embed_batch([text])
-        return res[0] if res else [0.0] * self._dim
+        if len(res) != 1:
+            raise EmbeddingProviderError("Embedding provider returned no vector for the input text")
+        return res[0]
 
     def embed_batch(self, texts: List[str]) -> List[List[float]]:
         if not texts:
             return []
         if not self._client:
-            logger.warning("Gemini Client not initialized. Falling back to deterministic embedding.")
-            mock = DeterministicMockEmbeddingProvider(dimension=self._dim)
-            return mock.embed_batch(texts)
+            raise EmbeddingProviderError("Google GenAI embedding client is not initialized")
 
         results: List[List[float]] = []
         batch_size = 50
+
+        from google.genai import types
 
         for i in range(0, len(texts), batch_size):
             chunk = texts[i : i + batch_size]
@@ -173,6 +201,11 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
                     response = self._client.models.embed_content(
                         model=self._model_name,
                         contents=chunk,
+                        config=types.EmbedContentConfig(
+                            task_type=self._task_type,
+                            output_dimensionality=self._dim,
+                            auto_truncate=False,
+                        ),
                     )
                     # Extract embeddings
                     if hasattr(response, "embeddings"):
@@ -181,13 +214,22 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
                     else:
                         raise ValueError(f"Unexpected embed_content response structure: {response}")
                     break
-                except Exception as e:
+                except Exception as exc:
                     if attempt == 2:
-                        logger.error(f"Failed to embed batch with Gemini API after 3 attempts: {e}")
-                        mock = DeterministicMockEmbeddingProvider(dimension=self._dim)
-                        results.extend(mock.embed_batch(chunk))
+                        raise EmbeddingProviderError(
+                            "Google GenAI embedding request failed after 3 attempts"
+                        ) from exc
                     else:
                         time.sleep(1.0 * (attempt + 1))
+
+        if len(results) != len(texts):
+            raise EmbeddingProviderError(
+                f"Embedding provider returned {len(results)} vectors for {len(texts)} inputs"
+            )
+        if any(len(vector) != self._dim for vector in results):
+            raise EmbeddingProviderError(
+                f"Embedding provider returned a vector with dimension other than {self._dim}"
+            )
 
         return results
 
@@ -195,17 +237,19 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
 def get_embedding_provider(
     force_mock: bool = False,
     api_key: Optional[str] = None,
+    task_type: str = "RETRIEVAL_QUERY",
 ) -> EmbeddingProvider:
     """Factory creating the appropriate EmbeddingProvider."""
     if force_mock:
         return DeterministicMockEmbeddingProvider()
 
+    configured_provider = os.getenv("EMBEDDING_PROVIDER", "").strip().lower()
     api_key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if configured_provider in {"vertex", "vertex_ai", "google_vertex_ai"}:
+        return GeminiEmbeddingProvider(vertex_ai=True, task_type=task_type)
     if api_key:
-        try:
-            return GeminiEmbeddingProvider(api_key=api_key)
-        except Exception as e:
-            logger.warning(f"Could not load Gemini provider ({e}), using deterministic provider.")
-            return DeterministicMockEmbeddingProvider()
+        return GeminiEmbeddingProvider(api_key=api_key, task_type=task_type)
     else:
+        # No provider was configured, so this is an explicit offline/test mode,
+        # not a recovery path after a production provider failure.
         return DeterministicMockEmbeddingProvider()
