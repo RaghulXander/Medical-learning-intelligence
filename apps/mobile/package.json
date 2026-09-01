@@ -43,6 +43,7 @@
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
+    "@types/node": "^20.17.19",
     "@types/react": "~19.1.10",
     "@types/react-dom": "~19.1.7",
     "babel-preset-expo": "~54.0.12",
