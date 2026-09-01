@@ -29,6 +29,16 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Verify Expo token and project access
+        working-directory: apps/mobile
+        run: |
+          echo "Expo identity supplied by EXPO_TOKEN:"
+          eas whoami
+          if ! eas project:info; then
+            echo "::error::EXPO_TOKEN cannot read EAS project 73362ab7-6019-402a-887c-11185e863270 owned by raghuljayan. Replace the secret in GitHub's preview environment with a token from the owning Expo account or an authorized Developer robot."
+            exit 1
+          fi
+
       - name: Validate release tag
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}

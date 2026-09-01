@@ -58,6 +58,28 @@ The workflow `.github/workflows/android-beta-release.yml` performs validation, s
 5. Confirm the EAS-managed signing key is retained. Every APK update for the installed package must use the same signing key.
 6. Protect the workflow/environment so only maintainers can create beta releases.
 
+### Fix `Entity not authorized` in GitHub Actions
+
+This error means Expo accepted `EXPO_TOKEN`, but the token's personal or robot user cannot read the linked project. It is not an Android-signing or GitHub permission failure.
+
+The configured project is:
+
+```text
+Owner: raghuljayan
+Slug: docedge-mobile
+Project ID: 73362ab7-6019-402a-887c-11185e863270
+```
+
+Correct it as follows:
+
+1. Sign in to the Expo dashboard as `raghuljayan`, or as a member of the account that actually owns the project.
+2. Create a new personal access token from that account's **Access tokens** page. For an Organization-owned project, a robot token is also suitable when the robot has at least the **Developer** role.
+3. In GitHub open **Settings → Environments → preview → Environment secrets**.
+4. Replace `EXPO_TOKEN` there. The beta job selects the `preview` environment, so an environment secret with this name is the value used by the workflow.
+5. Run the workflow again. Its **Verify Expo token and project access** step must show the intended identity and complete `eas project:info` before a build is started.
+
+Do not run `eas project:init`, change `extra.eas.projectId`, create another EAS project, or paste the token into logs. The existing project link is correct; only the token's access is wrong. Expo token authentication also takes precedence over an interactive `eas login`, so changing the locally logged-in user does not repair a wrong GitHub secret.
+
 ### Create a beta
 
 1. Set `apps/mobile/app.json` to the intended semantic app version, validate the native/runtime change, and merge the approved release candidate into `main`.
