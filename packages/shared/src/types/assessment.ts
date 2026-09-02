@@ -66,6 +66,18 @@ export interface SanitizedQuestion {
   status?: PrometricQuestionState | string;
   topic_name?: string;
   difficulty?: string;
+  has_images?: boolean;
+  image_assets?: Array<{
+    image_id?: string;
+    filename?: string;
+    storage_uri?: string;
+    cdn_url?: string;
+    figure_label?: string;
+    caption?: string;
+    stain_type?: string;
+    magnification?: string;
+    [key: string]: any;
+  }>;
 }
 
 export interface StartAttemptResponse {

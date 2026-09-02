@@ -269,6 +269,8 @@ class AssessmentService:
                 "external_source": q.external_source,
                 "selection_reasons": reasons_map.get(q.id, ["EXAM_BLUEPRINT_CORE"]),
                 "priority_score": scores_map.get(q.id, 0.0),
+                "has_images": getattr(q, "has_images", False),
+                "image_assets": getattr(q, "image_assets", []) or [],
             }
 
             aq = AssessmentQuestion(
@@ -430,6 +432,10 @@ class AssessmentService:
                 "selected_answer": selected_answer,
                 "marked_for_review": marked,
                 "status": status,
+                "topic_name": snap.get("topic_name") or snap.get("primary_topic_id") or "Pathology",
+                "difficulty": snap.get("difficulty"),
+                "has_images": snap.get("has_images", False),
+                "image_assets": snap.get("image_assets", []),
             })
 
         return sanitized

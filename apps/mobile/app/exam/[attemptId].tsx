@@ -178,6 +178,17 @@ export default function ExamRunnerScreen() {
           stem={currentQ.stem}
           topicName={currentQ.topic_name || 'Pathology & Diagnostic IHC'}
           difficulty={currentQ.difficulty}
+          imageUrl={
+            currentQ.image_assets?.[0]?.cdn_url ||
+            (currentQ.image_assets?.[0]?.storage_uri?.startsWith('http')
+              ? currentQ.image_assets[0].storage_uri
+              : undefined)
+          }
+          imageCaption={
+            currentQ.image_assets?.[0]?.caption ||
+            currentQ.image_assets?.[0]?.figure_label ||
+            (currentQ.image_assets?.[0]?.source_name ? `Source: ${currentQ.image_assets[0].source_name}` : undefined)
+          }
         />
 
         {/* Options */}
