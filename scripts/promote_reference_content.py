@@ -37,6 +37,7 @@ DEFAULT_RECEIPT_DIR = (
 DEFAULT_DOCUMENTS = (
     "robbins_review",
     "robbins_pathologic_basis_11th",
+    "sternberg_review_2nd",
 )
 PENDING_PAGE_RECEIPTS = {
     "robbins_pathologic_basis_11th": [4, 6, 16, 1226],

@@ -1,10 +1,14 @@
 # Milestone 14 — Versioned Surgical Pathology Knowledge Ontology
 
-> Progress (2026-08-29): Phases 14.1–14.3 have started. The versioned schema,
-> structural validation, core hierarchy, and limited Breast draft seed are present.
+> Progress (2026-09-02): Phases 14.1–14.3 and the deterministic portion of 14.5
+> have started. The versioned schema, structural validation, core hierarchy, and
+> limited Breast draft seed are present. A reversible exact-topic mapping run
+> suggested 360 of 15,526 questions across nine ontology nodes; all suggestions
+> remain unverified and all question statuses remain `IMPORTED`.
 > The sixth-edition WHO Breast source is an online beta, so the scheme remains
 > `DRAFT`; a public read-only ontology explorer is available at `/pathology`, while
-> feature relationships, evidence, reviewed question crosswalk, and editing UI remain.
+> feature relationships, evidence, human review of the mapping queue, broader
+> crosswalk coverage, and editing UI remain.
 
 ## 1. Purpose
 

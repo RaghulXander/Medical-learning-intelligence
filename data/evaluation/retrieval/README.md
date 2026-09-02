@@ -7,7 +7,7 @@ Generated queries or automatically inferred gold labels are not acceptable.
 Each JSONL row has this shape:
 
 ```json
-{"id":"general-001","domain":"general_pathology","query":"...","expected_chunk_ids":["verified-chunk-id"],"out_of_corpus":false,"reviewer":"reviewer-id"}
+{"id":"general-001","domain":"general_pathology","query":"...","expected_chunk_ids":["verified-chunk-id"],"out_of_corpus":false,"reviewer":"reviewer-id","verification_status":"HUMAN_VERIFIED"}
 ```
 
 An unsupported control prompt uses an empty `expected_chunk_ids` list and
@@ -20,6 +20,11 @@ Requirements:
 - at least one deliberately out-of-corpus control;
 - one or more manually verified chunk IDs for every in-corpus query;
 - no copied review-book question stems.
+
+`scripts/build_retrieval_eval_set.py` produces bootstrap candidates using term
+matching. Its output is deliberately marked `AUTO_BOOTSTRAP_UNVERIFIED` and is
+rejected by the evaluator until a human checks each expected chunk and changes
+the reviewer and status truthfully.
 
 Validate labels without calling Vertex AI:
 

@@ -23,6 +23,7 @@ class RetrievalEvaluationCase:
     expected_chunk_ids: List[str]
     out_of_corpus: bool
     reviewer: str
+    verification_status: str
 
 
 def load_evaluation_set(path: Path) -> tuple[List[RetrievalEvaluationCase], str]:
@@ -41,11 +42,19 @@ def load_evaluation_set(path: Path) -> tuple[List[RetrievalEvaluationCase], str]
                 expected_chunk_ids=[str(item) for item in payload.get("expected_chunk_ids", [])],
                 out_of_corpus=bool(payload.get("out_of_corpus", False)),
                 reviewer=str(payload["reviewer"]).strip(),
+                verification_status=str(
+                    payload.get("verification_status", "UNVERIFIED")
+                ).strip(),
             )
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
             raise ValueError(f"Invalid evaluation case at line {line_number}") from exc
         if not case.id or not case.domain or not case.query or not case.reviewer:
             raise ValueError(f"Blank required field at line {line_number}")
+        if case.verification_status != "HUMAN_VERIFIED":
+            raise ValueError(
+                f"Evaluation case {case.id} is not HUMAN_VERIFIED; "
+                "automatically selected chunks cannot be used as gold labels"
+            )
         if case.id in seen_ids:
             raise ValueError(f"Duplicate evaluation ID: {case.id}")
         if case.out_of_corpus and case.expected_chunk_ids:

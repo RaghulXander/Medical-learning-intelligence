@@ -6,7 +6,7 @@
 
 **Milestone 16A only** is the approved implementation slice:
 
-1. promote the two-book text corpus into local PostgreSQL;
+1. promote the three-book text corpus into local PostgreSQL;
 2. build a versioned pgvector retrieval index;
 3. measure retrieval on a human-authored evaluation set;
 4. generate a small evidence-bound MCQ pilot;
@@ -22,7 +22,7 @@ downstream of measurable retrieval quality. A fluent question is not acceptable
 unless its answer, explanation, and relevant distractor rationales can be traced
 to the supplied book evidence.
 
-Milestone 16 does not fine-tune a model. With 1,719 evidence chunks, retrieval,
+Milestone 16 does not fine-tune a model. With the versioned evidence corpus, retrieval,
 structured generation, evaluation, and human review are the first useful quality
 controls. Fine-tuning is reconsidered only after reviewed failures produce a
 meaningful training set.
@@ -40,7 +40,7 @@ the Pathology feeder specialty and may cover its general/basic and subspecialty
 components. Revalidate this assumption when the NEET-SS 2026 bulletin is
 published.
 
-### Proposed size from these two books
+### Proposed size from these books
 
 | Bank stage | Approved unique questions | Purpose |
 |---|---:|---|
@@ -90,7 +90,10 @@ but existing copyrighted questions must not be copied or lightly paraphrased.
 
 ## Current baseline
 
-- Remote PostgreSQL contains 1,719 unique text chunks from two books.
+- The first verified local promotion contained 1,719 unique text chunks from two
+  books. A 2026-09-02 contributor update reports that `sternberg_review_2nd` is
+  now also present remotely; its exact count/hash manifest must be verified
+  during the next sync rather than copied into this document speculatively.
 - A verified local SQLite copy exists as a transfer/recovery artifact.
 - Robbins Review contributes 496 chunks covering physical PDF pages 1–496.
 - Robbins Pathologic Basis 11th contributes 1,223 chunks across physical PDF
@@ -163,8 +166,15 @@ but existing copyrighted questions must not be copied or lightly paraphrased.
    corpus can be labelled complete.
 7. Restore `.env` secret hygiene before any commit: `.env` must not be tracked.
 
-**A0 gate:** PostgreSQL contains exactly 2 sources, 2 source documents, and
-1,719 unique chunks with zero empty content or hash conflicts.
+**Original two-book A0 receipt:** PostgreSQL contained exactly 2 selected
+sources, 2 source documents, and 1,719 unique chunks with zero empty content or
+hash conflicts.
+
+**Expanded three-book gate (2026-09-02):** the requested scope contains exactly
+three source identities and one source document per book; remote, transfer, and
+local PostgreSQL per-book chunk/word/content-hash manifests must match. The
+verified runtime receipt—not a hard-coded count—is authoritative after adding
+`sternberg_review_2nd`.
 
 ### A1. Versioned embedding schema
 

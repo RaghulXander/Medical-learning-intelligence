@@ -34,6 +34,7 @@ from pgvector.sqlalchemy import VECTOR
 from backend.domain.surgical_pathology_ontology import (
     OntologyMappingMethod,
     OntologyMappingRole,
+    OntologyMappingRunStatus,
     OntologyNodeStatus,
     OntologyNodeType,
     OntologyRelationshipType,
@@ -581,6 +582,10 @@ class QuestionOntologyMapping(Base):
     supersedes_mapping_id: Mapped[Optional[str]] = mapped_column(
         GUID(), ForeignKey("question_ontology_mappings.id", ondelete="SET NULL"), nullable=True
     )
+    mapping_run_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("ontology_mapping_runs.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    match_metadata: Mapped[Dict[str, Any]] = mapped_column(JSONType, default=dict, nullable=False)
     mapped_by: Mapped[str] = mapped_column(String(100), default="system", nullable=False)
     reviewed_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -598,6 +603,42 @@ class QuestionOntologyMapping(Base):
     node: Mapped["OntologyNode"] = relationship("OntologyNode")
     supersedes_mapping: Mapped[Optional["QuestionOntologyMapping"]] = relationship(
         "QuestionOntologyMapping", remote_side="QuestionOntologyMapping.id"
+    )
+    mapping_run: Mapped[Optional["OntologyMappingRun"]] = relationship(
+        "OntologyMappingRun", back_populates="mappings"
+    )
+
+
+class OntologyMappingRun(Base):
+    __tablename__ = "ontology_mapping_runs"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    scheme_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("ontology_schemes.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    ontology_version: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    rule_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    status: Mapped[OntologyMappingRunStatus] = mapped_column(
+        make_enum(OntologyMappingRunStatus), nullable=False, index=True
+    )
+    configuration_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    question_filter: Mapped[Dict[str, Any]] = mapped_column(JSONType, default=dict, nullable=False)
+    input_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    matched_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    ambiguous_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    unmapped_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_mapping_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_by: Mapped[str] = mapped_column(String(100), nullable=False, default="m14_mapping_rule")
+    error_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    rolled_back_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    scheme: Mapped["OntologyScheme"] = relationship("OntologyScheme")
+    mappings: Mapped[List["QuestionOntologyMapping"]] = relationship(
+        "QuestionOntologyMapping", back_populates="mapping_run"
     )
 
 

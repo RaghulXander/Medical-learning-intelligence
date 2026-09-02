@@ -28,6 +28,7 @@ from database.models import Base, DocumentChunk, Source, SourceDocument
 DEFAULT_DOCUMENTS = (
     "robbins_review",
     "robbins_pathologic_basis_11th",
+    "sternberg_review_2nd",
 )
 DEFAULT_LOCAL_DB = PROJECT_ROOT / "data" / "medical_exam.db"
 
@@ -38,11 +39,22 @@ def _batched(rows: list[dict[str, Any]], size: int = 200) -> Iterable[list[dict[
 
 
 def _load_remote_url(env_file: Path) -> str:
-    url = (dotenv_values(env_file).get("DATABASE_URL") or "").strip()
+    values = dotenv_values(env_file)
+    url = (
+        values.get("REMOTE_DATABASE_URL")
+        or values.get("DATABASE_URL")
+        or ""
+    ).strip()
     if not url:
-        raise RuntimeError(f"DATABASE_URL is missing from {env_file}")
+        raise RuntimeError(
+            f"REMOTE_DATABASE_URL (or DATABASE_URL) is missing from {env_file}"
+        )
     if url.startswith("sqlite"):
         raise RuntimeError("DATABASE_URL must identify the remote PostgreSQL database")
+    if "localhost" in url or "127.0.0.1" in url:
+        raise RuntimeError(
+            "Remote sync refuses a localhost URL; set REMOTE_DATABASE_URL to the remote PostgreSQL database"
+        )
     return url
 
 

@@ -25,6 +25,7 @@ def _seed_source(engine) -> None:
         for suffix, short_name in (
             ("review", "robbins_review"),
             ("basis", "robbins_pathologic_basis_11th"),
+            ("sternberg", "sternberg_review_2nd"),
         ):
             source_id = f"source-{suffix}"
             document_id = f"document-{suffix}"
@@ -87,18 +88,18 @@ def test_promotion_preserves_unrelated_rows_and_is_idempotent(tmp_path):
 
     first = promote_reference_content(source_engine, target_engine)
     assert first["status"] == "PROMOTED_AND_VERIFIED"
-    assert first["inserted_sources"] == 2
-    assert first["inserted_chunks"] == 2
+    assert first["inserted_sources"] == 3
+    assert first["inserted_chunks"] == 3
 
     second = promote_reference_content(source_engine, target_engine)
     assert second["inserted_sources"] == 0
     assert second["inserted_source_documents"] == 0
     assert second["inserted_chunks"] == 0
-    assert second["skipped_existing_chunks"] == 2
+    assert second["skipped_existing_chunks"] == 3
 
     with target_engine.connect() as connection:
-        assert connection.execute(select(func.count()).select_from(Source)).scalar_one() == 3
-        assert connection.execute(select(func.count()).select_from(DocumentChunk)).scalar_one() == 2
+        assert connection.execute(select(func.count()).select_from(Source)).scalar_one() == 4
+        assert connection.execute(select(func.count()).select_from(DocumentChunk)).scalar_one() == 3
         assert connection.execute(
             select(Source.id).where(Source.short_name == "unrelated")
         ).scalar_one() == "unrelated-source"

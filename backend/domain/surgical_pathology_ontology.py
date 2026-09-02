@@ -78,6 +78,18 @@ class OntologyMappingMethod(str, enum.Enum):
     HUMAN = "HUMAN"
 
 
+class OntologyMappingRunStatus(str, enum.Enum):
+    APPLIED = "APPLIED"
+    ROLLED_BACK = "ROLLED_BACK"
+    FAILED = "FAILED"
+
+
+class OntologyMappingReviewDecision(str, enum.Enum):
+    ACCEPT = "ACCEPT"
+    CORRECT = "CORRECT"
+    REJECT = "REJECT"
+
+
 SEED_PATH = (
     Path(__file__).resolve().parents[2]
     / "data"

@@ -68,6 +68,9 @@ data/processed/reference_documents/**
 !data/processed/reference_documents/.gitkeep
 
 data/processed/images/*
+# Local ontology mapping previews contain database question identifiers and are
+# reproducible from the versioned rule; keep them as private run artifacts.
+data/processed/ontology/**
 
 # Large Processed Datasets (Reproduce via scripts/run_pipeline.py)
 data/processed/pathology/*.jsonl

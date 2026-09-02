@@ -1,10 +1,11 @@
 """
 scripts/build_retrieval_eval_set.py
 
-Milestone 16A: Generates and validates the gold-standard retrieval evaluation dataset
+Milestone 16A: Generates a bootstrap retrieval evaluation candidate dataset
 (data/evaluation/retrieval/m16a_retrieval_eval_v1.jsonl) containing 55 curated medical
 queries across 5 core pathology domains and deliberate out-of-corpus controls,
-with each in-corpus case linked to verified DocumentChunk UUIDs in the database.
+with each in-corpus case linked by automated term matching. These links are not
+gold labels until a human reviewer verifies them against the source evidence.
 """
 
 from __future__ import annotations
@@ -406,7 +407,8 @@ def build_evaluation_set() -> list[dict]:
                 "query": spec["query"],
                 "expected_chunk_ids": [],
                 "out_of_corpus": True,
-                "reviewer": "pathologist-curator",
+                "reviewer": "automated-bootstrap",
+                "verification_status": "AUTO_BOOTSTRAP_UNVERIFIED",
             })
         else:
             chunk_id = get_chunk_by_terms(conn, spec["terms"])
@@ -416,7 +418,8 @@ def build_evaluation_set() -> list[dict]:
                 "query": spec["query"],
                 "expected_chunk_ids": [chunk_id],
                 "out_of_corpus": False,
-                "reviewer": "pathologist-curator",
+                "reviewer": "automated-bootstrap",
+                "verification_status": "AUTO_BOOTSTRAP_UNVERIFIED",
             })
 
     conn.close()
@@ -430,7 +433,8 @@ def main():
         for c in cases:
             f.write(json.dumps(c) + "\n")
 
-    print(f"Successfully generated {len(cases)} gold benchmark cases in {OUTPUT_FILE}")
+    print(f"Generated {len(cases)} unverified benchmark candidates in {OUTPUT_FILE}")
+    print("A human reviewer must verify every expected chunk before evaluation.")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ Revision `20260901_0005` must be current. It creates immutable embedding runs,
 
 ## 2. Promote the private transfer database when needed
 
-Skip this section when the two books are already present in PostgreSQL.
+Skip this section when all three books are already present in PostgreSQL.
 
 ```bash
 python scripts/promote_reference_content.py --dry-run
@@ -27,7 +27,9 @@ The expected promoted scope is:
 
 - `robbins_review`: 496 chunks;
 - `robbins_pathologic_basis_11th`: 1,223 chunks;
-- selected total: 1,719 chunks.
+- `sternberg_review_2nd`: verify against the remote sync receipt;
+- the first two-book total remains 1,719 chunks, while the three-book total must
+  be established by matching remote/local manifests.
 
 The command is transactional and refuses source, document, or content-hash
 conflicts. Its private promotion receipt contains counts and hashes, not book
@@ -40,6 +42,7 @@ Run the existing audit against the complete live extraction artifacts:
 ```bash
 python scripts/manage_reference_documents.py audit --doc robbins_review --enforce
 python scripts/manage_reference_documents.py audit --doc robbins_pathologic_basis_11th --enforce
+python scripts/manage_reference_documents.py audit --doc sternberg_review_2nd --enforce
 ```
 
 For Robbins Pathologic Basis 11th, visually confirm or supply explicit page
@@ -65,8 +68,8 @@ override.
 python scripts/generate_evidence_embeddings.py
 ```
 
-Proceed only when it reports `chunks=1719`, `dimension=768`,
-`model=gemini-embedding-001`, and `provenance_ready=True`. The dry run creates no
+Proceed only when it reports the independently verified three-book chunk count,
+`dimension=768`, `model=gemini-embedding-001`, and `provenance_ready=True`. The dry run creates no
 run and makes no paid API call.
 
 After checking the current Vertex AI price/quota and confirming approval, create
