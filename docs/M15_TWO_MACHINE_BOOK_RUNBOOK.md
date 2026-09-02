@@ -132,7 +132,7 @@ python scripts/manage_reference_documents.py verify
 python scripts/manage_reference_documents.py list
 ```
 
-Record each document ID, SHA-256, total page count, edition, and Git commit in a copy of [the handoff template](templates/M15_RUN_HANDOFF_TEMPLATE.md).
+Record each document ID, SHA-256, total page count, edition, and Git commit in a copy of [the handoff template](handoff_templates/M15_RUN_HANDOFF_TEMPLATE.md).
 
 ## 4. Run and approve a live pilot first
 

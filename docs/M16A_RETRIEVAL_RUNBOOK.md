@@ -91,7 +91,7 @@ run failed; it never substitutes mock vectors.
 
 ## 5. Build the human retrieval gold set
 
-Follow [the benchmark instructions](../data/evaluation/retrieval/README.md).
+Follow the benchmark instructions in `data/evaluation/retrieval/README.md`.
 Create 50–75 human-authored cases across at least five domains, manually verify
 the expected chunk IDs/pages, and include out-of-corpus controls.
 

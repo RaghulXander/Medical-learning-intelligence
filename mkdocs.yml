@@ -54,5 +54,12 @@ nav:
       - Knowledge base: KNOWLEDGE_BASE.md
       - Surgical Pathology ontology: SURGICAL_PATHOLOGY_ONTOLOGY.md
       - Roadmap: ROADMAP.md
+  - Operations and runbooks:
+      - GCP Document AI: GCP_DOCUMENT_AI.md
+      - Milestone 15 two-machine runbook: M15_TWO_MACHINE_BOOK_RUNBOOK.md
+      - Milestone 15 handoff template: handoff_templates/M15_RUN_HANDOFF_TEMPLATE.md
+      - Milestone 16A retrieval runbook: M16A_RETRIEVAL_RUNBOOK.md
+      - Milestone 18 image curation handoff: M18_IMAGE_CURRATION_HANDOFF.md
 
 strict: true
+
