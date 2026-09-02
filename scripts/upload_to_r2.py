@@ -212,7 +212,39 @@ def upload_images(
 
     logger.info(f"🎉 Upload batch complete! Uploaded: {success_count:,} | Skipped: {skipped_count:,} | Failed: {failed_count:,}")
     logger.info(f"📄 Upload manifest saved to {RECEIPT_PATH}")
+
+    # Synchronize storage URIs to PostgreSQL database
+    try:
+        sync_storage_uris_to_db(uploaded_records)
+    except Exception as e:
+        logger.warning(f"Could not sync storage URIs to database: {e}")
+
     return summary
+
+
+def sync_storage_uris_to_db(uploaded_records: List[Dict[str, Any]]) -> int:
+    """Updates storage_uri for ImageAssets in PostgreSQL/Neon."""
+    if not uploaded_records:
+        return 0
+    from database.db import get_engine, get_session_factory
+    from database.models import ImageAsset
+
+    engine = get_engine()
+    session_factory = get_session_factory(engine)
+    logger.info(f"🔄 Syncing {len(uploaded_records):,} CDN URLs to Neon database...")
+    updated = 0
+    with session_factory() as db:
+        for r in uploaded_records:
+            sha = r.get("sha256")
+            cdn_url = r.get("cdn_url")
+            if sha and cdn_url:
+                asset = db.query(ImageAsset).filter(ImageAsset.sha256 == sha).first()
+                if asset:
+                    asset.storage_uri = cdn_url
+                    updated += 1
+        db.commit()
+    logger.info(f"✅ Synced {updated:,} storage_uri values to Neon database.")
+    return updated
 
 
 def main():
@@ -241,3 +273,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
