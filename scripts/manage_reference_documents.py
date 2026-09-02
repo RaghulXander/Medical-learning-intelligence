@@ -19,6 +19,9 @@ import logging
 import sys
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 # Add project root to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -67,7 +70,7 @@ KNOWN_DOCUMENTS = [
         "year": 2015,
         "publisher": "Wolters Kluwer",
         "source_type": "REVIEW_BOOK",
-        "textbook_page_offset": 12,  # PDF Page 13 = Textbook Page 1
+        "textbook_page_offset": 14,  # PDF Page 15 = Textbook Page 1
         "rights_status": "AUTHORIZED",
         "rights_basis": "Authorized surgical pathology review corpus",
     },

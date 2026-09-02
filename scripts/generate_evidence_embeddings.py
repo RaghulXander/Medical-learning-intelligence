@@ -44,7 +44,11 @@ from database.models import (
 )
 
 
-DEFAULT_SOURCES = ("robbins_pathologic_basis_11th", "robbins_review")
+DEFAULT_SOURCES = (
+    "robbins_pathologic_basis_11th",
+    "robbins_review",
+    "sternberg_review_2nd",
+)
 PROVENANCE_MANIFEST_DIR = Path("data/processed/reference_documents/provenance_manifests")
 logger = logging.getLogger(__name__)
 
