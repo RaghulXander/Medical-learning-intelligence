@@ -486,6 +486,71 @@ class AuthService:
         }
 
     # -------------------------------------------------------------------------
+    # Account Deletion & Right to Erasure (Milestone 17)
+    # -------------------------------------------------------------------------
+    @staticmethod
+    def delete_user_account(
+        db: Session,
+        user_id: str,
+        ip_address: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Permanently deletes user account, revokes sessions, clears personal profiles,
+        and anonymizes examination attempts for GDPR/CCPA Right to Erasure.
+        Protects root SUPER_ADMIN_EMAILS from accidental deletion.
+        """
+        user = db.get(User, user_id)
+        if not user:
+            raise ValueError(f"User '{user_id}' not found.")
+
+        if is_super_admin_email(user.email):
+            raise ValueError("Root Super Administrator accounts cannot be deleted.")
+
+        # 1. Revoke and delete all active user sessions
+        db.query(UserSession).filter(UserSession.user_id == user_id).delete()
+
+        # 2. Delete user mastery records
+        try:
+            from database.models import UserMastery
+            db.query(UserMastery).filter(UserMastery.user_id == user_id).delete()
+        except Exception:
+            pass
+
+        # 3. Anonymize assessment attempts (clear user_id to preserve item calibration)
+        db.query(AssessmentAttempt).filter(
+            AssessmentAttempt.user_id == user_id
+        ).update({"user_id": None})
+
+        # 4. Anonymize question reports
+        try:
+            from database.models import QuestionReport
+            db.query(QuestionReport).filter(
+                QuestionReport.user_id == user_id
+            ).update({"user_id": None})
+        except Exception:
+            pass
+
+        # 5. Log audit event before user purge
+        AuthService._log_auth_event(
+            db=db,
+            user_id=None,
+            email=user.email,
+            event_type="ACCOUNT_DELETED",
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+
+        # 6. Delete user record
+        db.delete(user)
+        db.commit()
+
+        return {
+            "success": True,
+            "message": "Your account, authentication sessions, and personal learning records have been permanently deleted.",
+        }
+
+    # -------------------------------------------------------------------------
     # Internal Helpers
     # -------------------------------------------------------------------------
     @staticmethod

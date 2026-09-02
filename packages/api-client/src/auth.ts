@@ -102,6 +102,12 @@ export class AuthApi {
       body: JSON.stringify({ guest_session_token: guestSessionToken }),
     });
   }
+
+  public async deleteAccount(): Promise<{ success: boolean; message: string }> {
+    return this.client.request<{ success: boolean; message: string }>('/api/auth/me', {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const authApi = new AuthApi();

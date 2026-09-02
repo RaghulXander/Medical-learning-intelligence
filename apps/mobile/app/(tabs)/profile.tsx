@@ -13,6 +13,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -24,8 +25,13 @@ import {
   ShieldCheck,
   ChevronRight,
   BookOpen,
+  Trash2,
+  ExternalLink,
+  FileText,
+  ShieldAlert,
 } from 'lucide-react-native';
 import { useAuth } from '../../lib/auth/auth-context';
+import { authApi } from '@medical/api-client';
 import { Header } from '../../components/ui/Header';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -46,6 +52,61 @@ export default function ProfileScreen() {
         },
       },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account & Data',
+      'This will permanently delete your account, authentication sessions, and individual learning records in accordance with GDPR/CCPA. This action cannot be undone.\n\nAre you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete Forever',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Final Confirmation',
+              'Are you absolutely certain? All preparation history and streaks will be immediately purged.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Yes, Permanently Delete',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await authApi.deleteAccount();
+                      await logout();
+                      Alert.alert(
+                        'Account Deleted',
+                        'Your account and data have been permanently removed.'
+                      );
+                    } catch (err: any) {
+                      Alert.alert(
+                        'Error',
+                        err?.message || 'Failed to delete account. Please try again or contact support.'
+                      );
+                    }
+                  },
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const openWebUrl = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Notice', `Please visit ${url} in your web browser.`);
+      }
+    } catch {
+      Alert.alert('Notice', `Please visit ${url} in your web browser.`);
+    }
   };
 
   return (
@@ -132,15 +193,93 @@ export default function ProfileScreen() {
           </View>
         </Card>
 
+        {/* Legal, Privacy & Safety (Milestone 17.2) */}
+        <Text style={styles.sectionHeading}>Privacy & Compliance</Text>
+        <Card style={styles.settingsCard}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => openWebUrl('https://medexam.ai/legal/privacy')}
+            style={styles.settingItem}
+          >
+            <View style={styles.settingLeft}>
+              <ShieldCheck size={20} color="#10b981" />
+              <View>
+                <Text style={styles.settingTitle}>Privacy Policy</Text>
+                <Text style={styles.settingValue}>Zero patient data • Encrypted storage</Text>
+              </View>
+            </View>
+            <ExternalLink size={16} color="#64748b" />
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => openWebUrl('https://medexam.ai/legal/terms')}
+            style={styles.settingItem}
+          >
+            <View style={styles.settingLeft}>
+              <FileText size={20} color="#38bdf8" />
+              <View>
+                <Text style={styles.settingTitle}>Terms & Medical Disclaimer</Text>
+                <Text style={styles.settingValue}>Strictly educational exam preparation</Text>
+              </View>
+            </View>
+            <ExternalLink size={16} color="#64748b" />
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => openWebUrl('https://medexam.ai/legal/account-deletion')}
+            style={styles.settingItem}
+          >
+            <View style={styles.settingLeft}>
+              <ShieldAlert size={20} color="#f59e0b" />
+              <View>
+                <Text style={styles.settingTitle}>Data Erasure Rights</Text>
+                <Text style={styles.settingValue}>Public deletion instructions & policies</Text>
+              </View>
+            </View>
+            <ExternalLink size={16} color="#64748b" />
+          </TouchableOpacity>
+        </Card>
+
+        {/* Account Management & Deletion */}
+        <Text style={styles.sectionHeading}>Account Operations</Text>
+        <Card style={styles.settingsCard}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleDeleteAccount}
+            style={styles.settingItem}
+          >
+            <View style={styles.settingLeft}>
+              <Trash2 size={20} color="#ef4444" />
+              <View>
+                <Text style={[styles.settingTitle, { color: '#f87171' }]}>Delete Account & Data</Text>
+                <Text style={styles.settingValue}>Irrevocably erase profile, streaks, and sessions</Text>
+              </View>
+            </View>
+            <ChevronRight size={18} color="#64748b" />
+          </TouchableOpacity>
+        </Card>
+
         {/* Sign Out Button */}
         <Button
           title="Sign Out"
-          variant="danger"
+          variant="secondary"
           size="lg"
           onPress={handleLogout}
-          icon={<LogOut size={18} color="#ffffff" />}
-          style={{ marginTop: 24 }}
+          icon={<LogOut size={18} color="#94a3b8" />}
+          style={{ marginTop: 12 }}
         />
+
+        {/* Release Diagnostics Footer (Milestone 17.1) */}
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerVersion}>DocEdge Android Beta v1.0.1 (Build 12)</Text>
+          <Text style={styles.footerChannel}>Channel: github-beta • Educational Use Only</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -261,5 +400,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#94a3b8',
     marginTop: 1,
+  },
+  footerContainer: {
+    marginTop: 32,
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  footerVersion: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748b',
+    letterSpacing: 0.3,
+  },
+  footerChannel: {
+    fontSize: 11,
+    color: '#475569',
+    marginTop: 4,
   },
 });

@@ -276,3 +276,20 @@ def merge_guest_session(
     """Merges anonymous guest diagnostic attempts and mastery into user account."""
     res = AuthService.merge_guest_session(db, req.guest_session_token, current_user.id)
     return res
+
+
+@router.delete("/me")
+def delete_me(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Permanently deletes the authenticated user account, wipes sessions, and anonymizes attempts."""
+    try:
+        ip = request.client.host if request.client else None
+        user_agent = request.headers.get("user-agent")
+        res = AuthService.delete_user_account(db, current_user.id, ip_address=ip, user_agent=user_agent)
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
