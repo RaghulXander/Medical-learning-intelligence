@@ -1,6 +1,6 @@
 # Milestone 19 — Evidence Acceptance and Multimodal Safety Stabilization
 
-> **Status: PART 19A COMPLETE / PARTS 19B–19E DRAFT FOR APPROVAL — no paid
+> **Status: PART 19A COMPLETE / PART 19B REVIEW TOOLING READY, HUMAN REVIEW PENDING / PARTS 19C–19E DRAFT — no paid
 > embeddings or generation may run before the M15/M16 quality gates pass**
 
 ## Purpose
@@ -62,6 +62,18 @@ from the PDF/GCP processing machine.
    notes. Automatically selected chunks remain unverified.
 5. Expand to 50–75 cases only to close domain coverage gaps, not to inflate the
    benchmark.
+
+Implementation available for the retrieval-label portion:
+
+- role-gated admin queue at `/admin/retrieval-review`;
+- complete selected chunk text and source/page/hash provenance shown to the
+  reviewer;
+- editable prompt, domain, evidence set, and out-of-corpus flag;
+- explicit human attestation before approve/reject;
+- optimistic revision checks and immutable save/decision history;
+- bootstrap import remains `AUTO_BOOTSTRAP_UNVERIFIED` by design.
+
+See `docs/M19B_RETRIEVAL_HUMAN_REVIEW.md` for setup and reviewer instructions.
 
 **19B acceptance:** all three provenance manifests pass and every benchmark
 label is human verified. Until then, embedding execution remains blocked.

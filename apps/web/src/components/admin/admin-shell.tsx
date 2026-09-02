@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ExternalLink,
   FileCheck2,
+  ListChecks,
   LayoutDashboard,
   Menu,
   Monitor,
@@ -39,6 +40,7 @@ const SIDEBAR_STORAGE_KEY = 'docedge_admin_sidebar_collapsed';
 const navigationIcons = {
   overview: BarChart3,
   questions: FileCheck2,
+  'retrieval-review': ListChecks,
   users: Users,
   'landing-content': LayoutDashboard,
   'native-layout': Smartphone,
@@ -62,6 +64,9 @@ function itemIsActive(item: AdminNavigationItem, pathname: string, activeView: s
 function currentPage(pathname: string, activeView: string): { title: string; description: string } {
   if (pathname.startsWith('/admin/questions/')) {
     return { title: 'Question editor', description: 'Review content, metadata, and evidence' };
+  }
+  if (pathname === '/admin/retrieval-review') {
+    return { title: 'Retrieval evidence', description: 'Verify benchmark prompts and source chunks' };
   }
   if (pathname === '/admin/content') {
     return { title: 'Landing page', description: 'Manage the public website experience' };

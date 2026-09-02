@@ -32,6 +32,13 @@ export const adminNavigationGroups: AdminNavigationGroup[] = [
         keywords: ['mcq', 'review', 'approval', 'editorial'],
       },
       {
+        id: 'retrieval-review',
+        label: 'Retrieval evidence',
+        href: '/admin/retrieval-review',
+        description: 'Human-verify RAG benchmark labels',
+        keywords: ['rag', 'evidence', 'benchmark', 'chunks', 'retrieval'],
+      },
+      {
         id: 'users',
         label: 'User governance',
         href: '/admin?view=users',

@@ -5,7 +5,14 @@
  */
 
 import { MedicalApiClient, defaultClient } from './client';
-import { ListUsersResponse } from '@medical/shared';
+import {
+  ListUsersResponse,
+  RetrievalEvidenceChunk,
+  RetrievalReviewCase,
+  RetrievalReviewCasePage,
+  RetrievalReviewSummary,
+  UpdateRetrievalReviewCase,
+} from '@medical/shared';
 
 export class AdminApi {
   constructor(private client: MedicalApiClient = defaultClient) {}
@@ -58,6 +65,72 @@ export class AdminApi {
     return this.client.request('/api/admin/stats', {
       method: 'GET',
     });
+  }
+
+  public async getRetrievalReviewSummary(
+    slug = 'm16a-retrieval-v1'
+  ): Promise<RetrievalReviewSummary> {
+    return this.client.request(`/api/admin/retrieval-review/${encodeURIComponent(slug)}`);
+  }
+
+  public async listRetrievalReviewCases(
+    slug = 'm16a-retrieval-v1',
+    params?: { verification_status?: string; domain?: string; page?: number; limit?: number }
+  ): Promise<RetrievalReviewCasePage> {
+    const qs = new URLSearchParams();
+    if (params?.verification_status) qs.set('verification_status', params.verification_status);
+    if (params?.domain) qs.set('domain', params.domain);
+    if (params?.page) qs.set('page', String(params.page));
+    if (params?.limit) qs.set('limit', String(params.limit));
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.client.request(
+      `/api/admin/retrieval-review/${encodeURIComponent(slug)}/cases${suffix}`
+    );
+  }
+
+  public async getRetrievalReviewCase(
+    caseId: string,
+    slug = 'm16a-retrieval-v1'
+  ): Promise<RetrievalReviewCase> {
+    return this.client.request(
+      `/api/admin/retrieval-review/${encodeURIComponent(slug)}/cases/${encodeURIComponent(caseId)}`
+    );
+  }
+
+  public async updateRetrievalReviewCase(
+    caseId: string,
+    payload: UpdateRetrievalReviewCase,
+    slug = 'm16a-retrieval-v1'
+  ): Promise<RetrievalReviewCase> {
+    return this.client.request(
+      `/api/admin/retrieval-review/${encodeURIComponent(slug)}/cases/${encodeURIComponent(caseId)}`,
+      { method: 'PATCH', body: JSON.stringify(payload) }
+    );
+  }
+
+  public async decideRetrievalReviewCase(
+    caseId: string,
+    action: 'approve' | 'reject',
+    expectedRevision: number,
+    notes: string,
+    slug = 'm16a-retrieval-v1'
+  ): Promise<RetrievalReviewCase> {
+    return this.client.request(
+      `/api/admin/retrieval-review/${encodeURIComponent(slug)}/cases/${encodeURIComponent(caseId)}/${action}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ expected_revision: expectedRevision, notes }),
+      }
+    );
+  }
+
+  public async searchRetrievalEvidence(
+    query: string,
+    source?: string
+  ): Promise<{ items: RetrievalEvidenceChunk[] }> {
+    const qs = new URLSearchParams({ q: query });
+    if (source) qs.set('source', source);
+    return this.client.request(`/api/admin/retrieval-review/evidence/search?${qs.toString()}`);
   }
 }
 

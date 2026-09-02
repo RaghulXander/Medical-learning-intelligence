@@ -806,7 +806,103 @@ class DocumentChunkEmbedding(Base):
 
 
 # -----------------------------------------------------------------------------
-# 7B. Milestone 18C — Pathology Image Catalog & Evidence Linkage
+# 7B. Human-reviewed retrieval benchmark datasets
+# -----------------------------------------------------------------------------
+class RetrievalBenchmark(Base):
+    __tablename__ = "retrieval_benchmarks"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="HUMAN_REVIEW", index=True)
+    source_file: Mapped[str] = mapped_column(String(500), nullable=False)
+    source_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    cases: Mapped[List["RetrievalBenchmarkCase"]] = relationship(
+        "RetrievalBenchmarkCase", back_populates="benchmark", cascade="all, delete-orphan"
+    )
+
+
+class RetrievalBenchmarkCase(Base):
+    __tablename__ = "retrieval_benchmark_cases"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    benchmark_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("retrieval_benchmarks.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    case_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    domain: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    query: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_chunk_ids: Mapped[List[str]] = mapped_column(JSONType, default=list, nullable=False)
+    out_of_corpus: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    verification_status: Mapped[str] = mapped_column(
+        String(50), default="AUTO_BOOTSTRAP_UNVERIFIED", nullable=False, index=True
+    )
+    reviewer_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    review_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    revision: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    benchmark: Mapped["RetrievalBenchmark"] = relationship(
+        "RetrievalBenchmark", back_populates="cases"
+    )
+    reviewer: Mapped[Optional["User"]] = relationship("User")
+    reviews: Mapped[List["RetrievalBenchmarkReview"]] = relationship(
+        "RetrievalBenchmarkReview", back_populates="case", cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        UniqueConstraint("benchmark_id", "case_key", name="uq_retrieval_benchmark_case_key"),
+    )
+
+
+class RetrievalBenchmarkReview(Base):
+    __tablename__ = "retrieval_benchmark_reviews"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    case_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("retrieval_benchmark_cases.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    reviewer_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    action: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    previous_snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    new_snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    case: Mapped["RetrievalBenchmarkCase"] = relationship(
+        "RetrievalBenchmarkCase", back_populates="reviews"
+    )
+    reviewer: Mapped["User"] = relationship("User")
+
+
+# -----------------------------------------------------------------------------
+# 7C. Milestone 18C — Pathology Image Catalog & Evidence Linkage
 # -----------------------------------------------------------------------------
 class ImageAsset(Base):
     __tablename__ = "image_assets"
