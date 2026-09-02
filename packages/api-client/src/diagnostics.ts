@@ -4,7 +4,7 @@
  * Milestone 17.1: Client Error and Crash Reporting Client.
  */
 
-import { ApiClient } from './client';
+import { MedicalApiClient, defaultClient } from './client';
 
 export interface CrashReportPayload {
   app_version: string;
@@ -28,11 +28,7 @@ export interface CrashReportResponse {
 }
 
 export class DiagnosticsApi {
-  private client: ApiClient;
-
-  constructor(client: ApiClient = new ApiClient()) {
-    this.client = client;
-  }
+  constructor(private client: MedicalApiClient = defaultClient) {}
 
   public async submitCrashReport(payload: CrashReportPayload): Promise<CrashReportResponse> {
     return this.client.request<CrashReportResponse>('/api/diagnostics/crash-report', {

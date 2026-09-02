@@ -95,18 +95,23 @@ export class MedicalApiClient {
       headers,
     });
 
-    if (!response.ok) {
-      let errorData;
-      try {
-        errorData = await response.json();
-      } catch {
-        errorData = await response.text();
-      }
-      throw new ApiError(response.status, response.statusText, errorData);
+    if (response.status === 204 || response.status === 304) {
+      return {} as T;
     }
 
-    if (response.status === 204) {
-      return {} as T;
+    if (!response.ok) {
+      let errorData: any;
+      try {
+        const text = await response.text();
+        try {
+          errorData = JSON.parse(text);
+        } catch {
+          errorData = text;
+        }
+      } catch {
+        errorData = response.statusText;
+      }
+      throw new ApiError(response.status, response.statusText, errorData);
     }
 
     return (await response.json()) as T;
