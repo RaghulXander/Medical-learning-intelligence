@@ -27,9 +27,15 @@ The expected promoted scope is:
 
 - `robbins_review`: 496 chunks;
 - `robbins_pathologic_basis_11th`: 1,223 chunks;
-- `sternberg_review_2nd`: verify against the remote sync receipt;
-- the first two-book total remains 1,719 chunks, while the three-book total must
-  be established by matching remote/local manifests.
+- `sternberg_review_2nd`: 1,126 chunks;
+- the first two-book total remains 1,719 chunks and the verified three-book
+  transfer total is 2,845 chunks.
+
+For the 2026-09-02 transfer, the sorted three-book content-hash manifest SHA-256
+was `88424b7e4561348083d43f1947b14f732bc225ff8e08b23071737f852975d787` in
+both the private SQLite transfer copy and local PostgreSQL. A later extraction
+must establish and record its own matching manifest rather than assuming these
+counts or this hash.
 
 The command is transactional and refuses source, document, or content-hash
 conflicts. Its private promotion receipt contains counts and hashes, not book
