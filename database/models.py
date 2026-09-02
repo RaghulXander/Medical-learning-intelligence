@@ -731,6 +731,11 @@ class DocumentChunk(Base):
         back_populates="chunk",
         cascade="all, delete-orphan",
     )
+    image_links: Mapped[List["ImageTextEvidenceLink"]] = relationship(
+        "ImageTextEvidenceLink",
+        back_populates="chunk",
+        cascade="all, delete-orphan",
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -798,6 +803,89 @@ class DocumentChunkEmbedding(Base):
     chunk: Mapped["DocumentChunk"] = relationship(
         "DocumentChunk", back_populates="embedding_records"
     )
+
+
+# -----------------------------------------------------------------------------
+# 7B. Milestone 18C — Pathology Image Catalog & Evidence Linkage
+# -----------------------------------------------------------------------------
+class ImageAsset(Base):
+    __tablename__ = "image_assets"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    sha256: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    pixel_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    filename: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    storage_uri: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    width: Mapped[int] = mapped_column(Integer, nullable=False)
+    height: Mapped[int] = mapped_column(Integer, nullable=False)
+    aspect_ratio: Mapped[float] = mapped_column(Float, nullable=False)
+    file_size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    format: Mapped[str] = mapped_column(String(10), default="PNG", nullable=False)
+    triage_class: Mapped[str] = mapped_column(String(50), default="AUTO_KEEP_CANDIDATE", nullable=False, index=True)
+    curation_status: Mapped[str] = mapped_column(String(50), default="CURATED_VALID", nullable=False, index=True)
+    rights_status: Mapped[str] = mapped_column(String(50), default="RESTRICTED_INTERNAL", nullable=False)
+    entropy: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    blank_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    is_exact_duplicate: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    occurrences: Mapped[List["ImageOccurrence"]] = relationship(
+        "ImageOccurrence", back_populates="image_asset", cascade="all, delete-orphan"
+    )
+    evidence_links: Mapped[List["ImageTextEvidenceLink"]] = relationship(
+        "ImageTextEvidenceLink", back_populates="image_asset", cascade="all, delete-orphan"
+    )
+
+
+class ImageOccurrence(Base):
+    __tablename__ = "image_occurrences"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    image_asset_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_assets.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    source_document_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("source_documents.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    pdf_page: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    textbook_page: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, index=True)
+    figure_index: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    figure_label: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    extraction_id: Mapped[Optional[str]] = mapped_column(String(150), nullable=True, index=True)
+    is_canonical: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    image_asset: Mapped["ImageAsset"] = relationship("ImageAsset", back_populates="occurrences")
+    source_document: Mapped["SourceDocument"] = relationship("SourceDocument")
+
+
+class ImageTextEvidenceLink(Base):
+    __tablename__ = "image_text_evidence_links"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    image_asset_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_assets.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    document_chunk_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("document_chunks.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    link_type: Mapped[str] = mapped_column(String(50), default="PAGE_CO_OCCURRENCE", nullable=False, index=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    verification_status: Mapped[str] = mapped_column(String(50), default="AI_SUGGESTED", nullable=False, index=True)
+    verified_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    image_asset: Mapped["ImageAsset"] = relationship("ImageAsset", back_populates="evidence_links")
+    chunk: Mapped["DocumentChunk"] = relationship("DocumentChunk", back_populates="image_links")
 
 
 # -----------------------------------------------------------------------------
