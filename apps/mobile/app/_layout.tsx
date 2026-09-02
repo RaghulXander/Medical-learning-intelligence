@@ -13,6 +13,8 @@ import { AuthProvider, useAuth } from '../lib/auth/auth-context';
 import { isOnboardingComplete } from '@medical/shared';
 import { mobileRuntimeConfig } from '../lib/api/runtime-config';
 
+import { ErrorBoundary as AppErrorBoundary } from '../components/ErrorBoundary';
+
 export { ErrorBoundary } from 'expo-router';
 
 function ConfigurationError({ message }: { message: string }) {
@@ -94,10 +96,12 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <StatusBar style="light" backgroundColor="#020617" />
-        <NavigationGuard />
-      </AuthProvider>
+      <AppErrorBoundary>
+        <AuthProvider>
+          <StatusBar style="light" backgroundColor="#020617" />
+          <NavigationGuard />
+        </AuthProvider>
+      </AppErrorBoundary>
     </SafeAreaProvider>
   );
 }

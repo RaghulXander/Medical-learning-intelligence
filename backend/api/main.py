@@ -21,6 +21,7 @@ from backend.api.routes.cms import router as cms_router
 from backend.api.routes.mobile_ui import router as mobile_ui_router
 from backend.api.routes.evidence import router as evidence_router
 from backend.api.routes.multimodal import router as multimodal_router
+from backend.api.routes.diagnostics import router as diagnostics_router
 
 settings = get_settings()
 
@@ -52,6 +53,7 @@ app.include_router(cms_router)
 app.include_router(mobile_ui_router)
 app.include_router(evidence_router)
 app.include_router(multimodal_router)
+app.include_router(diagnostics_router)
 
 
 @app.get("/api/health", include_in_schema=False)
