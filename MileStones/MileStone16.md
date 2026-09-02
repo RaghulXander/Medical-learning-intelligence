@@ -90,10 +90,10 @@ but existing copyrighted questions must not be copied or lightly paraphrased.
 
 ## Current baseline
 
-- The first verified local promotion contained 1,719 unique text chunks from two
-  books. A 2026-09-02 contributor update reports that `sternberg_review_2nd` is
-  now also present remotely; its exact count/hash manifest must be verified
-  during the next sync rather than copied into this document speculatively.
+- The verified local promotion contains 2,845 unique text chunks across three
+  books: `robbins_review` (496), `robbins_pathologic_basis_11th` (1,223), and
+  `sternberg_review_2nd` (1,126). The sorted content-hash manifest SHA-256 is
+  `88424b7e4561348083d43f1947b14f732bc225ff8e08b23071737f852975d787`.
 - A verified local SQLite copy exists as a transfer/recovery artifact.
 - Robbins Review contributes 496 chunks covering physical PDF pages 1–496.
 - Robbins Pathologic Basis 11th contributes 1,223 chunks across physical PDF
