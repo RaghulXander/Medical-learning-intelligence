@@ -18,8 +18,177 @@ depends_on = None
 GUID = sa.String(64).with_variant(postgresql.UUID(as_uuid=False), "postgresql")
 JSON_TYPE = sa.JSON().with_variant(postgresql.JSONB(), "postgresql")
 
+TABLE_NULLABILITY = {
+    "image_assets": {
+        "id": False,
+        "sha256": False,
+        "pixel_hash": False,
+        "filename": False,
+        "storage_uri": True,
+        "width": False,
+        "height": False,
+        "aspect_ratio": False,
+        "file_size_bytes": False,
+        "format": False,
+        "triage_class": False,
+        "curation_status": False,
+        "rights_status": False,
+        "entropy": False,
+        "blank_score": False,
+        "is_exact_duplicate": False,
+        "metadata": False,
+        "created_at": False,
+    },
+    "image_occurrences": {
+        "id": False,
+        "image_asset_id": False,
+        "source_document_id": False,
+        "pdf_page": True,
+        "textbook_page": True,
+        "figure_index": True,
+        "figure_label": True,
+        "extraction_id": True,
+        "is_canonical": False,
+        "metadata": False,
+        "created_at": False,
+    },
+    "image_text_evidence_links": {
+        "id": False,
+        "image_asset_id": False,
+        "document_chunk_id": False,
+        "link_type": False,
+        "confidence": False,
+        "verification_status": False,
+        "verified_by": True,
+        "verified_at": True,
+        "created_at": False,
+    },
+}
+
+REQUIRED_FOREIGN_KEYS = {
+    "image_assets": set(),
+    "image_occurrences": {
+        ("image_asset_id", "image_assets"),
+        ("source_document_id", "source_documents"),
+    },
+    "image_text_evidence_links": {
+        ("image_asset_id", "image_assets"),
+        ("document_chunk_id", "document_chunks"),
+    },
+}
+
+REQUIRED_INDEXES = {
+    "image_assets": (
+        (("curation_status",), False, "ix_image_assets_curation_status"),
+        (("filename",), False, "ix_image_assets_filename"),
+        (("pixel_hash",), False, "ix_image_assets_pixel_hash"),
+        (("triage_class",), False, "ix_image_assets_triage_class"),
+        (("sha256",), True, "ix_image_assets_sha256"),
+    ),
+    "image_occurrences": tuple(
+        ((column,), False, f"ix_image_occurrences_{column}")
+        for column in (
+            "extraction_id",
+            "image_asset_id",
+            "pdf_page",
+            "source_document_id",
+            "textbook_page",
+        )
+    ),
+    "image_text_evidence_links": tuple(
+        ((column,), False, f"ix_image_text_evidence_links_{column}")
+        for column in (
+            "document_chunk_id",
+            "image_asset_id",
+            "link_type",
+            "verification_status",
+        )
+    ),
+}
+
+
+def _index_signatures(inspector, table_name: str) -> set[tuple[tuple[str, ...], bool]]:
+    signatures = {
+        (tuple(index.get("column_names") or ()), bool(index.get("unique")))
+        for index in inspector.get_indexes(table_name)
+    }
+    signatures.update(
+        (tuple(constraint.get("column_names") or ()), True)
+        for constraint in inspector.get_unique_constraints(table_name)
+    )
+    return signatures
+
+
+def _adopt_existing_catalog_if_compatible() -> bool:
+    """Adopt catalog tables created before Alembic owned this schema.
+
+    M18's remote ingestion created these tables before migration 0007 existed.
+    We may stamp them as migrated only after checking their safety-critical
+    shape. A partial or incompatible catalog fails with a diagnostic instead
+    of silently changing or deleting populated tables.
+    """
+    inspector = sa.inspect(op.get_bind())
+    expected_tables = set(TABLE_NULLABILITY)
+    present_tables = expected_tables.intersection(inspector.get_table_names())
+    if not present_tables:
+        return False
+    if present_tables != expected_tables:
+        missing = sorted(expected_tables - present_tables)
+        raise RuntimeError(
+            "Cannot adopt partial image catalog; missing tables: " + ", ".join(missing)
+        )
+
+    for table_name, expected_columns in TABLE_NULLABILITY.items():
+        actual_columns = {
+            column["name"]: bool(column["nullable"])
+            for column in inspector.get_columns(table_name)
+        }
+        missing_columns = sorted(set(expected_columns) - set(actual_columns))
+        if missing_columns:
+            raise RuntimeError(
+                f"Cannot adopt {table_name}; missing columns: "
+                + ", ".join(missing_columns)
+            )
+        nullability_mismatches = sorted(
+            column
+            for column, nullable in expected_columns.items()
+            if actual_columns[column] != nullable
+        )
+        if nullability_mismatches:
+            raise RuntimeError(
+                f"Cannot adopt {table_name}; incompatible nullability: "
+                + ", ".join(nullability_mismatches)
+            )
+        primary_key = set(
+            inspector.get_pk_constraint(table_name).get("constrained_columns") or ()
+        )
+        if primary_key != {"id"}:
+            raise RuntimeError(f"Cannot adopt {table_name}; expected primary key on id")
+        foreign_keys = {
+            (column, foreign_key["referred_table"])
+            for foreign_key in inspector.get_foreign_keys(table_name)
+            for column in (foreign_key.get("constrained_columns") or ())
+        }
+        missing_foreign_keys = REQUIRED_FOREIGN_KEYS[table_name] - foreign_keys
+        if missing_foreign_keys:
+            rendered = ", ".join(
+                f"{column}->{target}" for column, target in sorted(missing_foreign_keys)
+            )
+            raise RuntimeError(f"Cannot adopt {table_name}; missing foreign keys: {rendered}")
+
+    for table_name, required_indexes in REQUIRED_INDEXES.items():
+        signatures = _index_signatures(inspector, table_name)
+        for columns, unique, index_name in required_indexes:
+            if (columns, unique) not in signatures:
+                op.create_index(index_name, table_name, list(columns), unique=unique)
+                signatures.add((columns, unique))
+    return True
+
 
 def upgrade() -> None:
+    if _adopt_existing_catalog_if_compatible():
+        return
+
     op.create_table(
         "image_assets",
         sa.Column("id", GUID, primary_key=True),
