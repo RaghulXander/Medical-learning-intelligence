@@ -179,10 +179,28 @@ class AssessmentService:
         """
         blueprint = blueprint or {}
         
-        # Verify marking scheme exists
+        # Verify marking scheme exists (with self-healing fallback for standard schemes)
         scheme = db.get(MarkingScheme, marking_scheme_id)
         if not scheme:
-            raise AssessmentServiceError(f"Marking scheme '{marking_scheme_id}' not found.")
+            standard_defaults = {
+                "NEET_4_1": ("NEET Standard (+4, -1)", 4.0, 1.0, 0.0),
+                "INICET_1_033": ("INI-CET Standard (+1, -0.3333)", 1.0, 0.3333, 0.0),
+                "PROPORTIONAL_1_025": ("Proportional (+1, -0.25)", 1.0, 0.25, 0.0),
+                "ZERO_PENALTY": ("Learning Mode (+1, 0)", 1.0, 0.0, 0.0),
+            }
+            if marking_scheme_id in standard_defaults:
+                name, corr, pen, unans = standard_defaults[marking_scheme_id]
+                scheme = MarkingScheme(
+                    id=marking_scheme_id,
+                    name=name,
+                    correct_marks=corr,
+                    penalty_marks=pen,
+                    unanswered_marks=unans,
+                )
+                db.add(scheme)
+                db.flush()
+            else:
+                raise AssessmentServiceError(f"Marking scheme '{marking_scheme_id}' not found.")
 
         # Execute Intelligent Question Selection (Milestone 6)
         selector_blueprint = dict(blueprint or {})

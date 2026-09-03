@@ -22,6 +22,7 @@ from database.models import (
     CurriculumLevel,
     CurriculumTopic,
     DepthLevel,
+    MarkingScheme,
     Source,
     SourceType,
     User,
@@ -231,6 +232,18 @@ COURSE_TOPIC_MAPPINGS = [
 def seed_curriculum(engine) -> None:
     """Seeds courses, users, knowledge domain hierarchy, and cross-course mappings."""
     with session_scope(engine) as session:
+        # 0. Seed Marking Schemes
+        standard_schemes = [
+            MarkingScheme(id="NEET_4_1", name="NEET Standard (+4, -1)", correct_marks=4.0, penalty_marks=1.0, unanswered_marks=0.0),
+            MarkingScheme(id="INICET_1_033", name="INI-CET Standard (+1, -0.3333)", correct_marks=1.0, penalty_marks=0.3333, unanswered_marks=0.0),
+            MarkingScheme(id="PROPORTIONAL_1_025", name="Proportional (+1, -0.25)", correct_marks=1.0, penalty_marks=0.25, unanswered_marks=0.0),
+            MarkingScheme(id="ZERO_PENALTY", name="Learning Mode (+1, 0)", correct_marks=1.0, penalty_marks=0.0, unanswered_marks=0.0),
+        ]
+        for s in standard_schemes:
+            if not session.get(MarkingScheme, s.id):
+                session.add(s)
+                logger.info(f"Seeded marking scheme: {s.id} ({s.name})")
+
         # 1. Seed Users
         for user_data in INITIAL_USERS:
             existing = session.query(User).filter_by(email=user_data["email"]).first()
