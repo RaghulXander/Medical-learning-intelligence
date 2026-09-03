@@ -92,7 +92,10 @@ export default function RetrievalReviewPage() {
   );
 
   const loadQueue = useCallback(async () => {
-    if (!canReview) return;
+    if (!canReview) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const [nextSummary, page] = await Promise.all([
