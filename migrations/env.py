@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config, pool
 
 from database.db import get_default_db_url
 from database.models import Base
+from migrations.runtime_safety import ensure_postgresql_migrations_are_writable
 
 
 config = context.config
@@ -37,6 +38,7 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
+        ensure_postgresql_migrations_are_writable(connection)
         context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
         with context.begin_transaction():
             context.run_migrations()
