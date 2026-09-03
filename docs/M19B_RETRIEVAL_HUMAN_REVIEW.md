@@ -17,7 +17,21 @@ corpus.
 
 The first importer invocation is a validation-only dry run. The execution is
 idempotent for the same source hash and refuses to replace a changed dataset.
-All inserted cases start as `AUTO_BOOTSTRAP_UNVERIFIED`.
+It also refuses any candidate chunk ID absent from the target database. All
+inserted cases start as `AUTO_BOOTSTRAP_UNVERIFIED`.
+
+If the corpus was re-imported with new chunk IDs, regenerate the bootstrap
+against that exact corpus before human review begins. A changed bootstrap can
+then be checked and replaced safely:
+
+```bash
+.venv/bin/python scripts/import_retrieval_review_dataset.py --replace-unreviewed
+.venv/bin/python scripts/import_retrieval_review_dataset.py \
+  --replace-unreviewed --execute
+```
+
+Replacement is refused as soon as any human review status, reviewer metadata,
+revision, or audit event exists.
 
 Start the existing backend and web applications, sign in as `REVIEWER`,
 `ADMIN`, or `SUPER_ADMIN`, and open:

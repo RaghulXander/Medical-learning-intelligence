@@ -22,7 +22,12 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from database.models import RetrievalBenchmark, RetrievalBenchmarkCase
+from database.models import (
+    DocumentChunk,
+    RetrievalBenchmark,
+    RetrievalBenchmarkCase,
+    RetrievalBenchmarkReview,
+)
 
 
 DEFAULT_DATASET = (
@@ -75,14 +80,73 @@ def import_review_dataset(
     path: Path,
     slug: str = DEFAULT_SLUG,
     execute: bool = False,
+    replace_unreviewed: bool = False,
 ) -> dict[str, Any]:
     cases, source_hash = load_bootstrap_cases(path)
+    expected_chunk_ids = {
+        chunk_id for case in cases for chunk_id in case["expected_chunk_ids"]
+    }
+    if expected_chunk_ids:
+        found_chunk_ids = {
+            str(row[0])
+            for row in session.query(DocumentChunk.id)
+            .filter(DocumentChunk.id.in_(expected_chunk_ids))
+            .all()
+        }
+        missing_chunk_ids = expected_chunk_ids - found_chunk_ids
+        if missing_chunk_ids:
+            raise RuntimeError(
+                "Bootstrap dataset references "
+                f"{len(missing_chunk_ids)} chunk IDs absent from the target database"
+            )
     existing = session.scalar(select(RetrievalBenchmark).where(RetrievalBenchmark.slug == slug))
     if existing:
         if existing.source_hash != source_hash:
-            raise RuntimeError(
-                f"Benchmark {slug} already exists with a different source hash"
+            if not replace_unreviewed:
+                raise RuntimeError(
+                    f"Benchmark {slug} already exists with a different source hash"
+                )
+            existing_cases = session.query(RetrievalBenchmarkCase).filter_by(
+                benchmark_id=existing.id
+            ).all()
+            existing_by_key = {case.case_key: case for case in existing_cases}
+            incoming_by_key = {case["case_key"]: case for case in cases}
+            review_count = (
+                session.query(RetrievalBenchmarkReview)
+                .join(RetrievalBenchmarkCase)
+                .filter(RetrievalBenchmarkCase.benchmark_id == existing.id)
+                .count()
             )
+            if review_count or any(
+                case.verification_status != "AUTO_BOOTSTRAP_UNVERIFIED"
+                or case.reviewer_id is not None
+                or case.reviewed_at is not None
+                or case.review_notes is not None
+                or case.revision != 1
+                for case in existing_cases
+            ):
+                raise RuntimeError("Refusing to replace a benchmark after human review began")
+            if set(existing_by_key) != set(incoming_by_key):
+                raise RuntimeError("Replacement benchmark case keys do not match")
+            if execute:
+                for case_key, target in existing_by_key.items():
+                    incoming = incoming_by_key[case_key]
+                    target.domain = incoming["domain"]
+                    target.query = incoming["query"]
+                    target.expected_chunk_ids = incoming["expected_chunk_ids"]
+                    target.out_of_corpus = incoming["out_of_corpus"]
+                existing.source_hash = source_hash
+                try:
+                    existing.source_file = str(path.resolve().relative_to(PROJECT_ROOT))
+                except ValueError:
+                    existing.source_file = str(path.resolve())
+                session.commit()
+            return {
+                "status": "REPLACED_UNREVIEWED" if execute else "DRY_RUN_REPLACE_VALID",
+                "slug": slug,
+                "case_count": len(cases),
+                "source_hash": source_hash,
+            }
         existing_count = session.query(RetrievalBenchmarkCase).filter_by(
             benchmark_id=existing.id
         ).count()
@@ -138,6 +202,11 @@ def main() -> None:
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--slug", default=DEFAULT_SLUG)
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument(
+        "--replace-unreviewed",
+        action="store_true",
+        help="Replace a changed bootstrap only when no human review has begun",
+    )
     parser.add_argument("--env-file", type=Path, default=PROJECT_ROOT / ".env")
     args = parser.parse_args()
 
@@ -149,7 +218,11 @@ def main() -> None:
 
     with sessionmaker(bind=engine)() as session:
         result = import_review_dataset(
-            session, path=args.dataset, slug=args.slug, execute=args.execute
+            session,
+            path=args.dataset,
+            slug=args.slug,
+            execute=args.execute,
+            replace_unreviewed=args.replace_unreviewed,
         )
     engine.dispose()
     print(f"status={result['status']}")

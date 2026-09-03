@@ -10,6 +10,7 @@ gold labels until a human reviewer verifies them against the source evidence.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sqlite3
 import sys
@@ -49,8 +50,8 @@ def get_chunk_by_terms(conn: sqlite3.Connection, search_terms: list[str]) -> str
     raise ValueError(f"Could not find any chunk for terms: {search_terms}")
 
 
-def build_evaluation_set() -> list[dict]:
-    conn = sqlite3.connect(str(DB_PATH))
+def build_evaluation_set(database_path: Path = DB_PATH) -> list[dict]:
+    conn = sqlite3.connect(str(database_path))
 
     # Curated cases mapped to search terms guaranteed to be in Robbins 11th or Robbins Review
     cases_specs = [
@@ -427,13 +428,20 @@ def build_evaluation_set() -> list[dict]:
 
 
 def main():
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    cases = build_evaluation_set()
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    parser = argparse.ArgumentParser(
+        description="Build unverified retrieval candidates from a corpus database"
+    )
+    parser.add_argument("--db", type=Path, default=DB_PATH)
+    parser.add_argument("--output", type=Path, default=OUTPUT_FILE)
+    args = parser.parse_args()
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    cases = build_evaluation_set(args.db)
+    with open(args.output, "w", encoding="utf-8") as f:
         for c in cases:
             f.write(json.dumps(c) + "\n")
 
-    print(f"Generated {len(cases)} unverified benchmark candidates in {OUTPUT_FILE}")
+    print(f"Generated {len(cases)} unverified benchmark candidates in {args.output}")
     print("A human reviewer must verify every expected chunk before evaluation.")
 
 
