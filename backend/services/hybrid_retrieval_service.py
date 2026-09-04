@@ -33,7 +33,7 @@ class HybridRetrievalConfig:
     lexical_weight: float = 0.35
     max_per_page: int = 2
     minimum_fused_score: float = 0.01
-    minimum_dense_score: float = 0.45
+    minimum_dense_score: float = 0.60
     minimum_lexical_score: float = 0.01
 
     @property

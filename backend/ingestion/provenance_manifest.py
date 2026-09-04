@@ -301,7 +301,7 @@ class ProvenanceManifestAuditor:
             total_words=total_words,
             total_evidence_blocks=total_evidence_blocks,
             processing_modes=sorted_processing_modes,
-            processor_version_ids=sorted_processor_version_ids,
+            processor_version_ids=sorted_processor_version_ids or sorted_processor_ids,
             rights_verified=rights_verified,
             metadata={
                 "textbook_page_offset": doc.textbook_page_offset,

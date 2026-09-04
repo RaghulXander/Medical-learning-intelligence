@@ -1,5 +1,8 @@
 # Medical Exam AI Platform — Initial Project Specification
 
+> [!IMPORTANT]
+> **Active Development Status**: For the current active milestone, daily tasks, and live context, always refer to [ACTIVE_CONTEXT.md](file:///r:/Repositories/medical-learning-intelligence/ACTIVE_CONTEXT.md) and [MileStones/MileStone7.md](file:///r:/Repositories/medical-learning-intelligence/MileStones/MileStone7.md).
+
 ## 1. Project Vision
 
 Build a scalable medical education and mock-exam platform.

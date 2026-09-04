@@ -1,0 +1,150 @@
+{
+  "case_count": 55,
+  "citation_mismatches": 0,
+  "dataset_hash": "a3f8eff6b1f32f359146e40d3cf252e2c73eb7b78b3c86b7f94a7d92f5605c95",
+  "dataset_shape_valid": true,
+  "domain_count": 5,
+  "embedding_model_id": "gemini-embedding-001",
+  "embedding_provider": "google_vertex_ai",
+  "embedding_run_id": "cba90495-1c99-416d-989d-fdd246212218",
+  "failures": [
+    {
+      "domain": "out_of_corpus",
+      "failure": "not_refused",
+      "id": "ctrl-003"
+    },
+    {
+      "domain": "out_of_corpus",
+      "failure": "not_refused",
+      "id": "ctrl-005"
+    },
+    {
+      "domain": "diagnostic_techniques",
+      "failure": "recall_at_5",
+      "id": "diag-002"
+    },
+    {
+      "domain": "diagnostic_techniques",
+      "failure": "recall_at_5",
+      "id": "diag-003"
+    },
+    {
+      "domain": "diagnostic_techniques",
+      "failure": "recall_at_5",
+      "id": "diag-006"
+    },
+    {
+      "domain": "diagnostic_techniques",
+      "failure": "recall_at_5",
+      "id": "diag-008"
+    },
+    {
+      "domain": "general_pathology",
+      "failure": "recall_at_5",
+      "id": "gen-path-001"
+    },
+    {
+      "domain": "general_pathology",
+      "failure": "recall_at_5",
+      "id": "gen-path-005"
+    },
+    {
+      "domain": "general_pathology",
+      "failure": "recall_at_5",
+      "id": "gen-path-006"
+    },
+    {
+      "domain": "general_pathology",
+      "failure": "recall_at_5",
+      "id": "gen-path-009"
+    },
+    {
+      "domain": "general_pathology",
+      "failure": "recall_at_5",
+      "id": "gen-path-010"
+    },
+    {
+      "domain": "hematopathology",
+      "failure": "recall_at_5",
+      "id": "hem-001"
+    },
+    {
+      "domain": "hematopathology",
+      "failure": "recall_at_5",
+      "id": "hem-008"
+    },
+    {
+      "domain": "hematopathology",
+      "failure": "recall_at_5",
+      "id": "hem-010"
+    },
+    {
+      "domain": "neoplasia",
+      "failure": "recall_at_5",
+      "id": "neop-006"
+    },
+    {
+      "domain": "neoplasia",
+      "failure": "recall_at_5",
+      "id": "neop-008"
+    },
+    {
+      "domain": "neoplasia",
+      "failure": "recall_at_5",
+      "id": "neop-010"
+    },
+    {
+      "domain": "systemic_pathology",
+      "failure": "recall_at_5",
+      "id": "sys-001"
+    },
+    {
+      "domain": "systemic_pathology",
+      "failure": "recall_at_5",
+      "id": "sys-004"
+    },
+    {
+      "domain": "systemic_pathology",
+      "failure": "recall_at_5",
+      "id": "sys-005"
+    },
+    {
+      "domain": "systemic_pathology",
+      "failure": "recall_at_5",
+      "id": "sys-008"
+    }
+  ],
+  "gate_passed": false,
+  "generated_at": "2026-09-04T18:29:59.481625+00:00",
+  "in_corpus_count": 50,
+  "mrr": 0.4400714285714286,
+  "out_of_corpus_count": 5,
+  "per_domain": {
+    "diagnostic_techniques": {
+      "count": 10,
+      "recall_at_5": 0.6
+    },
+    "general_pathology": {
+      "count": 10,
+      "recall_at_5": 0.5
+    },
+    "hematopathology": {
+      "count": 10,
+      "recall_at_5": 0.7
+    },
+    "neoplasia": {
+      "count": 10,
+      "recall_at_5": 0.7
+    },
+    "systemic_pathology": {
+      "count": 10,
+      "recall_at_5": 0.6
+    }
+  },
+  "recall_at_1": 0.3,
+  "recall_at_10": 0.72,
+  "recall_at_5": 0.62,
+  "retrieval_configuration_hash": "e8f7d6c510773fce6cbd27117f40cbf3f1d3044c706c980a80c74529b1d1576a",
+  "schema_version": 1,
+  "unsupported_query_refusal_rate": 0.6
+}
