@@ -53,6 +53,11 @@ http://localhost:3000/admin/retrieval-review
 7. Read the saved evidence again, select the human-review attestation, and
    choose **Verify** or **Reject**.
 
+For a correctly labelled out-of-corpus control, choose **Verify**. Use
+**Reject case** only when the benchmark prompt or label is itself defective and
+must be corrected. Being outside pathology is the expected behavior of the
+negative controls and is not, by itself, a reason to reject them.
+
 Every save, approval, and rejection records the authenticated reviewer, time,
 revision, notes, and before/after snapshots. A stale browser tab receives a
 conflict instead of overwriting another review.

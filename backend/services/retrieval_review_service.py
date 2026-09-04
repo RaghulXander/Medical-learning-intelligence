@@ -92,6 +92,26 @@ class RetrievalReviewService:
 
     @staticmethod
     def _serialize_chunk(chunk, document, source) -> dict[str, Any]:
+        tables = []
+        raw_tables = (chunk.metadata_json or {}).get("tables", [])
+        if isinstance(raw_tables, list):
+            for raw_table in raw_tables:
+                if not isinstance(raw_table, dict):
+                    continue
+                headers = raw_table.get("headers", [])
+                rows = raw_table.get("rows", [])
+                if not isinstance(headers, list) or not isinstance(rows, list):
+                    continue
+                tables.append(
+                    {
+                        "headers": [str(cell or "") for cell in headers],
+                        "rows": [
+                            [str(cell or "") for cell in row]
+                            for row in rows
+                            if isinstance(row, list)
+                        ],
+                    }
+                )
         return {
             "id": chunk.id,
             "content": chunk.content,
@@ -104,6 +124,7 @@ class RetrievalReviewService:
             "chapter_name": chunk.chapter_name,
             "section_heading": chunk.section_heading,
             "word_count": chunk.word_count,
+            "tables": tables,
         }
 
     @staticmethod
@@ -427,6 +448,8 @@ class RetrievalReviewService:
             raise ReviewConflictError("Case was changed by another reviewer; reload it")
         if not domain.strip() or not query.strip():
             raise ValueError("Domain and query are required")
+        if len(notes.strip()) < 3:
+            raise ValueError("Review notes are required before saving a draft")
         previous = RetrievalReviewService._snapshot(case)
         case.domain = domain.strip()
         case.query = query.strip()
@@ -435,7 +458,7 @@ class RetrievalReviewService:
         case.verification_status = "HUMAN_REVIEW"
         case.reviewer_id = reviewer_id
         case.reviewed_at = None
-        case.review_notes = notes.strip() or None
+        case.review_notes = notes.strip()
         case.revision += 1
         RetrievalReviewService._validate_labels(db, case)
         RetrievalReviewService._record_review(
@@ -443,7 +466,7 @@ class RetrievalReviewService:
             case=case,
             reviewer_id=reviewer_id,
             action="SAVE_DRAFT",
-            notes=notes.strip() or "Draft reviewed and saved",
+            notes=notes.strip(),
             previous=previous,
         )
         RetrievalReviewService._refresh_benchmark_status(db, case.benchmark_id)

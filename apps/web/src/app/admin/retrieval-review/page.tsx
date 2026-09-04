@@ -232,6 +232,10 @@ export default function RetrievalReviewPage() {
 
   const saveDraft = async () => {
     if (!selected || !draft) return;
+    if (draft.notes.trim().length < 3) {
+      setError('Add concise review notes before saving the draft.');
+      return;
+    }
     setSaving(true);
     setError(null);
     setMessage(null);
@@ -419,7 +423,7 @@ export default function RetrievalReviewPage() {
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" disabled={saving || !dirty} onClick={() => void saveDraft()}><Save className="mr-2 h-4 w-4" />Save draft</Button>
-                  <Button variant="destructive" disabled={saving || dirty || !attested} onClick={() => void decide('reject')}><XCircle className="mr-2 h-4 w-4" />Reject</Button>
+                  <Button variant="destructive" disabled={saving || dirty || !attested} onClick={() => void decide('reject')}><XCircle className="mr-2 h-4 w-4" />Reject case</Button>
                   <Button variant="gradient" disabled={saving || dirty || !attested} onClick={() => void decide('approve')}><CheckCircle2 className="mr-2 h-4 w-4" />Verify</Button>
                 </div>
               </div>
@@ -461,7 +465,7 @@ export default function RetrievalReviewPage() {
                     <span>
                       <strong>Out of corpus</strong>
                       <span className="block text-xs text-muted-foreground">
-                        Use only when none of the three approved books supports the prompt. Evidence must remain empty.
+                        Use only when none of the three approved books supports the prompt. Evidence must remain empty. If this label is correct, save and Verify it; Reject case means the benchmark item itself needs correction.
                       </span>
                     </span>
                   </label>
@@ -482,7 +486,17 @@ export default function RetrievalReviewPage() {
                         <Button size="sm" variant="ghost" onClick={() => updateDraft({ expected_chunk_ids: draft.expected_chunk_ids.filter((id) => id !== chunk.id) })}><Trash2 className="mr-1 h-3.5 w-3.5" />Remove</Button>
                       </div>
                       <p className="mt-3 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-sm leading-6">{chunk.content}</p>
-                      <p className="mt-2 break-all font-mono text-[10px] text-muted-foreground">Chunk {chunk.id} · SHA {chunk.content_hash}</p>
+                      {(chunk.tables ?? []).map((table, tableIndex) => (
+                        <div key={`${chunk.id}-table-${tableIndex}`} className="mt-3 overflow-x-auto rounded-lg border border-border">
+                          <table className="min-w-full border-collapse text-left text-xs">
+                            <thead className="bg-muted/70">
+                              <tr>{table.headers.map((header, index) => <th key={`${index}-${header}`} className="border-b border-r border-border px-3 py-2 font-semibold last:border-r-0">{header || `Column ${index + 1}`}</th>)}</tr>
+                            </thead>
+                            <tbody>{table.rows.map((row, rowIndex) => <tr key={rowIndex} className="border-b border-border last:border-b-0">{table.headers.map((_, cellIndex) => <td key={cellIndex} className="border-r border-border px-3 py-2 align-top last:border-r-0">{row[cellIndex] ?? ''}</td>)}</tr>)}</tbody>
+                          </table>
+                        </div>
+                      ))}
+                      <p className="mt-2 break-all font-mono text-[10px] text-muted-foreground">Integrity receipt (not evidence text): Chunk {chunk.id} · SHA {chunk.content_hash}</p>
                     </div>
                   ))}
                 </div>

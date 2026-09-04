@@ -1,6 +1,6 @@
 # Milestone 19 — Evidence Acceptance and Multimodal Safety Stabilization
 
-> **Status: PART 19A COMPLETE / PART 19B REVIEW TOOLING READY, HUMAN REVIEW PENDING / PARTS 19C–19E DRAFT — no paid
+> **Status: PART 19A COMPLETE / PART 19B NOTES COMPLETE, EVIDENCE REMEDIATION PENDING / PARTS 19C–19E DRAFT — no paid
 > embeddings or generation may run before the M15/M16 quality gates pass**
 
 ## Purpose
@@ -77,6 +77,11 @@ Implementation available for the retrieval-label portion:
   passes.
 
 See `docs/M19B_RETRIEVAL_HUMAN_REVIEW.md` for setup and reviewer instructions.
+The 2026-09-04 remote audit is recorded in
+`docs/M19B_REVIEW_AUDIT_2026-09-04.md`. All cases have reviewer notes, but
+unsupported/partial evidence, extraction artifacts, five misinterpreted
+out-of-corpus rejections, and two inconsistent approvals still require
+adjudication.
 
 **19B acceptance:** all three provenance manifests pass and every benchmark
 label is human verified. Until then, embedding execution remains blocked.

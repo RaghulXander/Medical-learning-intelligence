@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -15,9 +17,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from backend.services.retrieval_review_service import RetrievalReviewService
-from database.db import get_default_db_url
-
-
 DEFAULT_OUTPUT = (
     PROJECT_ROOT
     / "data"
@@ -32,11 +31,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--slug", default="m16a-retrieval-v1")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--database-url-env",
+        default="DATABASE_URL",
+        help="Environment-variable name containing the PostgreSQL URL (never pass the URL as a CLI argument).",
+    )
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
-    engine = create_engine(get_default_db_url(), hide_parameters=True)
+    load_dotenv(dotenv_path=PROJECT_ROOT / ".env")
+    database_url = os.environ.get(args.database_url_env)
+    if not database_url:
+        parser.error(f"{args.database_url_env} is not configured")
+    engine = create_engine(database_url, hide_parameters=True, pool_pre_ping=True)
     if engine.dialect.name != "postgresql":
         parser.error("Verified retrieval export requires PostgreSQL")
     with sessionmaker(bind=engine)() as session:

@@ -40,6 +40,14 @@ class TestRetrievalReviewService(unittest.TestCase):
             content="RB protein restrains the G1 to S cell-cycle transition.",
             content_hash="a" * 64,
             word_count=9,
+            metadata_json={
+                "tables": [
+                    {
+                        "headers": ["Marker", "Result"],
+                        "rows": [["RB", "Restrains G1/S transition"]],
+                    }
+                ]
+            },
         )
         self.benchmark = RetrievalBenchmark(
             slug="m16a-retrieval-v1",
@@ -82,6 +90,15 @@ class TestRetrievalReviewService(unittest.TestCase):
         self.assertEqual(saved["verification_status"], "HUMAN_REVIEW")
         self.assertEqual(saved["revision"], 2)
         self.assertEqual(saved["evidence"][0]["content"], self.chunk.content)
+        self.assertEqual(
+            saved["evidence"][0]["tables"],
+            [
+                {
+                    "headers": ["Marker", "Result"],
+                    "rows": [["RB", "Restrains G1/S transition"]],
+                }
+            ],
+        )
 
         approved = RetrievalReviewService.decide_case(
             self.db,
@@ -109,6 +126,23 @@ class TestRetrievalReviewService(unittest.TestCase):
                 approve=False,
                 notes="This label is wrong",
             )
+
+    def test_blank_notes_cannot_clear_a_review_draft(self):
+        with self.assertRaisesRegex(ValueError, "Review notes are required"):
+            RetrievalReviewService.update_case(
+                self.db,
+                self.benchmark.slug,
+                self.case.id,
+                reviewer_id=self.reviewer.id,
+                expected_revision=1,
+                domain="cell-cycle",
+                query="What does RB protein restrain?",
+                expected_chunk_ids=[],
+                out_of_corpus=True,
+                notes="  ",
+            )
+        self.db.rollback()
+        self.assertIsNone(self.case.review_notes)
 
     def test_out_of_corpus_case_cannot_retain_chunks(self):
         with self.assertRaisesRegex(ValueError, "cannot include expected chunks"):

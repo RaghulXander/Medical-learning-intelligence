@@ -44,6 +44,10 @@ export interface RetrievalEvidenceChunk {
   chapter_name?: string | null;
   section_heading?: string | null;
   word_count: number;
+  tables?: Array<{
+    headers: string[];
+    rows: string[][];
+  }>;
 }
 
 export interface RetrievalReviewHistory {
