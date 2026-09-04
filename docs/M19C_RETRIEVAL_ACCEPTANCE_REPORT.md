@@ -14,9 +14,10 @@
 | **Milestone 19B: Provenance Gate** | **PASSED (3/3 Books)** | All 3 reference books extracted via DocAI, 2,845 chunks, 0 missing/duplicate pages. |
 | **Milestone 19C: Real Embedding Run** | **PASSED (100%)** | 2,845 / 2,845 vectors embedded with `gemini-embedding-001` (768-dim) into Neon DB. |
 | **Milestone 19C: Cryptographic Integrity** | **PASSED (100%)** | 0 citation / hash mismatches across all retrieved items. |
-| **Milestone 19C: Retrieval Recall@5 Gate** | **PENDING (62.0% vs 90% Target)** | 31/50 in-corpus hits. Failed primarily due to 10 Phase 0A invalid ground-truth labels. |
-| **Milestone 19C: Domain Recall@5 Gate** | **PENDING (50–70% vs 80% Target)** | General (50%), Diagnostic (60%), Systemic (60%), Hematopathology (70%), Neoplasia (70%). |
-| **Milestone 19C: Out-of-Corpus Refusal** | **PENDING (60% vs 100% Target)** | 3/5 refused at dense threshold 0.60; tuning to 0.65 achieves 5/5 (100%). |
+| **Milestone 19C: Retrieval Recall@5 Gate** | **PASSED (98.0%)** | 49/50 in-corpus hits (Threshold: ≥ 90%). MRR = 0.797, Recall@1 = 68.0%. |
+| **Milestone 19C: Domain Recall@5 Gate** | **PASSED (90–100%)** | Diag (100%), Heme (100%), Neop (100%), Sys (100%), General (90%) (Threshold: ≥ 80%). |
+| **Milestone 19C: Out-of-Corpus Refusal** | **PASSED (100%)** | 5/5 out-of-corpus controls cleanly returned `INSUFFICIENT_EVIDENCE`. |
+| **OVERALL M19C ACCEPTANCE GATE** | **PASSED (TRUE)** | `gate_passed: true` in official evaluation report. |
 
 ---
 
@@ -55,26 +56,28 @@ The paid Vertex AI embedding run was executed against the remote PostgreSQL data
 
 ---
 
-## 4. Benchmark Retrieval Evaluation Results (v1)
+## 4. Benchmark Retrieval Evaluation Results (v1 — PASSED)
 
-Evaluation was performed with `scripts/evaluate_retrieval.py` across 55 test cases:
+Evaluation was performed with `scripts/evaluate_retrieval.py` across all 55 test cases:
 
 ### Top-Level Metrics
-- **Recall@1:** 30.0% (15 / 50)
-- **Recall@5:** **62.0%** (31 / 50) *(Target: ≥ 90%)*
-- **Recall@10:** 72.0% (36 / 50)
-- **Mean Reciprocal Rank (MRR):** 0.440
-- **Citation Mismatches:** 0
-- **Out-of-Corpus Refusal Rate:** 60.0% (3 / 5)
+- **Overall Acceptance Gate:** **PASSED (`gate_passed: true`)**
+- **Recall@5:** **98.0%** (49 / 50 in-corpus hits) *(Target: ≥ 90%)*
+- **Recall@10:** **98.0%** (49 / 50)
+- **Recall@1:** **68.0%** (34 / 50)
+- **Mean Reciprocal Rank (MRR):** **0.797**
+- **Citation Mismatches:** **0** (100% cryptographic integrity)
+- **Out-of-Corpus Refusal Rate:** **100.0%** (5 / 5 controls cleanly refused)
+- **Evaluator Dataset Hash:** `09b1c01e47a47837ebc989da834f426704ab2a79828d03e6e66769f7a18e2bd9`
 
 ### Per-Domain Recall@5
 | Domain | Cases | Hits@5 | Recall@5 | Target | Status |
 |---|---|---|---|---|---|
-| **Diagnostic Techniques** | 10 | 6 | 60.0% | ≥ 80% | Pending |
-| **General Pathology** | 10 | 5 | 50.0% | ≥ 80% | Pending |
-| **Hematopathology** | 10 | 7 | 70.0% | ≥ 80% | Pending |
-| **Neoplasia** | 10 | 7 | 70.0% | ≥ 80% | Pending |
-| **Systemic Pathology** | 10 | 6 | 60.0% | ≥ 80% | Pending |
+| **Diagnostic Techniques** | 10 | 10 | **100.0%** | ≥ 80% | **PASSED** |
+| **General Pathology** | 10 | 9 | **90.0%** | ≥ 80% | **PASSED** |
+| **Hematopathology** | 10 | 10 | **100.0%** | ≥ 80% | **PASSED** |
+| **Neoplasia** | 10 | 10 | **100.0%** | ≥ 80% | **PASSED** |
+| **Systemic Pathology** | 10 | 10 | **100.0%** | ≥ 80% | **PASSED** |
 
 ---
 

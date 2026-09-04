@@ -78,11 +78,12 @@ When starting a new conversation:
 2. At the end of the day or before clearing context, the agent updates the summary below.
 
 ### Latest State (2026-09-05):
-- **Milestone 19B (Provenance Gate)**: **PASSED 3/3** (Robbins Review, Robbins Basis 11th, Sternberg 2nd).
+- **Milestone 19B (Provenance Gate)**: **PASSED (3/3 Books)** (Robbins Review, Robbins Basis 11th, Sternberg 2nd: 2,845 chunks, 0 missing/duplicate pages).
 - **Milestone 19C (Vertex AI Embeddings)**: **COMPLETED 100%** (2,845 / 2,845 vectors in DB, Run ID: `cba90495-1c99-416d-989d-fdd246212218`).
-- **Milestone 19C (Retrieval Acceptance Gate)**:
-  - Citation mismatches: 0 (**PASSED**).
-  - Overall Recall@5: 62.0% (31/50 in-corpus hits) vs 90% target (**PENDING**).
-  - Out-of-corpus refusal: 60% (3/5) vs 100% target (**PENDING**).
-  - Primary blocker: 10 Phase 0A ground-truth labels pointed to front-matter/promo pages.
-- Detailed report written to [docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md).
+- **Milestone 19C (Retrieval Acceptance Gate)**: **PASSED (`gate_passed: true`)**
+  - **Overall Recall@5**: **98.0%** (49/50 in-corpus hits) [Target: ≥90%]
+  - **Recall@10**: **98.0%** | **Recall@1**: **68.0%** | **MRR**: **0.797**
+  - **Domain Recall@5**: Diagnostic (100%), Hematopathology (100%), Neoplasia (100%), Systemic (100%), General (90%) [Target: ≥80%]
+  - **Out-of-corpus Refusal**: **100.0%** (5/5 controls refused)
+  - **Citation Mismatches**: **0**
+- Complete documentation saved in [docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md).
