@@ -347,10 +347,44 @@ export default function RetrievalReviewPage() {
                 <label className="text-sm"><span className="mb-1 block font-semibold">Human-reviewed retrieval prompt</span><textarea rows={3} value={draft.query} onChange={(event) => updateDraft({ query: event.target.value })} className="w-full rounded-lg border border-border bg-background px-3 py-2" /></label>
               </div>
 
-              <label className="mt-4 flex items-start gap-3 rounded-xl border border-border bg-muted/30 p-3 text-sm">
-                <input type="checkbox" checked={draft.out_of_corpus} onChange={(event) => updateDraft({ out_of_corpus: event.target.checked, expected_chunk_ids: event.target.checked ? [] : draft.expected_chunk_ids })} className="mt-1" />
-                <span><strong>Out-of-corpus control</strong><span className="block text-xs text-muted-foreground">Use only when none of the three books supports the prompt. Expected chunks must remain empty.</span></span>
-              </label>
+              <fieldset className="mt-4">
+                <legend className="text-sm font-semibold">Evidence classification</legend>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  This is a retrieval prompt, not an MCQ. Choose whether the approved books support it.
+                </p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className={cn('flex cursor-pointer items-start gap-3 rounded-xl border p-4 text-sm', !draft.out_of_corpus ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-border bg-muted/30')}>
+                    <input
+                      type="radio"
+                      name="evidence-classification"
+                      checked={!draft.out_of_corpus}
+                      onChange={() => updateDraft({ out_of_corpus: false })}
+                      className="mt-1"
+                    />
+                    <span>
+                      <strong>Supported by book evidence</strong>
+                      <span className="block text-xs text-muted-foreground">
+                        Review the candidate passage shown immediately below and correct it when necessary.
+                      </span>
+                    </span>
+                  </label>
+                  <label className={cn('flex cursor-pointer items-start gap-3 rounded-xl border p-4 text-sm', draft.out_of_corpus ? 'border-amber-500/50 bg-amber-500/10' : 'border-border bg-muted/30')}>
+                    <input
+                      type="radio"
+                      name="evidence-classification"
+                      checked={draft.out_of_corpus}
+                      onChange={() => updateDraft({ out_of_corpus: true, expected_chunk_ids: [] })}
+                      className="mt-1"
+                    />
+                    <span>
+                      <strong>Out of corpus</strong>
+                      <span className="block text-xs text-muted-foreground">
+                        Use only when none of the three approved books supports the prompt. Evidence must remain empty.
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
             </Card>
 
             {!draft.out_of_corpus && (
