@@ -8,6 +8,7 @@ export interface ApiClientConfig {
   baseUrl?: string;
   getToken?: () => string | null | Promise<string | null>;
   getGuestToken?: () => string | null | Promise<string | null>;
+  onUnauthorized?: () => string | null | Promise<string | null>;
 }
 
 export class ApiError extends Error {
@@ -29,6 +30,8 @@ export class MedicalApiClient {
   private baseUrl: string;
   private getToken?: () => string | null | Promise<string | null>;
   private getGuestToken?: () => string | null | Promise<string | null>;
+  private onUnauthorized?: () => string | null | Promise<string | null>;
+  private unauthorizedRefresh: Promise<string | null> | null = null;
 
   constructor(config?: ApiClientConfig) {
     const runtimeProcess = (
@@ -55,6 +58,7 @@ export class MedicalApiClient {
     }
     this.getToken = config?.getToken;
     this.getGuestToken = config?.getGuestToken;
+    this.onUnauthorized = config?.onUnauthorized;
   }
 
   public setBaseUrl(url: string) {
@@ -69,7 +73,31 @@ export class MedicalApiClient {
     this.getGuestToken = getter;
   }
 
+  public setUnauthorizedHandler(
+    handler?: () => string | null | Promise<string | null>
+  ) {
+    this.onUnauthorized = handler;
+  }
+
   public async request<T>(path: string, options: RequestInit = {}): Promise<T> {
+    return this.requestWithAuthRetry<T>(path, options, true);
+  }
+
+  private async refreshAfterUnauthorized(): Promise<string | null> {
+    if (!this.onUnauthorized) return null;
+    if (!this.unauthorizedRefresh) {
+      this.unauthorizedRefresh = Promise.resolve(this.onUnauthorized()).finally(() => {
+        this.unauthorizedRefresh = null;
+      });
+    }
+    return this.unauthorizedRefresh;
+  }
+
+  private async requestWithAuthRetry<T>(
+    path: string,
+    options: RequestInit,
+    allowAuthRetry: boolean
+  ): Promise<T> {
     const url = `${this.baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -94,6 +122,20 @@ export class MedicalApiClient {
       ...options,
       headers,
     });
+
+    // Access tokens are deliberately short-lived. Refresh once and replay the
+    // request; never recurse when the refresh endpoint itself rejects a token.
+    if (
+      response.status === 401 &&
+      allowAuthRetry &&
+      Boolean(headers['Authorization']) &&
+      path !== '/api/auth/refresh'
+    ) {
+      const refreshedToken = await this.refreshAfterUnauthorized();
+      if (refreshedToken) {
+        return this.requestWithAuthRetry<T>(path, options, false);
+      }
+    }
 
     if (response.status === 204 || response.status === 304) {
       return {} as T;
@@ -126,4 +168,10 @@ export function setAuthTokenGetter(getter: () => string | null | Promise<string 
 
 export function setGuestTokenGetter(getter: () => string | null | Promise<string | null>) {
   defaultClient.setGuestTokenGetter(getter);
+}
+
+export function setUnauthorizedHandler(
+  handler?: () => string | null | Promise<string | null>
+) {
+  defaultClient.setUnauthorizedHandler(handler);
 }

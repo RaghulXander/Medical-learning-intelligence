@@ -2,7 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserProfile, AuthSessionResponse } from '@medical/shared';
-import { authApi, setAuthTokenGetter, setGuestTokenGetter } from '@medical/api-client';
+import {
+  authApi,
+  setAuthTokenGetter,
+  setGuestTokenGetter,
+  setUnauthorizedHandler,
+} from '@medical/api-client';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -41,6 +46,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setGuestTokenGetter(() =>
       typeof window !== 'undefined' ? localStorage.getItem('docedge_guest_token') : null
     );
+    setUnauthorizedHandler(async () => {
+      const refreshToken = localStorage.getItem('docedge_refresh_token');
+      if (!refreshToken) return null;
+
+      try {
+        const refreshed = await authApi.refreshToken(refreshToken);
+        localStorage.setItem('docedge_access_token', refreshed.access_token);
+        localStorage.setItem('docedge_refresh_token', refreshed.refresh_token);
+        return refreshed.access_token;
+      } catch (err) {
+        console.warn('Session refresh failed:', err);
+        localStorage.removeItem('docedge_access_token');
+        localStorage.removeItem('docedge_refresh_token');
+        setUser(null);
+        return null;
+      }
+    });
 
     // Load guest token from storage if present
     if (typeof window !== 'undefined') {
@@ -67,7 +89,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    loadUser();
+    void loadUser();
+
+    return () => setUnauthorizedHandler(undefined);
   }, []);
 
   const saveTokens = (access: string, refresh: string) => {
