@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Header, Request, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from database.db import get_engine, get_session_factory
+from database.db import get_session_factory
 from database.models import User
 from backend.core.security import decode_access_token, generate_crypto_password, calculate_password_entropy
 from backend.services.auth_service import AuthService
@@ -18,8 +18,10 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication & Identity"])
 
 
 def get_db():
-    engine = get_engine()
-    session_factory = get_session_factory(engine)
+    # Let the database module reuse its process-level engine and connection
+    # pool. Creating an engine here on every request is particularly costly for
+    # a remote serverless Postgres database.
+    session_factory = get_session_factory()
     db = session_factory()
     try:
         yield db
@@ -292,4 +294,3 @@ def delete_me(
         return res
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-

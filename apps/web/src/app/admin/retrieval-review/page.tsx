@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CheckCircle2,
   ChevronRight,
@@ -81,9 +81,13 @@ export default function RetrievalReviewPage() {
   const [attested, setAttested] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [openingCaseId, setOpeningCaseId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const caseCache = useRef(new Map<string, RetrievalReviewCase>());
+  const pendingCaseRequests = useRef(new Map<string, Promise<RetrievalReviewCase>>());
+  const latestOpenRequest = useRef(0);
 
   const canReview = ['SUPER_ADMIN', 'ADMIN', 'REVIEWER'].includes(user?.role ?? '');
   const domains = useMemo(
@@ -91,12 +95,12 @@ export default function RetrievalReviewPage() {
     [summary]
   );
 
-  const loadQueue = useCallback(async () => {
+  const loadQueue = useCallback(async (showPageLoader = true) => {
     if (!canReview) {
-      setLoading(false);
+      if (showPageLoader) setLoading(false);
       return;
     }
-    setLoading(true);
+    if (showPageLoader) setLoading(true);
     try {
       const [nextSummary, page] = await Promise.all([
         adminApi.getRetrievalReviewSummary(BENCHMARK_SLUG),
@@ -108,11 +112,15 @@ export default function RetrievalReviewPage() {
       ]);
       setSummary(nextSummary);
       setCases(page.items);
-      setError(null);
+      if (showPageLoader) setError(null);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Could not load review queue');
+      if (showPageLoader) {
+        setError(caught instanceof Error ? caught.message : 'Could not load review queue');
+      } else {
+        console.warn('Background review queue refresh failed:', caught);
+      }
     } finally {
-      setLoading(false);
+      if (showPageLoader) setLoading(false);
     }
   }, [canReview, domainFilter, statusFilter]);
 
@@ -120,29 +128,100 @@ export default function RetrievalReviewPage() {
     if (!authLoading) void loadQueue();
   }, [authLoading, loadQueue]);
 
+  const fetchReviewCase = useCallback((caseId: string) => {
+    const pending = pendingCaseRequests.current.get(caseId);
+    if (pending) return pending;
+
+    const request = adminApi
+      .getRetrievalReviewCase(caseId, BENCHMARK_SLUG)
+      .then((item) => {
+        caseCache.current.set(caseId, item);
+        return item;
+      })
+      .finally(() => pendingCaseRequests.current.delete(caseId));
+    pendingCaseRequests.current.set(caseId, request);
+    return request;
+  }, []);
+
+  const prefetchNextCase = useCallback((caseId: string) => {
+    const currentIndex = cases.findIndex((item) => item.id === caseId);
+    const next = currentIndex >= 0 ? cases[currentIndex + 1] : undefined;
+    if (!next) return;
+    const cached = caseCache.current.get(next.id);
+    if (cached?.revision === next.revision) return;
+
+    // Reviewers normally move down the queue. Fetch one case ahead while they
+    // read the current evidence, hiding most remote database latency without
+    // downloading the full benchmark at once.
+    void fetchReviewCase(next.id).catch((caught) => {
+      console.warn('Review case prefetch failed:', caught);
+    });
+  }, [cases, fetchReviewCase]);
+
   const openCase = async (caseId: string) => {
-    setSaving(true);
+    const requestId = latestOpenRequest.current + 1;
+    latestOpenRequest.current = requestId;
     setError(null);
+    setMessage(null);
+
+    const listedRevision = cases.find((item) => item.id === caseId)?.revision;
+    const cached = caseCache.current.get(caseId);
+    if (cached && (listedRevision === undefined || cached.revision === listedRevision)) {
+      setOpeningCaseId(null);
+      setSelected(cached);
+      setDraft(toDraft(cached));
+      setDirty(false);
+      setAttested(false);
+      setSearchResults([]);
+      prefetchNextCase(caseId);
+      return;
+    }
+
+    setOpeningCaseId(caseId);
     try {
-      const item = await adminApi.getRetrievalReviewCase(caseId, BENCHMARK_SLUG);
+      const item = await fetchReviewCase(caseId);
+      if (latestOpenRequest.current !== requestId) return;
       setSelected(item);
       setDraft(toDraft(item));
       setDirty(false);
       setAttested(false);
       setSearchResults([]);
+      prefetchNextCase(caseId);
     } catch (caught) {
+      if (latestOpenRequest.current !== requestId) return;
       setError(caught instanceof Error ? caught.message : 'Could not load case');
     } finally {
-      setSaving(false);
+      if (latestOpenRequest.current === requestId) setOpeningCaseId(null);
     }
   };
 
-  const refreshAfterChange = async (item: RetrievalReviewCase) => {
+  const refreshAfterChange = (item: RetrievalReviewCase) => {
+    caseCache.current.set(item.id, item);
     setSelected(item);
     setDraft(toDraft(item));
     setDirty(false);
     setAttested(false);
-    await loadQueue();
+    setCases((current) =>
+      current.map((listed) =>
+        listed.id === item.id
+          ? {
+              ...listed,
+              domain: item.domain,
+              query: item.query,
+              expected_chunk_count: item.expected_chunk_ids.length,
+              out_of_corpus: item.out_of_corpus,
+              verification_status: item.verification_status,
+              reviewer_id: item.reviewer_id,
+              reviewed_at: item.reviewed_at,
+              revision: item.revision,
+            }
+          : listed
+      )
+    );
+    // The saved case response already contains everything needed to keep the
+    // editor and its queue row current. Refresh aggregate counts off the
+    // critical path so a remote/free-tier database cannot block the editor.
+    void loadQueue(false);
   };
 
   const updateDraft = (change: Partial<Draft>) => {
@@ -310,7 +389,10 @@ export default function RetrievalReviewPage() {
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-bold">{item.case_key}</span>
-                  <Badge variant={statusVariant(item.verification_status)}>{item.verification_status.replaceAll('_', ' ')}</Badge>
+                  <div className="flex items-center gap-2">
+                    {openingCaseId === item.id && <RefreshCw className="h-3.5 w-3.5 animate-spin text-sky-400" aria-label="Loading case" />}
+                    <Badge variant={statusVariant(item.verification_status)}>{item.verification_status.replaceAll('_', ' ')}</Badge>
+                  </div>
                 </div>
                 <p className="mt-2 line-clamp-2 text-sm">{item.query}</p>
                 <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
