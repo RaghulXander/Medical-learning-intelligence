@@ -1,5 +1,6 @@
 site_name: DocEdge AI Engineering
 site_description: Architecture, development, data, and operations documentation
+site_url: https://raghulxander.github.io/Medical-learning-intelligence/
 repo_name: Medical-learning-intelligence
 repo_url: https://github.com/RaghulXander/Medical-learning-intelligence
 edit_uri: edit/main/docs/
@@ -60,6 +61,7 @@ nav:
       - Milestone 15 handoff template: handoff_templates/M15_RUN_HANDOFF_TEMPLATE.md
       - Milestone 16A retrieval runbook: M16A_RETRIEVAL_RUNBOOK.md
       - Milestone 18 image curation handoff: M18_IMAGE_CURRATION_HANDOFF.md
+      - Milestone 19B retrieval review: M19B_RETRIEVAL_HUMAN_REVIEW.md
 
 strict: true
 
