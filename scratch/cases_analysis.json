@@ -1,0 +1,3544 @@
+[
+  {
+    "case_id": "7a6f1ae9-7ea9-53a7-85f0-d019add384d8",
+    "case_key": "ctrl-001",
+    "domain": "out_of_corpus",
+    "query": "What is the recommended pediatric antibiotic dosing schedule for amoxicillin in acute otitis media?",
+    "out_of_corpus": true,
+    "expected_chunk_ids": [],
+    "revision": 6,
+    "retrieved": [],
+    "status": "REFUSED"
+  },
+  {
+    "case_id": "98b31967-2f92-55cb-94ef-c33d8561f990",
+    "case_key": "ctrl-002",
+    "domain": "out_of_corpus",
+    "query": "What are the diagnostic DSM-5 criteria and psychiatric pharmacological treatments for bipolar I manic episodes?",
+    "out_of_corpus": true,
+    "expected_chunk_ids": [],
+    "revision": 4,
+    "retrieved": [],
+    "status": "REFUSED"
+  },
+  {
+    "case_id": "d7c5f028-c513-53e4-b14a-cd9ee80fe55c",
+    "case_key": "ctrl-003",
+    "domain": "out_of_corpus",
+    "query": "How is a laparoscopic appendectomy performed step-by-step including trocar placement and appendiceal artery ligation?",
+    "out_of_corpus": true,
+    "expected_chunk_ids": [],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "0f066287-57b2-52d1-98d1-079518be0782",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 762,
+        "dense_score": 0.61035,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "A\n\nFig. 17.57 Anal tumors. (A) This anal squamous cell carcinoma demonstrates a multilayered organization reminiscent of squamous mucosa. The adjacent rectal mucosa is normal. (B) This anal squamous cell carci- noma with basaloid features is composed of hyperchromatic cells that resemble the basal l"
+      }
+    ],
+    "status": "NOT_REFUSED"
+  },
+  {
+    "case_id": "b1521517-b78a-5fdc-bc0f-f9028bab1f51",
+    "case_key": "ctrl-004",
+    "domain": "out_of_corpus",
+    "query": "What are the guidelines for dental implant placement depth and osseointegration mechanical torque measurements?",
+    "out_of_corpus": true,
+    "expected_chunk_ids": [],
+    "revision": 4,
+    "retrieved": [],
+    "status": "REFUSED"
+  },
+  {
+    "case_id": "2803d3d9-9149-5ce7-a7fa-02e1f928e0d6",
+    "case_key": "ctrl-005",
+    "domain": "out_of_corpus",
+    "query": "What are the ventilator management tidal volume settings for acute respiratory distress syndrome in the ICU?",
+    "out_of_corpus": true,
+    "expected_chunk_ids": [],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "2866cd3f-6ed4-5faa-b7dd-cd220047ebb6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 632,
+        "dense_score": 0.644106,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "HEALTHY ALVEOLUS\n\nBronchial epithelium\n\nBasement membrane\n\nAlveolar macrophage\n\nInactivated\n\n\u2022 surfactant\n\nACUTE LUNG INJURY\n\nSloughed bronchial epithelium\n\nCytokines\n\nROS\n\nProteases\n\nSurfactant layer\n\nTNF IL-1\n\nAlveolus\n\nType I cell\n\nCapillary\n\nType II cell\n\nInterstitium\n\nEndothelial cell\n\nFibrin\n\n"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "7c71cc44-93dc-5442-ab33-9d471de7f6a2",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 631,
+        "dense_score": 0.643104,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "### Edema Caused by Microvascular (Alveolar) Injury\n\n\nNoncardiogenic pulmonary edema is caused by injury of the alveolar septa. Primary injury to the vascular endothelium or damage to alveolar epithelial cells (with secondary microvascular injury) produces an inflammatory exudate that leaks into the"
+      }
+    ],
+    "status": "NOT_REFUSED"
+  },
+  {
+    "case_id": "3af5c110-1919-5c9a-98ff-dc72637d7654",
+    "case_key": "diag-001",
+    "domain": "diagnostic_techniques",
+    "query": "What immunohistochemical panel is used to differentiate adenocarcinoma from malignant mesothelioma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "ecbee128-2a2d-5d14-8e74-64f511d70852"
+    ],
+    "revision": 7,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "aa2dc1bc-d261-58ad-a252-21e3f515f457",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 605,
+        "dense_score": 0.764009,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "QUESTION 27.5\nA.  Cytokeratin 7\nB.  Cytokeratin 20\nC.  Pancytokeratin\nD.  Vimentin\nE.  None of the above\n  6.  A pleural tumor composed of tubular and papillary structures raises\nthe differential diagnosis between epithelioid mesothelioma and\nadenocarcinoma. Which of the following immunostains would"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "dc6336e7-e5a6-52f1-bd4a-03ba2a18b7d7",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 608,
+        "dense_score": 0.746943,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "Synovial sarcoma\nSarcomatoid carcinoma of the lung, which may have a biphasic\nappearance\n5.  Correct choice: E\nIMMUNOHISTOCHEMISTRY FOR MM\u2014The pattern of cytokeratin\nexpression in MM is similar to that of reactive and resting mesothelial\ncells. However, both mesotheliomas and adenocarcinomas have a "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "b01af224-0c95-5bac-8813-285c68c957e1",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 607,
+        "dense_score": 0.740563,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "express low molecular weight keratin and actin in response to noxious\nstimuli. This phenotypical change has been observed in other serosal sites.\nA common problem in the differential diagnosis of serosal lesions is\ndistinguishing reactive from neoplastic cells. Keratin-positive reactive\ncells do not"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "724b1299-f2d7-5f57-9bbc-be56c175bf83",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 604,
+        "dense_score": 0.727556,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "QUESTION 27.4\nA.  Epithelioid\nB.  Mixed\nC.  Sarcomatoid\n  5.  A 65-year-old man presents with persistent chest pain and unexplained\nweight loss. On initial examination, he is found to have a hemorrhagic\npleural effusion, which is evacuated. A CT scan reveals irregular\npleural thickening. A biopsy of"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "ecbee128-2a2d-5d14-8e74-64f511d70852",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 678,
+        "dense_score": 0.716428,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": true,
+        "content_preview": "A\n\nB\n\nFig. 15.41 Malignant mesothelioma. Note the thick, firm, white pleural tumor tissue that ensheathes the lung (A). Histologic variants of malignant mesothelioma. (B) Epithelioid type. (C) Biphasic type, stained for cal- retinin (immunoperoxidase method). The epithelial component is strongly pos"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "2a062d46-6ee0-5d74-a4a6-eda39da24b00",
+    "case_key": "diag-002",
+    "domain": "diagnostic_techniques",
+    "query": "What is the utility of cytokeratin 7 and cytokeratin 20 (CK7/CK20) expression profile in carcinomas of unknown primary?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "f78a0558-a590-5151-9fd2-8e046b2bca5c"
+    ],
+    "revision": 5,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "aa2dc1bc-d261-58ad-a252-21e3f515f457",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 605,
+        "dense_score": 0.689598,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "QUESTION 27.5\nA.  Cytokeratin 7\nB.  Cytokeratin 20\nC.  Pancytokeratin\nD.  Vimentin\nE.  None of the above\n  6.  A pleural tumor composed of tubular and papillary structures raises\nthe differential diagnosis between epithelioid mesothelioma and\nadenocarcinoma. Which of the following immunostains would"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "e2a4e8c4-6b6f-5121-8f5e-7a070a22321f",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 903,
+        "dense_score": 0.656674,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "D.  Perivesical fat\nE.  Prostate\n  7.  Biopsies of a 2.0-cm exophytic tumor in the bladder trigone of a 57-\nyear-old man show papillary structures lined by more than 10 layers of\nepithelial cells. Nuclear atypia is moderate, mitoses are rare, and there\nare foci of necrosis. The neoplasm infiltrates "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "935d52cb-5a72-5ba7-9164-172ca5d07dbc",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 586,
+        "dense_score": 0.654818,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "QUESTION 26.21\nA.  CD31 positive\nB.  BEREP4 positive\nC.  TTF-1 positive\nD.  CK5/CK6 positive\nE.  CK7 positive\n22.  The illustrated lesion is most likely due to:"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "dc6336e7-e5a6-52f1-bd4a-03ba2a18b7d7",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 608,
+        "dense_score": 0.653891,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Synovial sarcoma\nSarcomatoid carcinoma of the lung, which may have a biphasic\nappearance\n5.  Correct choice: E\nIMMUNOHISTOCHEMISTRY FOR MM\u2014The pattern of cytokeratin\nexpression in MM is similar to that of reactive and resting mesothelial\ncells. However, both mesotheliomas and adenocarcinomas have a "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "e0aadf37-3759-50a0-a5d0-71ebe40445c9",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 366,
+        "dense_score": 0.648446,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "QUESTION 15.3\nA.  Chromogranin\nB.  GATA3\nC.  OCT4\nD.  S100\nE.  Synaptophysin\n  4.  This picture shows the histologic appearance of a nodule found in the\ncoccygeal region. Which of the following is the most likely diagnosis?"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "4ceaaa93-ed5a-5f5b-ace6-5bdb46c01f50",
+    "case_key": "diag-003",
+    "domain": "diagnostic_techniques",
+    "query": "How is HER2/neu overexpression detected by immunohistochemistry, and how is ERBB2 gene amplification confirmed by FISH in breast cancer?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "b86c3719-ae64-5298-ae02-ff0c2ea45e23"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "fd81fcab-2b53-5ae0-9af3-bdb9e7acc1cf",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 977,
+        "dense_score": 0.679662,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "HER2 negative\n\nHER2 positive\n\nCEP17\n\nHER2\n\nHER2 copy number\n\nHER2 protein\n\nFig. 23.19 Diagnosis of HER2-positive breast cancer. HER2 protein overexpression is virtually always caused by amplification of the region of chromosome 17q that contains the HER2 gene. The increase in HER2 gene copy number i"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "fc26b4ff-192e-52f3-86fb-09e72f86f0a8",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 976,
+        "dense_score": 0.67821,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "TABLE 23.4 Molecular Subtypes of Invasive Breast Cancer\n\n\n| Col 1 | Col 2 | Col 3 | Col 4 |\n| --- | --- | --- | --- |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n\n\naTNBC lacks expression of ER, progesterone receptor, and HER2.\n\nbThe"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "b430b535-5e67-50c8-864c-9d92e2bf78b2",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 975,
+        "dense_score": 0.677502,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Luminal\n\n(ER-positive, HER2-negative)\n\nLow proliferation\n\nHigh proliferation\n\nHER2\n\n(HER2-positive)\n\nHigh proliferation\n\nTriple negative breast cancer (ER-negative, HER2-negative)\n\nHigh proliferation\n\nDNA\n\n17 16\n\nmRNA\n\nER regulated genes\n\nProtein\n\nProliferation genes\n\nHER2 amplicon genes\n\nMorphology"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e985a7d3-36d1-5967-81ea-88ebc316fe22",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 253,
+        "dense_score": 0.668941,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "receptors is a predictive factor, useful in assessing the likelihood of a\nfavorable response to tamoxifen therapy. Measurement of HER2/neu gene\nexpression has been recently accepted in clinical management to select\npatients for treatment with a monoclonal antibody that targets the\nHER2/neu protein.\n"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "2666177d-7e4b-5713-86d0-4825d8f110ea",
+        "source": "robbins_review",
+        "pdf_page": 366,
+        "dense_score": 0.667548,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "12 A 54-year-old woman feels a lump in her left breast. On examination there is a firm, irregular mass in the lower outer quadrant. A mammogram shows a 2-cm density with focal microcalcifications. Excisional biopsy shows intraductal and invasive carcinoma. Immunohistochemical staining is negative fo"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "3659b409-8279-5d07-bdac-6ce33eea09bd",
+    "case_key": "diag-004",
+    "domain": "diagnostic_techniques",
+    "query": "What is the diagnostic significance of KIT (CD117) immunoreactivity in gastrointestinal stromal tumors?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "94d3d6eb-497c-5a1d-813d-888605c317f3"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "aebfbbc3-5a4e-58de-aecc-cfb70d8dcc26",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 725,
+        "dense_score": 0.754824,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "\u2022\n\ntis. Gastric neuroendocrine tumors without predisposing factors are often more aggressive.\n\nNeuroendocrine tumors that arise in the jejunum and ileum are often multiple and tend to be aggressive.\n\nNeuroendocrine tumors arising in the appendix and colorectum are typically discovered incidentally. "
+      },
+      {
+        "rank": 2,
+        "chunk_id": "94d3d6eb-497c-5a1d-813d-888605c317f3",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 701,
+        "dense_score": 0.717162,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "20.  Correct choice: C\nGASTRIC LYMPHOMAS\u2014Lymphomas account for near 10% of gastric\ncancer. Most of these are lymphomas arising from the mucosa-associated\nlymphoid tissue (MALT), referred to as extranodal marginal zone\nlymphomas or MALT lymphomas. They are characterized by the following:\n(i) tropism "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "d4bf18ec-c49e-56ed-afb7-8539569ab417",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 130,
+        "dense_score": 0.691452,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "arrangement. On high power, it appears composed of a mixture of\nlarge bizarre cells and spindle-shaped cells. The intercellular matrix\nshows focal myxoid changes. Mitotic activity is brisk. Tumor cells are\nimmunoreactive for vimentin but negative for keratin, S100 protein,\ndesmin, myoglobin, smooth "
+      },
+      {
+        "rank": 4,
+        "chunk_id": "6686e83b-4000-5297-9c7f-ea615adb7354",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 155,
+        "dense_score": 0.680621,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "other locations. The spindly cells are neoplastic myofibroblasts expressing\nSMA and vimentin. In 50% of cases, IMTs harbor a fusion of the ALK\ngene with other genes, leading to overexpression of the ALK gene product,\nwhich can be immunohistochemically detected by using antibodies such as\nALK1 or p80"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "5e9b4370-736c-5132-ba21-3360ee34aafd",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 736,
+        "dense_score": 0.674617,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "characterized by a heterogeneous population of cells arranged in a\nnesting pattern. A high-power view is shown in this picture. Which of\nthe following is the most likely diagnosis?\nQUESTION 34.28\nA.  Carcinoid tumor\nB.  Gangliocytic paraganglioma\nC.  Gastrointestinal autonomic nerve tumor (GANT)\nD. "
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "c0eaaefe-8ec1-5877-a574-a5c4073bf17f",
+    "case_key": "diag-005",
+    "domain": "diagnostic_techniques",
+    "query": "What neuroendocrine markers, including synaptophysin and chromogranin, are expressed by olfactory neuroblastoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "78e5133c-9c25-5412-9d32-e7ff67aaf8e6"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "78e5133c-9c25-5412-9d32-e7ff67aaf8e6",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 515,
+        "dense_score": 0.65507,
+        "lexical_score": 0.001613,
+        "fused_score": 0.916429,
+        "is_hit": true,
+        "content_preview": "SINONASAL ADENOCARCINOMAS\u2014Sinonasal malignant tumors\nwith a glandular structure include:\nSalivary-type adenocarcinomas: Adenoid cystic carcinoma is the\nmost frequent type in this region, followed by mucoepidermoid\ncarcinoma.\nNonsalivary adenocarcinomas, nonintestinal type:\nLow-grade \nadenocarcinoma "
+      },
+      {
+        "rank": 2,
+        "chunk_id": "e0aadf37-3759-50a0-a5d0-71ebe40445c9",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 366,
+        "dense_score": 0.703368,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "QUESTION 15.3\nA.  Chromogranin\nB.  GATA3\nC.  OCT4\nD.  S100\nE.  Synaptophysin\n  4.  This picture shows the histologic appearance of a nodule found in the\ncoccygeal region. Which of the following is the most likely diagnosis?"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "5d6a9393-2f22-515f-abfb-f69cf8ee3a92",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 309,
+        "dense_score": 0.693782,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "1.  Correct choice: E\nGENERAL NEUROENDOCRINE MARKERS\u2014Bombesin is found in\namphibian skin, but its mammalian analogue GRP is expressed by lung\nand gastrointestinal endocrine tumors. Chromogranins are associated with\ndense-core granules, but are difficult to demonstrate in cells that contain\nonly a fe"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e25ea3de-c836-5ae2-9c93-4ce1866b9f75",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 507,
+        "dense_score": 0.686013,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "A.  CD45\nB.  CD99\nC.  HMB45\nD.  NUT protein\nE.  Synaptophysin\n12.  A 65-year-old retired woodworker is found to have a tumor in the left\nethmoid sinus. A biopsy reveals a carcinoma characterized by\nglandular architecture, as shown in this picture. Which of the\nfollowing is the most likely diagnosis?"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "29e0fb3c-c801-5c1d-83ce-0eff4413a544",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 579,
+        "dense_score": 0.685559,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "A.  ACTH\nB.  Chromogranin\nC.  Neural cell adhesion molecule (NCAM)\nD.  Neuron-specific enolase (NSE)\nE.  Vimentin\n13.  Antibodies to Napsin A are useful in identifying which of the\nfollowing pulmonary cells or their neoplastic counterparts?\nA.  Clara cells\nB.  Goblet cells\nC.  Kulchitsky cells\nD.  S"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "b1240b81-85fb-5d2e-9c34-287524efd1a3",
+    "case_key": "diag-006",
+    "domain": "diagnostic_techniques",
+    "query": "How does flow cytometry immunophenotyping differentiate B-cell ALL from T-cell ALL?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "1c886c5c-91b0-5785-8646-47c67fbacc4f"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "de948f45-fc91-5783-9094-1d2d3b5de298",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 558,
+        "dense_score": 0.747101,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "### MORPHOLOGY\n\n\nIn leukemic presentations, the marrow is hypercellular and packed with lymphoblasts, which replace normal marrow elements. Mediastinal thymic masses occur in 50% to 70% of T-ALL, which is also more likely to be associ- ated with lymphadenopathy and splenomegaly than B-ALL. In both B"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "1ecbc0a4-688d-5f5a-b105-957b4696f4b4",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 556,
+        "dense_score": 0.705161,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "B-cell neoplasms\n\nBONE MARROW\n\nCLP\n\nT-cell neoplasms\n\nTHYMUS\n\nDN\n\nPrecursor B lymphoblastic lymphoma/ leukemias\n\nBLB\n\nDP\n\nSmall lymphocytic lymphoma\n\nChronic\n\nlymphocytic leukemia\n\nMultiple myeloma\n\nMantle cell lymphoma\n\nPC\n\nNBC\n\nCD4\n\nCD8\n\nMC\n\nPrecursor T lymphoblastic lymphoma/ leukemias\n\nFollicula"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "26535c44-582a-5758-b1f1-2b54026a29b6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 555,
+        "dense_score": 0.679709,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Before discussing the specific entities, some important principles relevant to lymphoid neoplasms should be emphasized.\n\n\u2022\n\nLymphoid neoplasia can be suspected based on clinical features, but histologic examination of lymph nodes or other involved tissues is required for diagnosis. Analysis of linea"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "28db371a-47d8-5306-8c42-6084b1414140",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 559,
+        "dense_score": 0.666616,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "BCR-ABL protein is usually 190 kDa in size and has stronger tyrosine kinase activity than the form of BCR-ABL that is found in chronic myeloid leukemia, in which a BCR-ABL protein of 210 kDa in size is usually seen. Treatment of t(9;22)-positive ALLs with BCR-ABL kinase inhibitors in combination wit"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "64213e40-5ec9-5d34-8031-0c588b5ba5a9",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 420,
+        "dense_score": 0.665686,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "architecture, as shown in this low-power photomicrograph (A). The\nmorphology of infiltrating lymphoid cells is demonstrated in this high-\npower picture (B). Neoplastic cells express pan-T-cell antigens, CD4,\nand CD8 but are negative for TdT (terminal deoxytransferase), CD1,\nand CD30. Which of the fo"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "a919735f-3393-5204-b236-70de02ce31e7",
+    "case_key": "diag-007",
+    "domain": "diagnostic_techniques",
+    "query": "How are S100 and SOX10 used in the immunohistochemical evaluation of melanoma and its mimics?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "b86c3719-ae64-5298-ae02-ff0c2ea45e23",
+      "6cdde24a-65a6-5b83-aff3-4ece0461dd8a"
+    ],
+    "revision": 6,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "6b500821-cc72-5f42-a12e-c871c8bb0334",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 86,
+        "dense_score": 0.717763,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "MFH. Its worrisome morphology is in stark contrast to its usually indolent\ngrowth and clinically benign behavior. It may show a locally aggressive\nbehavior but only rarely metastasizes. Its histogenesis and classification\nhave not yet been settled, but this tumor is viewed as a superficial well-\ndif"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "6cdde24a-65a6-5b83-aff3-4ece0461dd8a",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 151,
+        "dense_score": 0.704448,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "expression of vimentin and smooth muscle actin (SMA), while losing\nexpression of cytokeratin in 30% of cases. The features that should alert\nthe pathologist to the possibility of a spindle cell carcinoma are (i) tumor\ncells tend to be rather uniform; (ii) tumor cells have open nuclei with\nprominent "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "3db1c06a-d54d-5787-9718-ea2e3ab2ab4c",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 69,
+        "dense_score": 0.699753,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "QUESTION 2.25\nA.  Desmoplastic melanoma\nB.  Malignant peripheral nerve sheath tumor (MPNST)\nC.  Neurofibroma\nD.  Neurotized nevus\nE.  Schwannoma\n26.  A painful dermal tumor is removed and shows the microscopic\nfeatures in this picture. The tumor is strongly immunoreactive for\nS100, and immunostain f"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e0aadf37-3759-50a0-a5d0-71ebe40445c9",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 366,
+        "dense_score": 0.698406,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "QUESTION 15.3\nA.  Chromogranin\nB.  GATA3\nC.  OCT4\nD.  S100\nE.  Synaptophysin\n  4.  This picture shows the histologic appearance of a nodule found in the\ncoccygeal region. Which of the following is the most likely diagnosis?"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "f3b1ad05-1ac6-59ed-907f-721574388b0d",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 120,
+        "dense_score": 0.696073,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Fascicles of neoplastic cells are separated by dense fibrous bands. A\ndifferential diagnosis of desmoplastic melanoma versus malignant\nperipheral nerve sheath tumor (MPNST) is considered. Which of the\nfollowing would favor melanoma?\nA.  Absent HMB-45 immunoreactivity\nB.  Desmoplastic reaction\nC.  Di"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "6e9f4c8c-1aae-5387-9b4b-eed98afcf278",
+    "case_key": "diag-008",
+    "domain": "diagnostic_techniques",
+    "query": "What is the role of next-generation sequencing in detecting EGFR mutations and ALK rearrangements in lung adenocarcinoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "1153a8aa-b3d2-5aa5-b081-d1177b05bc8c"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "b3a7e8a4-071e-569a-843b-726a7d3a2595",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 181,
+        "dense_score": 0.684109,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "\u2022\n\n\u2022 Variant annotation and interpretation. Variants can be annotated with various pieces of information (e.g., gene name, coding change and protein effect predictions, information from databases listing commonly occurring as well as pathogenic variants, clinical infor- mation). Once reviewed by the"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "1dafc8b7-657e-5cb6-bbb3-f95b56365df0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 314,
+        "dense_score": 0.671758,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "\u2022\n\n\u2022\n\nDiagnosis of malignant neoplasms. Although molecular methods are not the primary modality of cancer diagnosis, they are of con- siderable value in selected cases. T- and B-cell tumors are derived from single cells with unique antigen receptor gene rearrange- ments, whereas reactive lymphoid pr"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "ba07719f-0619-509c-b966-40ec8ea94116",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 180,
+        "dense_score": 0.669747,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "### Next-Generation Sequencing\n\n\nNext-generation sequencing is a term used to describe several newer DNA sequencing technologies that produce very large amounts of sequence data in a massively parallel manner. These technologies have revolutionized biomedical research and molecular diagnostics. The "
+      },
+      {
+        "rank": 4,
+        "chunk_id": "defad262-d884-5788-9711-e0dfe5b68283",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 315,
+        "dense_score": 0.666532,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "$15\n\nX\n\nY\n\nC\n\nFig. 7.48 Circos plot showing genetic alterations in a single lung cancer in a male patient. Each of the 24 chromosomes in the cancer is dis- played in a circle. The positions of various tumor-specific aberrations are mapped onto these chromosomes as follows. a denotes structural rear-"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "c93243d3-d13a-5604-882e-5f679febc590",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 673,
+        "dense_score": 0.654938,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "TABLE 15.11 Local Effects of Lung Tumor Spread\n\n\n| Col 1 | Col 2 |\n| --- | --- |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n|  |  |\n\n\nSVC, Superior vena cava.\n\n(resectable) cancers but has a high incidence of false-positive (noncan- cer) f"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "c8a51b55-5c36-55ad-aebb-7bdee830ec27",
+    "case_key": "diag-009",
+    "domain": "diagnostic_techniques",
+    "query": "What is the Ki-67 proliferation index and its clinical utility in grading pancreatic neuroendocrine neoplasms?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "fab9f3be-ec34-5cf4-ac3b-d97f6abcbc86"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "fab9f3be-ec34-5cf4-ac3b-d97f6abcbc86",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1027,
+        "dense_score": 0.688676,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "### PANCREATIC NEUROENDOCRINE NEOPLASMS\n\n\nThe preferred term for tumors of the pancreatic islet cells (\"islet cell tumors\") is pancreatic neuroendocrine neoplasms or Pan- NENs. They are rare in comparison to tumors of the exocrine pancreas, accounting for 2% of pancreatic neoplasms. PanNENs can occu"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "8a408d83-6ec4-5f8c-8d74-217c678d8b0f",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 744,
+        "dense_score": 0.66618,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "staging.\nCategory IIA: \u201cExtensively studied biologically and clinically.\nPrognostic value for therapy, sufficient to be noted in pathology report.\u201d\nExamples include tumor margins and inflammatory reaction, vascular\ninvasion, perineurial invasion, status of surgical margins, and\nmicroscopic grade.\nCa"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "f03e0a32-b485-532f-8fb2-367d7b3294c0",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 766,
+        "dense_score": 0.664453,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "polycystic kidney disease. Whether diagnosed incidentally or manifesting\nwith clinical symptoms, the tumor is associated with a good prognosis.\n16.  Correct choice: C\nPANCREATIC \nNEUROENDOCRINE \nTUMORS \n(PanNETs)\u2014\nInsulinoma is the most common PanNET. Fewer than 10% of insulinomas\nare malignant tumo"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "5a103a6b-13b5-51de-90af-69a0c09464f5",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 524,
+        "dense_score": 0.663741,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "9.  Which of the following types of neuroendocrine tumors is most"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "092bd8b9-9ae7-5c60-aa13-329732895ae6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 724,
+        "dense_score": 0.661726,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "intestines the tumors may invade deeply to involve the mesentery. Neuroendo- crine tumors tend to be yellow or tan in color and are very firm because of intense desmoplasia, which may cause kinking and obstruction of the small bowel. Histologically, well-differentiated neuroendocrine tumors are com-"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "77b90234-791e-53bd-b486-d984a728a1d7",
+    "case_key": "diag-010",
+    "domain": "diagnostic_techniques",
+    "query": "What endothelial markers, including factor VIII-related antigen and CD31, are expressed by littoral cell angioma of the spleen?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "c96426fd-d93a-510f-a1cc-ad0734d592ea"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "9c23bac9-38af-5e2a-9ff4-75c8741b017b",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 448,
+        "dense_score": 0.699252,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "pancytopenia. A bone marrow aspirate does not yield any material\n(dry tap). A splenectomy is performed. The cut surface of the removed\nspleen is homogeneous without nodular lesions. On histologic\nexamination, the cords and sinuses of the red pulp appear filled with\nnumerous atypical cells, as seen i"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "979f4414-002a-53a3-bf7a-c11b5cff8da8",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 449,
+        "dense_score": 0.674225,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "D. \n\nLymphangioma \noccurring \nas \npart \nof \nsystemic\nlymphangiomatosis\nE.  Sinus-like channels with endothelium-lined papillary projections\nAnswers and Explanations\n1.  Correct choice: B\nITP\u2014Splenic disorders may be divided into those primarily affecting\nwhite pulp or red pulp (see Table 18.1 in Ste"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "c96426fd-d93a-510f-a1cc-ad0734d592ea",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 451,
+        "dense_score": 0.66918,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": true,
+        "content_preview": "sinuses replete with hematopoietic elements of all three lines\n(megakaryocytes, and myeloid and nucleated red blood cells are present),\nwhich is most characteristic of primary myelofibrosis. Progressive fibrosis\nand obliteration of functioning bone marrow lead to compensatory\nextramedullary hematopo"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "20d918c6-839d-5fbc-90a3-27b177872dd8",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 489,
+        "dense_score": 0.66578,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "lesions that can be diagnostically challenging. In general, benign and malignant vascular neoplasms can be distinguished by the following features.\n\n\u2022\n\n\u2022 Benign tumors usually contain obvious vascular channels filled with blood cells (lymphatics will be filled with lymph), lined by a mono- layer of "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "7dc3514a-a71d-58fd-b842-0bcb4f073d66",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 88,
+        "dense_score": 0.653483,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "of the skin is characterized by proliferating blood vessels with prominent\nepithelioid-like endothelial cells. The stroma contains abundant\nlymphocytes and eosinophils. It belongs to the same category as\nepithelioid hemangioendothelioma (of intermediate malignancy) and\nangiosarcoma (malignant). Baci"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "49cb5c5b-5870-5134-af8b-3b3bb096b71b",
+    "case_key": "gen-path-001",
+    "domain": "general_pathology",
+    "query": "What type of necrosis is characteristic of ischemic myocardial infarction?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "7cc1d1d1-9a9f-5682-beac-21d570f038ab"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "4a9f6df2-7a16-5c82-8018-4aef40448a66",
+        "source": "robbins_review",
+        "pdf_page": 180,
+        "dense_score": 0.704453,
+        "lexical_score": 0.000157,
+        "fused_score": 0.886912,
+        "is_hit": false,
+        "content_preview": "23 E Reperfusion of an ischemic myocardium by sponta- neous or therapeutic thrombolysis changes the morphologic features of the affected area. Reflow of blood into vasculature injured during the period of ischemia leads to mitochondrial dysfunction, followed by leakage of blood into the tissues (hem"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "c5d2191f-6d2f-58d3-8435-186fe64230aa",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1153,
+        "dense_score": 0.651257,
+        "lexical_score": 0.001006,
+        "fused_score": 0.71713,
+        "is_hit": false,
+        "content_preview": "\u2022\n\nA\n\nB\n\nFig. 28.9 (A) An ischemic infarct involves the territory of the middle cerebral artery, including the striatum, on the left side of this brain. (B) A hemorrhagic infarct with punctate hemorrhages, consistent with ischemia- reperfusion injury, is present in the temporal lobe.\n\nInflammatory p"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "6dc5df03-841e-5369-859b-a3bcc9102a6a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 54,
+        "dense_score": 0.749727,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "molecular pathway, called necroptosis (discussed later). Moreover, in some situations, cell death may show morphologic features of both apoptosis and necrosis, and apoptosis may progress to necrosis, so the distinctions may not be absolute. Nevertheless, it is useful to consider these as largely non"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "5c8c6889-b359-52c3-9d7b-539f9b2b0455",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 513,
+        "dense_score": 0.740567,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "or drugs (cocaine or ephedrine). Elevated levels of catecholamines also increase heart rate and myocardial contractility, exacerbating ischemia caused by the vasospasm. The outcome of such vasospasm can be sudden cardiac death (usually caused by a fatal arrhythmia) or-with recurrent episodes-an isch"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "b55e8199-e98b-5b43-bad0-9f910c8aeb4d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 514,
+        "dense_score": 0.737932,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "negatively charged nucleic acids. Myocyte vacuolization is a sublethal ischemic change at the margins of infarcts caused by intracellular accumula- tions of salt and water within the sarcoplasmic reticulum; such myocytes are viable but poorly contractile.\n\nNecrotic myocardium elicits acute inflammat"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "764d6126-b4f2-52de-ad87-484eae736896",
+    "case_key": "gen-path-002",
+    "domain": "general_pathology",
+    "query": "What is the role of mitochondria in the intrinsic pathway of apoptosis, including mitochondrial outer membrane permeabilization and cytochrome c release?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "fa022f3d-bc56-594f-8b64-3a4947269c2b"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "49404e96-fa49-5af1-a77d-dcd5bfbb6dae",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 59,
+        "dense_score": 0.716421,
+        "lexical_score": 0.00056,
+        "fused_score": 0.994355,
+        "is_hit": false,
+        "content_preview": "different conditions, involve different initiating molecules, and serve distinct roles in physiology and disease.\n\nMitochondrial (Intrinsic) Pathway of Apoptosis. The mitochon- drial pathway is responsible for apoptosis in most physiologic and pathologic situations. It results from increased permeab"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "fa022f3d-bc56-594f-8b64-3a4947269c2b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 31,
+        "dense_score": 0.64535,
+        "lexical_score": 0.000833,
+        "fused_score": 0.969531,
+        "is_hit": true,
+        "content_preview": "intermembrane space, which is the site of nucleotide phosphoryla- tion and is, in turn, enclosed by the outer membrane; the latter is studded with porin proteins that form voltage-dependent anion channels that are permeable to small (<5000 Da) molecules. As with other cellular membranes, larger mole"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "69375534-2459-5806-8109-2f87d772e012",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 58,
+        "dense_score": 0.710956,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "MITOCHONDRIAL (INTRINSIC) PATHWAY\n\nDEATH RECEPTOR (EXTRINSIC) PATHWAY\n\nReceptor cross-linking\n\nCytochrome c\n\nBCL2 family effectors (BAX, BAK)\n\nBH3 sensors\n\nBAX (or BAK) dimer to form channel\n\nRegulators\n\n(BCL2, BCL-XL)\n\nCytochrome c and other proapoptotic proteins\n\nAPAF-1\n\nIAP\n\n\u2022 Growth factor\n\nwith"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e5dea61e-e23e-5bbd-8d4c-7c9642f26bd0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 30,
+        "dense_score": 0.648909,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "destruction are first tagged covalently with a small protein called ubiquitin. Polyubiquitinated molecules are unfolded and funneled into the polymeric proteasome complex-a cylinder containing multiple protease activities, each with its active site pointed at the hollow core. Proteasomes digest prot"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "f58972bf-1d1f-54d3-b16d-95aafe146a1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 60,
+        "dense_score": 0.637356,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Removal of Dead Cells. The formation of apoptotic bodies breaks cells up into \"bite-sized\" fragments that are edible for phagocytes. Apoptotic cells and their fragments also undergo several changes in their membranes that actively promote their phagocytosis so they are most often cleared before they"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "28be1fd6-e3c8-5b85-9bbb-8a328157a96f",
+    "case_key": "gen-path-003",
+    "domain": "general_pathology",
+    "query": "How does liquefactive necrosis differ from coagulative necrosis in central nervous system infarction?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "6dc5df03-841e-5369-859b-a3bcc9102a6a"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "6dc5df03-841e-5369-859b-a3bcc9102a6a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 54,
+        "dense_score": 0.713512,
+        "lexical_score": 9.6e-05,
+        "fused_score": 0.989516,
+        "is_hit": true,
+        "content_preview": "molecular pathway, called necroptosis (discussed later). Moreover, in some situations, cell death may show morphologic features of both apoptosis and necrosis, and apoptosis may progress to necrosis, so the distinctions may not be absolute. Nevertheless, it is useful to consider these as largely non"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "c5d2191f-6d2f-58d3-8435-186fe64230aa",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1153,
+        "dense_score": 0.718314,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "\u2022\n\nA\n\nB\n\nFig. 28.9 (A) An ischemic infarct involves the territory of the middle cerebral artery, including the striatum, on the left side of this brain. (B) A hemorrhagic infarct with punctate hemorrhages, consistent with ischemia- reperfusion injury, is present in the temporal lobe.\n\nInflammatory p"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "e700fbee-ee64-53f3-96c6-8dcdfb376f5b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 56,
+        "dense_score": 0.710509,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nN\n\nFig. 2.10 Coagulative necrosis. (A) A wedge-shaped kidney infarct (yellow). (B) Microscopic view of the edge of the infarct, with healthy kidney (N) and necrotic cells in the infarct (1) showing preserved cellular outlines with loss of nuclei and an inflammatory infiltrate (seen as nuclei o"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "c15d3a88-6331-5920-a7b4-d2befdf8c424",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1154,
+        "dense_score": 0.703008,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Fig. 28.10 Old cystic infarct showing cavitation from loss of brain parenchyma.\n\n\n### Clinical Features\n\n\nDeficits produced by infarction are determined by the anatomic distri- bution of the damage rather than the underlying cause. Neurologic symptoms referable to the area of injury often develop ra"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "65074a96-dfd7-5341-aa18-d5513c998296",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 55,
+        "dense_score": 0.695907,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "the lower leg, that has lost its blood supply and has undergone necrosis (typi- cally coagulative necrosis) involving multiple tissue planes. When bacterial infection is superimposed, there is increased liquefactive necrosis because of the actions of degradative enzymes in the bacteria and the attra"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "f85b4028-5635-563f-a7ea-9c6416503744",
+    "case_key": "gen-path-004",
+    "domain": "general_pathology",
+    "query": "What is the mechanism of dystrophic calcification versus metastatic calcification?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "b7c603d9-668f-5b67-a0f5-56cea8580f1a"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "b7c603d9-668f-5b67-a0f5-56cea8580f1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 76,
+        "dense_score": 0.735092,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "Although dystrophic calcification may simply be a telltale sign of previous cell injury, it is often a cause of organ dysfunction. Such is the case in calcific valvular disease and atherosclerosis, as will become clear in further discussion of these diseases (Chapters 11 and 12). Serum calcium is no"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "f78c957f-a060-57d3-b4c0-4a44a8cb9a77",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 75,
+        "dense_score": 0.70631,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "B\n\nFig. 2.33 Lipofuscin granules in cardiac myocytes. (A) Light microscopy (deposits indicated by arrow) and (B) electron microscopy (note the perinuclear, intralysosomal location).\n\nHemosiderin, a hemoglobin-derived, golden yellow-to-brown, granular or crystalline pigment is one of the major storag"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "311d741c-53a4-5696-a239-ca43c2971656",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1088,
+        "dense_score": 0.702448,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "### Clinical Features\n\n\nThe clinical manifestations of osteoporosis depend on which bones are involved. Vertebral fractures in the thoracic and lumbar regions are painful and when multiple can cause significant loss of height and de- formities such as lumbar lordosis and kyphoscoliosis. Fractures of"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "8f511fae-2343-5325-bab7-3bd390781d72",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1012,
+        "dense_score": 0.701529,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "\u2022\n\nmanifestations and associated pathologic changes, particularly those referable to bone and renal disease, such as brown tumors, osteitis fibrosa cystica, and urinary stones, are now seen infre- quently in clinical practice. Among other causes of hypercalce- mia (Table 24.5), malignancy stands out"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "b9b5d8c2-a589-5615-959f-8b7f46a62eb2",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1089,
+        "dense_score": 0.69484,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "### Clinical Features\n\n\nAs bone mass decreases, affected patients are increasingly suscepti- ble to fractures, bone deformation, and joint problems. Osteitis fi- brosa cystica is now uncommon because hyperparathyroidism is usually diagnosed on routine blood tests and treated at an early stage. In sy"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "11e74a21-51e2-58d6-9afb-91d2c4a594a8",
+    "case_key": "gen-path-005",
+    "domain": "general_pathology",
+    "query": "How are amyloid deposits identified histologically using Congo red stain and polarized light microscopy?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "061062c5-3243-5553-a6ed-a4802d654114"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "37a3d85b-2e10-5c0f-92c2-ac4d07471c5d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 249,
+        "dense_score": 0.735593,
+        "lexical_score": 0.001752,
+        "fused_score": 0.989516,
+        "is_hit": false,
+        "content_preview": "### Other Types of Amyloidosis\n\n\nHeredofamial Amyloidosis. A variety of familial forms of amyloidosis have been described. Most of them are rare and occur in limited geo- graphic areas. The most common and best studied is an autosomal re- cessive condition called familial Mediterranean fever (FMF). "
+      },
+      {
+        "rank": 2,
+        "chunk_id": "c51c8fb9-1045-5a32-9277-5f89ab6e7cc6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 250,
+        "dense_score": 0.737453,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nC\n\nFig. 6.46 Amyloidosis. (A) A section of the liver stained with Congo red reveals pink-red deposits of amyloid in the walls of blood vessels and along sinusoids. (B) Note the yellow-green birefringence of the deposits when observed by polarizing microscope. (C) Amyloidosis of the kidney. The"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "95783f54-0312-5dd5-8bc4-70e51e8c52fb",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 246,
+        "dense_score": 0.726188,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "\u2022 Clinical features. Full-blown AIDS manifests with several complications, mostly resulting from immune deficiency\n\n\u2022 Opportunistic infections\n\n\u2022 Tumors, especially tumors caused by oncogenic viruses\n\n\u2022 Neurologic complications of unknown pathogenesis\n\n\u2022 Antiretroviral therapy has greatly decreased "
+      },
+      {
+        "rank": 4,
+        "chunk_id": "57610768-330d-54b3-b457-ab13009cebcb",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 247,
+        "dense_score": 0.702694,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "other biochemically distinct proteins can also deposit as amyloid in a variety of clinical settings. In these other forms of amyloid, the proteins most often involved are:\n\n\u2022\n\n\u2022 B-amyloid (AB) protein constitutes the core of cerebral plaques found in Alzheimer disease as well as the amyloid deposite"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "66d6cce0-e321-5389-b59f-eee0f04baea9",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 248,
+        "dense_score": 0.698675,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "TABLE 6.17 Classification of Amyloidosis\n\n\n| Col 1 | Col 2 | Col 3 | Col 4 |\n| --- | --- | --- | --- |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n|  |  |  |  |\n\n\naddition to the synthesis of whole Ig mol"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "783d7638-6b35-5c09-905a-7596fb4cc648",
+    "case_key": "gen-path-006",
+    "domain": "general_pathology",
+    "query": "How does the intrinsic apoptosis pathway lead to caspase-9 and executioner caspase activation via cytochrome c and APAF-1?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "f0f2b014-6062-548c-b3da-2dded465589b"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "69375534-2459-5806-8109-2f87d772e012",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 58,
+        "dense_score": 0.710399,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "MITOCHONDRIAL (INTRINSIC) PATHWAY\n\nDEATH RECEPTOR (EXTRINSIC) PATHWAY\n\nReceptor cross-linking\n\nCytochrome c\n\nBCL2 family effectors (BAX, BAK)\n\nBH3 sensors\n\nBAX (or BAK) dimer to form channel\n\nRegulators\n\n(BCL2, BCL-XL)\n\nCytochrome c and other proapoptotic proteins\n\nAPAF-1\n\nIAP\n\n\u2022 Growth factor\n\nwith"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "49404e96-fa49-5af1-a77d-dcd5bfbb6dae",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 59,
+        "dense_score": 0.702911,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "different conditions, involve different initiating molecules, and serve distinct roles in physiology and disease.\n\nMitochondrial (Intrinsic) Pathway of Apoptosis. The mitochon- drial pathway is responsible for apoptosis in most physiologic and pathologic situations. It results from increased permeab"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "f58972bf-1d1f-54d3-b16d-95aafe146a1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 60,
+        "dense_score": 0.622059,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Removal of Dead Cells. The formation of apoptotic bodies breaks cells up into \"bite-sized\" fragments that are edible for phagocytes. Apoptotic cells and their fragments also undergo several changes in their membranes that actively promote their phagocytosis so they are most often cleared before they"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "b0e9caa1-f63a-5b53-b02c-c7aa80efb6b6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 61,
+        "dense_score": 0.619933,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "steatohepatitis, acute pancreatitis, ischemia-reperfusion injury, and neurodegenerative diseases such as Parkinson disease. Necroptosis also acts as a backup mechanism in host defense against certain viruses that encode caspase inhibitors (e.g., cytomegalovirus).\n\n\n### Pyroptosis\n\n\nPyroptosis (\"fier"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "942a67d7-4edf-59eb-8a40-d45bf31adedd",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 57,
+        "dense_score": 0.618343,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "\u2022\n\nIf repair mechanisms cannot correct the damage, the cell trig- gers intrinsic mechanisms that induce apoptosis. In these situ- ations, apoptosis has a protective effect by preventing the survival of cells with DNA mutations that can lead to malignant transformation.\n\nAccumulation of misfolded pro"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "b7ce7303-e3ba-568f-810c-c1899b00a109",
+    "case_key": "gen-path-007",
+    "domain": "general_pathology",
+    "query": "What cytokine and chemical mediators are released during acute inflammation to recruit and activate leukocytes?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "054bd431-0805-55b8-8371-28316e68b7da"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "054bd431-0805-55b8-8371-28316e68b7da",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 96,
+        "dense_score": 0.768516,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "grouped under cytokines. The general properties and functions of cy- tokines are discussed in Chapter 6. The cytokines involved in acute inflammation are discussed here (Table 3.7).\n\nTumor Necrosis Factor and Interleukin-1. TNF and IL-1 serve critical roles in leukocyte recruitment by promoting adhe"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "f67d5787-b13b-5e0a-b37a-43574f1b85c2",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 92,
+        "dense_score": 0.741495,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "### Leukocyte-Mediated Tissue Injury\n\n\n\n### Leukocytes are important causes of injury to normal cells and tissues under several circumstances.\n\n\n\u2022 As part of a normal defense reaction against pathogenic microbes, when adjacent tissues suffer collateral damage. In some infections that are difficult t"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "0d0a89a8-86a1-547d-96db-861d209ea582",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 93,
+        "dense_score": 0.738763,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "\u2022\n\nTABLE 3.5 Principal Mediators of Inflammation\n\n\n| Col 1 | Col 2 | Col 3 |\n| --- | --- | --- |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\n\nIL, Interleukin; TNF, tumor necrosis factor.\n\nbut we still do not know how other stimuli induce the secretion of mediators ("
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e59e08a5-51a8-5082-8433-faa34632b17c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 85,
+        "dense_score": 0.738078,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "### Responses of Lymphatic Vessels and Lymph Nodes\n\n\nIn addition to blood vessels, lymphatic vessels also participate in acute inflammation. The system of lymphatics and lymph nodes filters the extravascular fluids and clears microbes and other foreign substances. Lymphatics drain the small amount o"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "52aec2ec-b312-545a-aad3-1d17590a89db",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 95,
+        "dense_score": 0.737479,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "bradykinin. It is involved in cytokine-induced fever during infec- tions (described later).\n\nLeukotrienes. Leukotrienes are produced in leukocytes and mast cells by the action of lipoxygenase and are involved in vascular and smooth muscle reactions and leukocyte recruitment. There are three differen"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "bf5d5796-e4f3-5453-ad34-8d0a43c7fc06",
+    "case_key": "gen-path-008",
+    "domain": "general_pathology",
+    "query": "What are the histologic hallmarks of chronic granulomatous inflammation and multinucleated giant cells?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "fd6e2ad8-c34b-58e0-88c5-883db5f3dc7c"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "fd6e2ad8-c34b-58e0-88c5-883db5f3dc7c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 106,
+        "dense_score": 0.767724,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "immune response usually produces granulomas when the inciting agent is a persistent microbe or other chronic stimulus that acti- vates T cells. In such responses, Th1 cells produce cytokines such as IFN-y, which activates macrophages (see Fig. 3.20). In some para- sitic infections, such as schistoso"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "d29cde0d-3357-56dc-bd30-3975d0827f52",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 107,
+        "dense_score": 0.717491,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "TABLE 3.9 Examples of Diseases With Granulomatous Inflammation\n\n\n| Col 1 | Col 2 | Col 3 |\n| --- | --- | --- |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\n\n(see Table 3.9); however, there are so many atypical presentations that it is always necessary to identify the"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "e54fb22b-2b54-53dc-b419-a371dab18bc8",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 328,
+        "dense_score": 0.703741,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "tiny microabscesses formed in multiple organs during bacterial sepsis secondary to a colonized heart valve, to diffuse involvement of entire lobes of the lung in pneumonia. How destructive the lesions are de- pends on their location and the organism involved. For example, S. pneumoniae usually spare"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "a4865805-7f57-5999-9944-61cb2e3020d1",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 651,
+        "dense_score": 0.699374,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "\u2022\n\n\u2022\n\nIncreased levels of several cytokines in the local environment (IL-8, TNF, macrophage inflammatory protein 1a) that favor recruitment of additional T cells and monocytes and contribute to the forma- tion of granulomas. TNF is released in particularly large amounts by activated alveolar macroph"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "7c15b3b3-c297-59fe-808c-ce51e40de8ca",
+        "source": "robbins_review",
+        "pdf_page": 27,
+        "dense_score": 0.696232,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "29 A 65-year-old man develops worsening congestive heart failure 2 weeks after an acute myocardial infarction. An echo- cardiogram shows a markedly decreased ejection fraction. Now, capillaries, fibroblasts, collagen, and inflammatory cells have largely replaced the infarcted myocardium. Which of th"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "93eb3514-d2f5-56dc-a6d7-48ca4417b565",
+    "case_key": "gen-path-009",
+    "domain": "general_pathology",
+    "query": "What is metaplasia and how does it arise as a cellular adaptation?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "18d1a945-5895-51f5-bb85-1768f8eeac07"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "6f0f7c59-7cc7-51ce-add6-793572683db9",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 71,
+        "dense_score": 0.773643,
+        "lexical_score": 0.00021,
+        "fused_score": 0.994355,
+        "is_hit": false,
+        "content_preview": "The fundamental cellular changes associated with atrophy are simi- lar in all these settings. The initial response is a decrease in cell size and organelles, which may reduce the metabolic needs of the cell suffi- ciently to permit its survival. In atrophic muscle, the cells contain fewer mitochondr"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "d30798d4-4a0d-5afb-a4c4-9b1dd93b198b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 257,
+        "dense_score": 0.697519,
+        "lexical_score": 0.000129,
+        "fused_score": 0.962959,
+        "is_hit": false,
+        "content_preview": "proteins that are not produced by their normal adult counterparts, while others express proteins that are normally found only in other types of cells. For example, bronchogenic carcinomas may produce corticotro- pin, parathyroid-like hormone, insulin, glucagon, and other hormones, giving rise to par"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "48a63347-ae96-575c-9ee6-3401e51854d5",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 79,
+        "dense_score": 0.668579,
+        "lexical_score": 0.00121,
+        "fused_score": 0.916429,
+        "is_hit": false,
+        "content_preview": "The various forms of cellular derangements and adaptations de- scribed in this chapter cover a wide spectrum, which includes adapta- tions in cell size, growth, and function; reversible and irreversible forms of acute cell injury; regulated cell death (e.g., in apoptosis); pathologic alterations in "
+      },
+      {
+        "rank": 4,
+        "chunk_id": "ddb54232-8aa6-54f8-95ca-504558e3a40c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 46,
+        "dense_score": 0.678283,
+        "lexical_score": 0.000149,
+        "fused_score": 0.913527,
+        "is_hit": false,
+        "content_preview": "The four aspects of a disease process that form the core of pa- thology are causation (etiology), biochemical and molecular mecha- nisms (pathogenesis), the associated structural (morphologic changes) and functional alterations in cells and organs, and the re- sulting clinical consequences (clinical"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "2a1f54c2-c691-5d53-acf5-683606e94c9b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 70,
+        "dense_score": 0.700795,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "to cancer. Thus, although hyperplasia is distinct from cancer, patho- logic hyperplasia constitutes a fertile soil in which cancerous prolifera- tions may eventually arise. For instance, patients with hyperplasia of the endometrium are at increased risk for developing endometrial cancer (Chapter 22)"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "966f5563-7c12-5c14-b8e8-4716484008bb",
+    "case_key": "gen-path-010",
+    "domain": "general_pathology",
+    "query": "How does free radical generation and reactive oxygen species contribute to reperfusion injury?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "3cc3b4cd-f154-5832-9c8d-782aed96289e"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "4a548f12-c922-59ef-8c24-6eaf26d20534",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 64,
+        "dense_score": 0.732744,
+        "lexical_score": 0.000442,
+        "fused_score": 0.989516,
+        "is_hit": false,
+        "content_preview": "spontaneously as a part of aging, due largely to deamination of cytosine residues to uracil residues. DNA damage activates p53, which arrests cells in the G1 phase of the cell cycle and activates DNA repair mecha- nisms. If these mechanisms fail to correct the DNA damage, p53 triggers apoptosis by t"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "e8fe07e7-fff0-5379-b8b8-5a9a89383014",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 63,
+        "dense_score": 0.690097,
+        "lexical_score": 0.000269,
+        "fused_score": 0.954355,
+        "is_hit": false,
+        "content_preview": "O_{2} supply Toxins Radiation\n\n\u2714 Survival signals DNA, protein damage\n\nMitochondrial damage or dysfunction\n\nMPTP\n\nInjury 02\n\n\u2191 Cytosolic Ca2+\n\n\u2191 Pro-apototic proteins Anti-apoptotic proteins\n\nROSATP\n\nPhospholipase activation\n\nProtease activation\n\nLysosome\n\nLipid \u2193Phospholipid peroxidation synthesis\n"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "66292be5-b1f4-5c20-a52d-056dc5a0f6db",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 65,
+        "dense_score": 0.737323,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "Radiation Toxins Reperfusion\n\nProduction of ROS\n\nPathologic effects\n\nLipid peroxidation\n\nSOD\n\nH2O2 Hydrogen peroxide\n\nHO Hydroxyl radical\n\nProtein modification\n\nBreakdown Misfolding\n\nSuperoxide\n\nDNA damage\n\nCatalase\n\nGlutathione peroxidase\n\nH_{2}O\n\nRemoval of free radicals\n\nCYTOPLASM\n\nMutations, Str"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "4184e88c-d1d8-5544-9aed-46790677a007",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 67,
+        "dense_score": 0.710453,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Na^{+}\n\nCell\n\nArterial occlusion\n\nIschemia\n\n\u2193\n\nMitochondrion\n\nNa^{+}/K^{+} ATPase\n\nK^{+}\n\n\u2022\n\nPump failure causes influx\n\nH_{2}O\n\nof water\n\nswelling Membrane blebs\n\nER swelling\n\nOxidative phosphorylation \u2193\n\nATP\n\nDetachment\n\nof ribosomes \u2193\n\n\u2193 Protein\n\nsynthesis\n\n\u2191 Anaerobic glycolysis \u2193\n\n\u2191 Lactic acid"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "c0b0e410-27a8-59c8-a4e0-296fb300f694",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 515,
+        "dense_score": 0.703873,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "The following discussion considers the changes that result from interventions that can limit infarct size by salvaging myocardium that is not yet necrotic.\n\nInfarct Modification by Reperfusion. The therapeutic goal in acute MI is to salvage the maximal amount of ischemic myocardium; this is accompli"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "40a51714-95e1-5b91-bf1a-2f60b220dcc5",
+    "case_key": "hem-001",
+    "domain": "hematopathology",
+    "query": "What are the diagnostic cytologic features of Reed-Sternberg cells in classic Hodgkin lymphoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "6e7a234d-d6a1-573e-9a10-5567522450f6"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "eea9f9ad-cb45-59bf-88fa-6e15cede30e4",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 573,
+        "dense_score": 0.770674,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "results from widespread epigenetic changes. In addition, in a subset of classic Hodgkin lymphoma, the tumor cells are infected with EBV.\n\nActivation of the transcription factor NF-KB is a common event in classic Hodgkin lymphoma and turns on genes that promote the growth and survival of Reed-Sternbe"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "d0962cf2-6b15-5e29-8734-770628e49cff",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 574,
+        "dense_score": 0.757132,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nC\n\nD\n\nFig. 13.25 Reed-Sternberg cells and variants. (A) Diagnostic Reed-Sternberg cell, with two nuclear lobes, large inclusion-like nucleoli, and abundant cytoplasm, surrounded by lymphocytes, macrophages, and an eosinophil. (B) Reed-Sternberg cell, mononuclear variant. (C) Reed-Sternberg cel"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "35aec007-afea-5c7d-8b1c-e32cf3c4f1e9",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 575,
+        "dense_score": 0.724815,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Fig. 13.26 Hodgkin lymphoma, nodular sclerosis subtype. Low-power view shows well-defined bands of pink, acellular collagen that subdivide the tumor into nodules. (Courtesy Dr. Robert W. McKenna, Department of Pathology, University of Texas Southwestern Medical School, Dallas.)\n\nFig. 13.28 Hodgkin l"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "cafa4b18-285c-5f8a-a562-6287f69e8e83",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 407,
+        "dense_score": 0.718834,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "QUESTION 17.14\nA.  Broad bands of birefringent collagen result in a nodular pattern.\nB.  Classic Reed-Sternberg (RS) cells are rare.\nC.  Lacunar cells are abundant.\nD.  RS cells are easily found within an infiltrate of lymphocytes,\nhistiocytes, plasma cells, and eosinophils.\nE.  RS cells are immunor"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "36c9fe89-1d1b-5188-8d4f-eed118e16f04",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 406,
+        "dense_score": 0.709445,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "QUESTION 17.13\nA.  Lymphocyte-depleted HL\nB.  Lymphocyte-rich classic HL\nC.  Nodular lymphocyte-predominant HL\nD.  Mixed cellularity HL\nE.  Nodular sclerosis HL\n14.  A lymph node biopsy reveals the cell population shown in this picture,\nincluding many classic RS cells. In this case, a diagnosis of m"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "7f620fe6-6e9d-5fee-8601-4a2bfff509b4",
+    "case_key": "hem-002",
+    "domain": "hematopathology",
+    "query": "What is the characteristic t(8;14) translocation and starry sky microscopic appearance of Burkitt lymphoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "48bbe72d-5317-54d5-8623-60ca953cb53b"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "48bbe72d-5317-54d5-8623-60ca953cb53b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 563,
+        "dense_score": 0.741643,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "2 cm 3\n\n0 4 Fig. 13.14 Diffuse large B-cell lymphoma involving the spleen. The isolated large mass is typical. In contrast, indolent B-cell lymphomas usually produce multifocal expansion of white pulp (see Fig. 13.11). (Courtesy Dr. Mark Fleming, Department of Pathology, Children's Hospital, Boston."
+      },
+      {
+        "rank": 2,
+        "chunk_id": "f3718547-3393-5a16-b535-f1b3b7a96fe9",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 436,
+        "dense_score": 0.696972,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "24  : I\n25  : E\n26  : C\n27  : D\n28  : H\n29  : A\n30  : F\n31  : G\n32  : B\nSUBTYPES OF DIFFUSE LARGE B-CELL LYMPHOMA\u2014The 2008\nWHO classification has defined several subtypes of DLBCL. The concise\ndescriptions given in questions 24 to 32 emphasize the salient features of\nthose entities. Besides the abov"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "8d1941dd-0223-5eb9-846e-dbd2c9a8ceaf",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 414,
+        "dense_score": 0.678295,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "A.  t(8;14)\nB.  t(11;14)\nC.  t(14;18)\nD.  Trisomy 12\nE.  Trisomy 18\n21.  Which of the following methods is used for grading follicular\nlymphomas?\nA.  Assessing degree of dysplasia of centrocytes\nB.  Counting centroblasts in 10 high-power fields\nC.  Counting centrocytes in 10 high-power fields\nD.  Es"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "873ce0cd-cf01-5abc-ba06-87211b81073b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 564,
+        "dense_score": 0.676493,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "### Clinical Features\n\n\nBoth endemic and sporadic Burkitt lymphomas are found mainly in children or young adults; overall, Burkitt lymphoma accounts for about 30% of childhood NHLs in the United States. Most tumors manifest at extranodal sites. Endemic Burkitt lymphoma often pre- sents as a mass inv"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "097866c0-f336-535d-a941-ae0bd6083c87",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 299,
+        "dense_score": 0.676484,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Historically, chromosomal changes in cancer were identified through karyotyping, the morphologic identification of metaphase chromosomes prepared from clinical specimens. Today, however, can- cer cell karyotypes are being reconstructed in research laboratories from deep sequencing of cancer cell gen"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "21935f95-1ba2-5738-ba69-589bed3a1af1",
+    "case_key": "hem-003",
+    "domain": "hematopathology",
+    "query": "What blast percentage threshold is used to diagnose acute myeloid leukemia in blood or bone marrow?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "feca01a2-8a9b-5f48-8488-b4c4ea91a9b0"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "13d32e3a-d4c6-5355-a2dd-7a13ce40cd58",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 386,
+        "dense_score": 0.646592,
+        "lexical_score": 0.508282,
+        "fused_score": 0.900022,
+        "is_hit": false,
+        "content_preview": "etoposide) are the most common agents to cause leukemias, on average 5\nand 3 years after treatment, respectively.\n9.  Correct choice: D\nMYELODYSPLASTIC SYNDROMES (MDS)\u2014These are heterogeneous\nbone marrow conditions that share the following features:\nUsually manifest with blood cytopenia in patients "
+      },
+      {
+        "rank": 2,
+        "chunk_id": "32e04e58-d4a6-5630-9f0f-0e144342a762",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 375,
+        "dense_score": 0.677143,
+        "lexical_score": 0.315111,
+        "fused_score": 0.898514,
+        "is_hit": false,
+        "content_preview": "A.  Cytochemistry\nB.  Cytogenetics\nC.  Immunophenotyping\nD.  Molecular analysis\nE.  Morphology\n  8.  Which of the following are the chemotherapeutic compounds that\nmost frequently cause acute leukemias?\nA.  Alkylating agents and topoisomerase II inhibitors\nB.  Anthracyclines like daunorubicin\nC.  An"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "8b16315f-b579-59c2-bb59-d601ddd36039",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 387,
+        "dense_score": 0.633128,
+        "lexical_score": 0.855112,
+        "fused_score": 0.885811,
+        "is_hit": false,
+        "content_preview": "12.  Correct choice: E\nPRIMARY \nMYELOFIBROSIS \n(PM)\u2014PM \nis \ncharacterized \nby\nprogressive fibrosis and obliteration of functioning marrow, with\nsecondary development of extramedullary hematopoiesis in spleen and\nliver. (i) In the initial hypercellular (prefibrotic) phase, the marrow is\nhypercellular"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "b148e1c7-65d4-5a7d-8066-7b6a6f2db929",
+        "source": "robbins_review",
+        "pdf_page": 194,
+        "dense_score": 0.671754,
+        "lexical_score": 0.301701,
+        "fused_score": 0.854924,
+        "is_hit": false,
+        "content_preview": "43 A 38-year-old man experiences sudden onset of a severe headache. Physical examination shows no localizing neuro- logic signs and no organomegaly. A stool sample is positive for occult blood. Areas of purpura appear on the skin of his extremities. Laboratory studies show hemoglobin of 9.6~g/dL hem"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "feca01a2-8a9b-5f48-8488-b4c4ea91a9b0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 579,
+        "dense_score": 0.717846,
+        "lexical_score": 0.201515,
+        "fused_score": 0.851415,
+        "is_hit": true,
+        "content_preview": "\u2022\n\n\u2022\n\n\u2022\n\ninterferes with the terminal differentiation of granulocytes, an effect that can be overcome by targeting of the fusion protein with all-trans-retinoic acid and arsenic trioxide.\n\nMutation of signaling proteins that result in constitutive activation of progrowth/survival pathways. For examp"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "e5ce2823-4ec7-5032-8aa0-f40287b1243d",
+    "case_key": "hem-004",
+    "domain": "hematopathology",
+    "query": "What is the genetic hallmark t(14;18) involving BCL2 translocation in follicular lymphoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "256c510c-591d-57cc-b0e3-f543e17c9d17"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "737eab90-acde-5a1f-9e7a-1c4e401cceaf",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 561,
+        "dense_score": 0.69635,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "### MORPHOLOGY\n\n\nIn most cases, a nodular or nodular and diffuse growth pattern is observed in involved lymph nodes (Fig. 13.10A). Two principal cell types are present in vary- ing proportions: (1) small cells with irregular or cleaved nuclear contours and scant cytoplasm, referred to as centrocytes"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "8d1941dd-0223-5eb9-846e-dbd2c9a8ceaf",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 414,
+        "dense_score": 0.682291,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "A.  t(8;14)\nB.  t(11;14)\nC.  t(14;18)\nD.  Trisomy 12\nE.  Trisomy 18\n21.  Which of the following methods is used for grading follicular\nlymphomas?\nA.  Assessing degree of dysplasia of centrocytes\nB.  Counting centroblasts in 10 high-power fields\nC.  Counting centrocytes in 10 high-power fields\nD.  Es"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "256c510c-591d-57cc-b0e3-f543e17c9d17",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 560,
+        "dense_score": 0.666326,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": true,
+        "content_preview": "Fig. 13.8 Chronic lymphocytic leukemia. This peripheral blood smear is flooded with small lymphocytes with condensed chromatin and scant cytoplasm. A characteristic finding is the presence of disrupted tumor cells (smudge cells, arrows), two of which are present in this smear. A coexistent autoimmun"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "bb9c0ba3-2d8e-5796-a4c9-26e6ea6d473a",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 410,
+        "dense_score": 0.661164,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "E.  Translocation t(14;18) resulting in BCL-2 overexpression\n18.  A 65-year-old woman is found to have enlargement of multiple lymph\nnodes. Involvement of the spleen and liver is also documented. A\nlymph node biopsy reveals complete architectural effacement by a\nmixed population of lymphocytes, plas"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "097866c0-f336-535d-a941-ae0bd6083c87",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 299,
+        "dense_score": 0.656029,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Historically, chromosomal changes in cancer were identified through karyotyping, the morphologic identification of metaphase chromosomes prepared from clinical specimens. Today, however, can- cer cell karyotypes are being reconstructed in research laboratories from deep sequencing of cancer cell gen"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "85b41acb-a031-57fe-a8a0-8f1123d1dbcf",
+    "case_key": "hem-005",
+    "domain": "hematopathology",
+    "query": "How is multiple myeloma diagnosed by the clonal proliferation of plasma cells and its association with osteolytic bone lesions?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "5049a144-ef93-5126-a77b-5e6e7b61ae32"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "c84468e1-0dae-5846-b390-15815fa5cdbd",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 569,
+        "dense_score": 0.750667,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "paraproteinemia. These abnormal proteins are associated with the following clinicopathologic entities:\n\n\u2022\n\n\u2022\n\n\u2022\n\n\u2022\n\nMultiple myeloma (plasma cell myeloma), the most important plasma cell neoplasm, usually presents as tumor masses scattered throughout the skeletal system. Solitary plasmacytoma is an "
+      },
+      {
+        "rank": 2,
+        "chunk_id": "5049a144-ef93-5126-a77b-5e6e7b61ae32",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 571,
+        "dense_score": 0.74774,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "The clinicopathologic diagnosis of multiple myeloma relies on identification of clonal plasma cells in the marrow and the presence of CRAB criteria (hypercalcemia, renal dysfunction, anemia, and bone lesions). It can be strongly suspected when the distinctive radiographic changes are present, but de"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "ff0e326d-b9b2-53b7-9fdd-8f56b343308d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 570,
+        "dense_score": 0.730612,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Normal serum\n\nSP G AMK\n\n\u03bb\n\n+\n\nFig. 13.21 Multiple myeloma of the skull (radiograph, lateral view). The sharply punched-out bone lesions are most obvious in the calvaria.\n\nPatient serum SP\n\nG\n\n\u03bb\n\n100000\n\n+\n\nFig. 13.23 M protein detection in multiple myeloma. Serum protein electrophoresis (SP) is used"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "3246e87e-52b7-567a-abf6-9d95a1f6ed1f",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 389,
+        "dense_score": 0.710049,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "peripheral smear abnormalities; unknown pathogenesis\nANSWER 16.16\n17.  Correct choice: C\nMULTIPLE MYELOMA (MM)\u2014The diagnosis of MM relies on serum\nand urine protein electrophoresis and immunofixation, serum and urine\nprotein quantification, serum free light chain analysis, radiographic\nskeletal stud"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "584863c7-5023-51ca-bee2-5bcfa8ee8cae",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 381,
+        "dense_score": 0.695158,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "following is the most likely diagnosis?\nQUESTION 16.17\nA.  Immunoblastic lymphoma\nB.  Monoclonal gammopathy of undetermined significance (MGUS)\nC.  Multiple myeloma\nD.  Plasmacytoma\nE.  Reactive plasmacytosis\n18. \n\nA \npatient \nwith \nmonoclonal \ngammopathy, \norganomegaly,\npolyneuropathy, and multiple"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "3ab6b95c-1e07-5f77-a67b-32e6dd3b4d08",
+    "case_key": "hem-006",
+    "domain": "hematopathology",
+    "query": "What is the pathogenesis of immune thrombocytopenic purpura and anti-platelet glycoprotein antibodies?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "a9d85955-0537-51c6-8be5-20200a30a94e"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "a9d85955-0537-51c6-8be5-20200a30a94e",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 620,
+        "dense_score": 0.745719,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "### Chronic Immune Thrombocytopenic Purpura\n\n\nChronic immune thrombocytopenic purpura (ITP) is caused by autoantibody-mediated destruction of platelets. It can occur in the setting of a variety of predisposing conditions and exposures (second- ary) or in the absence of any known risk factors (primar"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "b498e59c-6de2-5021-8e49-ced1ca7461e8",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 621,
+        "dense_score": 0.701185,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "alternative nonheparin anticoagulant may lead to clot formation within large arteries, vascular insufficiency, and limb loss, as well as deep venous thrombosis with the attendant risk of pulmonary thromboembolism. The risk of type II HIT is lowered but not eliminated by use of low-molecular-weight h"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "d56f7861-b1bb-57b0-b342-b5fd996d936d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 619,
+        "dense_score": 0.6771,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "The clinical conditions in which vessel wall abnormalities cause bleeding include:\n\n\u2022\n\n\u2022\n\nInfections often induce petechial and purpuric hemorrhages, particu- larly meningococcemia, other forms of septicemia, infective endo- carditis, and several of the rickettsioses. The involved mechanisms include"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "9e3dae65-f247-59b5-b91b-edca61b3adae",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 626,
+        "dense_score": 0.676001,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "The prognosis is highly variable and largely depends on the underlying disorder. The only definitive treatment is to remove or treat the inciting cause. Management requires meticulous maneuvering between the Scylla of thrombosis and the Charybdis of bleeding diathesis. Administration of anticoagulan"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "b84e36dc-85c0-56ec-80fd-d89bd701b21e",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 120,
+        "dense_score": 0.670952,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Endothelium\n\nA. VASOCONSTRICTION\n\nBasement membrane Arteriolar smooth muscle\n\nSite of injury\n\nFig. 4.4 Normal hemostasis. (A) After vascular injury, neurohumoral factors induce transient vasoconstriction. (B) Platelets bind via glycopro- tein lb (Gplb) receptors to von Willebrand factor (vWF) on exp"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "1efd921e-2713-558e-a5f6-67692adfd56d",
+    "case_key": "hem-007",
+    "domain": "hematopathology",
+    "query": "What are the peripheral blood smear findings in microangiopathic hemolytic anemia, including schistocytes?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "1aeeda33-78c3-5c7f-9044-7689ecbdaca7"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "36acac8c-0336-5e35-b308-6506dae905cc",
+        "source": "robbins_review",
+        "pdf_page": 216,
+        "dense_score": 0.675883,
+        "lexical_score": 0.000667,
+        "fused_score": 0.924638,
+        "is_hit": false,
+        "content_preview": "49 A 21-year-old woman known to have a protein C defi- ciency develops recurrent pulmonary thromboembolism and is placed on anticoagulant therapy. Two weeks after initiation of this therapy, she has a sudden change in mental status and experiences difficulty speaking and swallowing. A cerebral angio"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "edff08f4-f99e-576f-a0fa-b4983d75a0f5",
+        "source": "robbins_review",
+        "pdf_page": 218,
+        "dense_score": 0.655862,
+        "lexical_score": 0.000459,
+        "fused_score": 0.846254,
+        "is_hit": false,
+        "content_preview": "### ANSWERS\n\n\n1 E Platelet number and function in this case are normal, and there is no detectable abnormality in the extrinsic or intrinsic pathways of coagulation as measured by the pro- thrombin time or partial thromboplastin time. Petechiae and ecchymoses can result from increased vascular fragi"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "b498e59c-6de2-5021-8e49-ced1ca7461e8",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 621,
+        "dense_score": 0.69967,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "alternative nonheparin anticoagulant may lead to clot formation within large arteries, vascular insufficiency, and limb loss, as well as deep venous thrombosis with the attendant risk of pulmonary thromboembolism. The risk of type II HIT is lowered but not eliminated by use of low-molecular-weight h"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "1aeeda33-78c3-5c7f-9044-7689ecbdaca7",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 607,
+        "dense_score": 0.697315,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "the antibodies rarely induce clinically important hemolysis. Chronic cold agglutinin immunohemolytic anemia occurs in association with certain B-cell neoplasms or as an idiopathic condition.\n\nClinical symptoms result from binding of IgM to red cells in vas- cular beds where the temperature may fall "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "55aed912-b7c7-5e04-9095-681e3ee36a38",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 870,
+        "dense_score": 0.689763,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "deficiency of ADAMTS13 is most often caused by autoantibodies that inhibit ADAMTS13 function and less commonly, inherited deficiencies of ADAMTS13. Very large vWF multimers can bind platelet surface glycoproteins and activate platelets spontaneously, providing a pathophysiologic explanation for the "
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "e2511cc0-1517-555f-9a0b-7d9b205979f2",
+    "case_key": "hem-008",
+    "domain": "hematopathology",
+    "query": "What is the molecular pathogenesis of the JAK2 V617F mutation in polycythemia vera?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "281b4c9e-22f3-5070-bffb-698eb9228ee3"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "39aac053-f544-50cf-8d60-366b0a148145",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 585,
+        "dense_score": 0.703767,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "of late middle age. Most symptoms are related to the increased red cell mass and hematocrit. Usually, there is also an increased total blood volume. Together, these factors cause abnormal blood flow, particularly on the low-pressure venous side of the circulation, which becomes greatly distended. Pa"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "4f976096-39bb-5d46-b341-e4ed9bf0689c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 584,
+        "dense_score": 0.695205,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "2 cm 3 BWH Pathology\n\nFig. 13.36 Chronic myeloid leukemia (spleen). Enlarged spleen (2630 g; normal: 150 to 200 g) with greatly expanded red pulp stemming from neoplastic hematopoiesis. (Courtesy Dr. Daniel Jones, Department of Pathology, Ohio State University, Columbus.)\n\nlymphoid blast crisis, in "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "30d07b1e-f1c1-5ccf-8496-eba91bd3e84b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 586,
+        "dense_score": 0.670346,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "uncertain etiology that may at least partially explain the risk of bleed- ing. One characteristic symptom is erythromelalgia, a throbbing and burning of hands and feet caused by occlusion of small arterioles by platelet aggregates, which also may be seen in PCV.\n\nET is an indolent disorder with long"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "becff701-569d-54af-86d0-e24230f4a6c0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 582,
+        "dense_score": 0.646905,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "on routine blood testing. When symptomatic, it presents with weakness, infections, and hemorrhages, all due to pancytopenia.\n\nLike AML, in the WHO classification primary MDS is divided into two major classes, one defined by specific genetic abnormalities and the second by the presence of certain mor"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "68f0f3da-50ca-57b3-a586-c097a933a50f",
+        "source": "robbins_review",
+        "pdf_page": 195,
+        "dense_score": 0.633076,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "47 In an experiment, cell samples are collected from the bone marrow aspirates of patients who were diagnosed with lymphoproliferative disorders. Cytogenetic analyses are per- formed on these cells, and a subset of the cases is found to have the BCR-ABL fusion gene from the reciprocal translocation "
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "5c64257c-2100-554f-94a2-e3a3defb7304",
+    "case_key": "hem-009",
+    "domain": "hematopathology",
+    "query": "What is the relationship between factor VIII and von Willebrand factor, and how does vWF deficiency affect factor VIII levels?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "5661b826-ff00-5ae5-9af1-9d873295bf19"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "149f7d61-d5a0-5999-ba52-2708ada22ee4",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 623,
+        "dense_score": 0.747073,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "VWF\n\nCirculating vWF with Factor VIII\n\nEndothelium\n\nFactor VIII\n\nX\n\nXa\n\nSubendothelial vWF\n\nClotting cascade\n\nIXa\n\nActivated, aggregated platelets\n\nPlatelet\n\nPlatelet\n\nEndothelial defect\n\nFibrinogen Gpllb/llla Gplb\n\nCollagen\n\nFig. 14.25 Structure and function of factor VIII-von Willebrand factor (vW"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "5661b826-ff00-5ae5-9af1-9d873295bf19",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 622,
+        "dense_score": 0.685888,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "against complement regulatory factors and exposure to certain drugs, including some chemotherapeutic agents.\n\nUnlike TTP, the basis for the platelet activation in hereditary and acquired forms of HUS is unclear. As in paroxysmal nocturnal hemo- globinuria (discussed earlier), therapeutic antibodies "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "bff02ed2-761c-56f1-83c5-eecedb111de9",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 624,
+        "dense_score": 0.662807,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Hemophilia A exhibits a wide range of clinical severity that corre- lates well with the level of factor VIII activity. Those with less than 1% of normal levels have severe disease; those with 2% to 5% of normal levels have moderately severe disease; and those with 6% to 50% of normal levels have mil"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "274ac876-d900-5525-ba39-887d0ef8c00b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 121,
+        "dense_score": 0.6451,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Platelet\n\nEndothelium\n\nDeficiency: Bernard-Soulier syndrome \u2191 Gplb\n\nDeficiency:\n\nvon Willebrand disease\n\nADP and thrombin induced conformational changes in platelet ADP\n\nP2Y1200U (Thrombin\n\nDeficiency: Glanzmann\n\nthrombasthenia\n\n\u2191 Gpllb/Illa complex\n\nvon Willebrand factor\n\nPlatelet adhesion\n\nPAR-1\n\n"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "4e3143dc-1be7-56db-a8a5-eb00904d8706",
+        "source": "robbins_review",
+        "pdf_page": 217,
+        "dense_score": 0.640506,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "56 A 12-year-old boy has had worsening problems with joint mobility involving his arms and legs, particularly his knees and ankles, for the past 6 years. He has been receiving therapy for this condition. His grandfather had a similar condition and died at age 25 years. On physical examination, he ha"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "f9d3c1db-234f-5263-bb43-6d54073fbdc6",
+    "case_key": "hem-010",
+    "domain": "hematopathology",
+    "query": "What are the laboratory findings and bone marrow morphology in megaloblastic anemia from B12 or folate deficiency?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "a45fbd98-3d9e-58e6-86a7-494f3f7e5eed"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "acbda90f-b0cd-5fd5-8f15-5fd182f90a63",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 611,
+        "dense_score": 0.752223,
+        "lexical_score": 0.513027,
+        "fused_score": 0.989516,
+        "is_hit": false,
+        "content_preview": "parenteral administration of vitamin B_{12}, whereas the \"megaloblastic\" changes in the marrow and gut are readily reversible.\n\nCentral nervous system lesions are found in about three-quarters of cases of florid pernicious anemia but can also be seen in the absence of overt hemato- logic findings. T"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "37a3bb16-aff1-59c6-98ed-5ca709063a33",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 608,
+        "dense_score": 0.771295,
+        "lexical_score": 0.162216,
+        "fused_score": 0.978462,
+        "is_hit": false,
+        "content_preview": "TABLE 14.5 Causes of Megaloblastic Anemia\n\n\n| Col 1 |\n| --- |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n|  |\n\n\nModified from Beck WS. Megaloblastic anemias. In: Wyngaarden JB, Smith LH, eds. Cecil Textbook of Medicine. 18th ed. WB Saunders; 1988:900.\n\n"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "4968079c-8b13-5a50-8207-8d622bdcec83",
+        "source": "robbins_review",
+        "pdf_page": 224,
+        "dense_score": 0.679196,
+        "lexical_score": 0.374877,
+        "fused_score": 0.927443,
+        "is_hit": false,
+        "content_preview": "folate deficiency, however. An aplastic anemia is unlikely to result from a nutritional deficiency. Folate has no cofactor for absorption, but vitamin B_{12} must be complexed to intrin- sic factor and secreted by gastric parietal cells, and then the complex must be absorbed in the terminal ileum, s"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "32e4b0bd-1839-5b5f-ad6a-2a1f4a40a36f",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 610,
+        "dense_score": 0.711051,
+        "lexical_score": 0.101282,
+        "fused_score": 0.916059,
+        "is_hit": false,
+        "content_preview": "Homocysteine\n\nMethyl-Cbl\n\nFH_{4}\n\nN^{5,10_{-}}-Methylene FH4\n\ndUMP\n\nMethionine Synthase\n\nThymidylate Synthetase\n\nMethionine\n\nCbl\n\nN5-Methyl FH4\n\nDHF\n\ndTMP\n\nFig. 14.18 Relationship of N5-methyl FH_{4} methionine synthase, and thymidylate synthetase. In cobalamin (Cbl) deficiency, folate is sequestere"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "b132f62e-db89-5c6e-ae61-7ea80c6e6891",
+        "source": "robbins_review",
+        "pdf_page": 214,
+        "dense_score": 0.703971,
+        "lexical_score": 0.106341,
+        "fused_score": 0.905758,
+        "is_hit": false,
+        "content_preview": "36 A clinical study is performed to assess outcomes in pa- tients who have macrocytic anemias as a result of Vitamin 12 or folate deficiency. A comparison of laboratory testing strate- gies shows that the best strategy includes testing for serum homocysteine, methylmalonic acid, vitamin B_{12} (coba"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "96177f26-67f9-531c-9a88-897ff2a7195c",
+    "case_key": "neop-001",
+    "domain": "neoplasia",
+    "query": "What is the two-hit hypothesis of Knudson in retinoblastoma and function of the RB protein?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "d1634322-b428-50f7-936e-a1e31c57706c"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "d1634322-b428-50f7-936e-a1e31c57706c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 274,
+        "dense_score": 0.74416,
+        "lexical_score": 0.000833,
+        "fused_score": 1.0,
+        "is_hit": true,
+        "content_preview": "germline mutations of p16 (CDKN2A) are present in 25% of mela- noma-prone kindreds, and somatically acquired deletion or inacti- vation of p16 is seen in 75% of pancreatic carcinomas, 40% to 70% of glioblastomas, 50% of esophageal cancers, 20% to 70% of acute lymphoblastic leukemias, and 20% of non-"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "4d813fd8-2761-52b9-a255-1476c43bb930",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 276,
+        "dense_score": 0.736874,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "Somatic cells of parents\n\nGerm cells\n\nZygote\n\nSomatic cells of child\n\nRetinal cells\n\nRetinoblastoma\n\nSPORADIC FORM\n\nFAMILIAL FORM\n\nRB gene\n\nMutation 1\n\nMutation 2\n\nMutation 1\n\nMutation 2\n\nHeterozygous retinal cells\n\nHomozygous retinal cells with tumor\n\nHeterozygous retinal cells\n\nFig. 7.25 Pathogene"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "c241716b-f37d-54e7-8879-70c98d6f059c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 277,
+        "dense_score": 0.721803,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "GROWTH INHIBITORS\n\n(TGF-\u1e9e, p53, others)\n\nStimulate\n\nGROWTH FACTORS (EGF, PDGF)\n\nP\n\nCDK inhibitors p16\n\nInactivate\n\nActivate\n\nCyclin D, CDK 4/6 Cyclin E, CDK2\n\nCyclin D, CDK 4/6 Cyclin E, CDK2\n\nHistone methyl- transferase\n\nPhosphorylate\n\nand inactivate RB\n\nP\n\nP\n\nRB\n\nHyphosphorylated RB sequesters E2F"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "6afc2f61-0af4-5f2f-a0d4-8e5c67a5b614",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 278,
+        "dense_score": 0.694425,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "INK4a, cyclin D, CDK4, RB) is dysregulated in most human can- cers. In cells that harbor mutations in any one of these genes or in upstream factors that regulate their expression and function (e.g., re- ceptor tyrosine kinases, RAS), RB may be functionally inactivated even if the RB gene itself is n"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "634fcf49-743a-56ba-942e-a4fd9b4b0ec1",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 280,
+        "dense_score": 0.65522,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "plausible idea is that senescence is the product of epigenetic changes that result in the formation of heterochromatin at key loci, including genes that are required for progression of cells from G_{1} phase to S phase. Like other p53 responses, senescence may be stimulated in response to a variety "
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "a867485f-9b9d-5a40-aa2d-3b997636dc6b",
+    "case_key": "neop-002",
+    "domain": "neoplasia",
+    "query": "What is the role of TP53 as guardian of the genome in inducing cell cycle arrest and apoptosis?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "6afc2f61-0af4-5f2f-a0d4-8e5c67a5b614"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "6afc2f61-0af4-5f2f-a0d4-8e5c67a5b614",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 278,
+        "dense_score": 0.749406,
+        "lexical_score": 0.000164,
+        "fused_score": 0.983871,
+        "is_hit": true,
+        "content_preview": "INK4a, cyclin D, CDK4, RB) is dysregulated in most human can- cers. In cells that harbor mutations in any one of these genes or in upstream factors that regulate their expression and function (e.g., re- ceptor tyrosine kinases, RAS), RB may be functionally inactivated even if the RB gene itself is n"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "634fcf49-743a-56ba-942e-a4fd9b4b0ec1",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 280,
+        "dense_score": 0.732743,
+        "lexical_score": 0.000228,
+        "fused_score": 0.979365,
+        "is_hit": false,
+        "content_preview": "plausible idea is that senescence is the product of epigenetic changes that result in the formation of heterochromatin at key loci, including genes that are required for progression of cells from G_{1} phase to S phase. Like other p53 responses, senescence may be stimulated in response to a variety "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "d268b631-d6fd-5ab7-b4f1-9cccecaa1ddc",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 279,
+        "dense_score": 0.753911,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "Non-stressed state\n\np53\n\nMDM2\n\nHealthy cell (p53 normal)\n\n\u2191\n\nMAMN\n\nNo DNA damage\n\nMDM2 targets\n\np53 for destruction\n\np53-dependent upregulation of p21 (CDK inhibitor)\n\n\u3002\n\nHealthy cell (p53 normal)\n\nMAMN\n\nDNA damage\n\nlonizing radiation, Carcinogens\n\nMDM2\n\nKinase sensors\n\nP\n\np53\n\nP\n\nP P P p53\n\nP p53 p"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "d1634322-b428-50f7-936e-a1e31c57706c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 274,
+        "dense_score": 0.653637,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "germline mutations of p16 (CDKN2A) are present in 25% of mela- noma-prone kindreds, and somatically acquired deletion or inacti- vation of p16 is seen in 75% of pancreatic carcinomas, 40% to 70% of glioblastomas, 50% of esophageal cancers, 20% to 70% of acute lymphoblastic leukemias, and 20% of non-"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "c241716b-f37d-54e7-8879-70c98d6f059c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 277,
+        "dense_score": 0.647254,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "GROWTH INHIBITORS\n\n(TGF-\u1e9e, p53, others)\n\nStimulate\n\nGROWTH FACTORS (EGF, PDGF)\n\nP\n\nCDK inhibitors p16\n\nInactivate\n\nActivate\n\nCyclin D, CDK 4/6 Cyclin E, CDK2\n\nCyclin D, CDK 4/6 Cyclin E, CDK2\n\nHistone methyl- transferase\n\nPhosphorylate\n\nand inactivate RB\n\nP\n\nP\n\nRB\n\nHyphosphorylated RB sequesters E2F"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "136dbb6b-89b5-592e-b84a-555249b8aaed",
+    "case_key": "neop-003",
+    "domain": "neoplasia",
+    "query": "How does the Warburg effect characterize aerobic glycolysis in neoplastic cells?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "923332c5-d735-5917-9b77-e73873f60d1a"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "4ec31ee9-e1ff-5335-890c-568c2e0ef9fc",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 285,
+        "dense_score": 0.687469,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "produce Warburg metabolism. Indeed, it may be that many (and per- haps all) tumor suppressors that induce growth arrest suppress the Warburg effect. For example, p53, arguably the most important tumor suppressor, upregulates target genes that collectively inhibit glucose uptake, glycolysis, lipogene"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "923332c5-d735-5917-9b77-e73873f60d1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 283,
+        "dense_score": 0.686254,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "STK11. The STK11 gene, also known as LKB1, encodes a serine/ threonine kinase that functions as an important regulator of cellular metabolism. Germline loss-of-function STK11 mutations cause Peutz-Jeghers syndrome, an autosomal dominant disorder associated with benign polyps of the gastrointestinal "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "accda5f6-cb58-5758-a5f0-600528fca30d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 284,
+        "dense_score": 0.678429,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "can be diverted for use as precursors in the synthesis of cellular build- ing blocks. For example, lipid biosynthesis requires acetyl coenzyme A (acetyl-CoA), that is largely synthesized in growing cells from interme- diates such as citrate that are generated in mitochondria. A high frac- tion of th"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "ea999e92-1b56-5d5e-866b-f520aa9036b6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 309,
+        "dense_score": 0.636662,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "infection leads to the appearance of H. pylori-reactive T cells, which in turn stimulate a polyclonal B-cell proliferation. In chronic infec- tions, mutations may be acquired that give individual cells a growth advantage. These cells grow out into a monoclonal lymphoma that nevertheless remains depe"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "e3e14466-5a7c-56dd-8c59-1a3b5bf73f1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 289,
+        "dense_score": 0.63529,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "EXTRINSIC:\n\nACUTE PROMYELOCYTIC\n\nINTRINSIC: CML\n\nBCR-ABL t(9;22)\n\nPML-RARA t(15;17)\n\nStem cell\n\nMutated stem cell\n\nLow proliferative fraction\n\n\u2191\n\nSelf-renewing population\n\nMutated stem cell\n\nAsymmetric cell divisions\n\nLEUKEMIA\n\nMutated Mutated progenitor progenitor\n\nHigh proliferative fraction\n\nBulk"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "47c8d797-1575-5e39-86ed-59d32da16dd0",
+    "case_key": "neop-004",
+    "domain": "neoplasia",
+    "query": "What is the mechanism of microRNA dysregulation and epigenetic silencing in carcinogenesis?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "57d1ad98-80f1-5f73-bc05-29a8badc01bb"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "9c8aae6d-80de-51e0-872b-39ff00085a10",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 302,
+        "dense_score": 0.66136,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "\"write,\" \"read,\" and \"erase\" histone marks or that position nucleo- somes on DNA (see Table 7.9). Remarkably, in some cancers, driver mutations occur in certain histone genes themselves. Details have yet to emerge, but it is certain that these lesions alter the expression of genes that contribute to"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "57d1ad98-80f1-5f73-bc05-29a8badc01bb",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 301,
+        "dense_score": 0.654767,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "From a clinical perspective, two of the most important amplifications are NMYC in neuroblastoma and ERBB2 in breast cancers. NMYC is amplified in 25% to 30% of neuroblastomas, and its amplification is associated with poor prognosis. ERBB2 amplification occurs in about 20% of breast cancers. As alrea"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "f78a0558-a590-5151-9fd2-8e046b2bca5c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 20,
+        "dense_score": 0.637355,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "Fig. 1.1). In general, only the regions that are \"unwound\" are avail- able for transcription. Chromatin structure can therefore regulate transcription independent of DNA regulatory elements (e.g., pro- moters and enhnancers) and, due to variation between cell types, define cellular identity.\n\nHiston"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "368bc0c2-5aa1-5204-8696-8b97e6bff4db",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 267,
+        "dense_score": 0.611585,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Classes of mutations:\n\nR2\n\nUbiquitous\n\nI think\n\nR1\n\nR3\n\nShared; primary tumor (P)\n\nShared; metastatic tumor (M)\n\nR8\n\nR5\n\nUnique; various sites (R)\n\nR9\n\nB\n\nR10\n\nP2\n\nD\n\nC\n\nInitiating mutation\n\nR4\n\n(ubiquitous)\n\nP1\n\nNormal tissue\n\nR6\n\nR7\n\nM1\n\nM2\n\nR11\n\nan may living\n\nsene genus (as is). Do do this & It "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "43d40189-514e-530e-b217-2ebc2dd4c533",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 266,
+        "dense_score": 0.611579,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Healthy cell\n\nCarcinogen-induced mutation\n\nFirst driver mutation\n\nAccumulation of driver and passenger mutations\n\nAdditional driver mutations\n\nInitiated precursor with\n\nstem cell-like properties\n\nAcquisition of cancer hallmarks\n\nInitiating mutation\n\nPassenger mutations\n\nAdditional mutations, emergen"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "b059c480-4471-57b5-8a65-987d3938bb1b",
+    "case_key": "neop-005",
+    "domain": "neoplasia",
+    "query": "What are the steps of the metastatic cascade, including down-regulation of E-cadherin and invasion of extracellular matrix?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "0c0c70a8-4272-545d-8c2c-23976c230c7a"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "0c0c70a8-4272-545d-8c2c-23976c230c7a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 290,
+        "dense_score": 0.76915,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "Transformed cell\n\nPRIMARY TUMOR\n\nBasement\n\nmembrane\n\nHost lymphocyte\n\nPlatelets\n\nExtracellular matrix\n\nMETASTATIC TUMOR\n\nClonal expansion, growth, diversification, angiogenesis\n\nMetastatic subclone\n\n\u2193\n\nAdhesion to and invasion of basement membrane\n\nPassage through extracellular matrix\n\n\u2193 Intravasati"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "88282199-1146-5c65-8cbe-08bedb324174",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 291,
+        "dense_score": 0.745736,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "A LOOSENING OF INTERCELLULAR JUNCTIONS\n\nBO\n\nCadherins Type IV Laminin Fibronectin Laminin Basement membrane\n\nB\n\ncollagen receptor\n\nreceptor\n\nB DEGRADATION OF ECM\n\nType IV collagenase\n\nMatrix metalloproteinase Plasminogen activator\n\nDegradation of ECM\n\nMacrophage Fibroblast\n\nC MIGRATION AND INVASION\n"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "12fdfee5-59e5-5a18-b27b-2be1ff1756ca",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 292,
+        "dense_score": 0.726047,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "metastases from the large number of cells that fail? Also, what deter- mines why metastases ultimately appear where they do in the body?\n\nWhile definitive answers to these questions are not known, clues have emerged. One idea that has gained support proposes that the circulating cells that establish"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "af11d79f-ec99-5d64-9687-f15f6a4ac4e2",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 281,
+        "dense_score": 0.672797,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "RESTING CELL\n\nWNT receptor\n\nAPC\n\nE-cadherin\n\nWNT STIMULATION\n\nWNT\n\nTUMOR CELL WITH MUTATED APC\n\nDestruction complex deactivated\n\nAPC\n\nAPC\n\nDestruction complex\n\nB-catenin\n\nB-catenin \u2191\n\nB-catenin \u2191\n\nDegradation\n\nTCF\n\nTCF\n\nNo proliferation\n\nProliferation\n\nTCF\n\nProliferation\n\nFig. 7.28 The role of adeno"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "d30798d4-4a0d-5afb-a4c4-9b1dd93b198b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 257,
+        "dense_score": 0.661962,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "proteins that are not produced by their normal adult counterparts, while others express proteins that are normally found only in other types of cells. For example, bronchogenic carcinomas may produce corticotro- pin, parathyroid-like hormone, insulin, glucagon, and other hormones, giving rise to par"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "92bc4cc2-684e-5e19-80a5-a1d4c3d25026",
+    "case_key": "neop-006",
+    "domain": "neoplasia",
+    "query": "What is microsatellite instability and how does it result from mismatch repair deficiency?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "ba2f6964-c24d-557f-8cc8-a7d03a7acfd5"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "f7556cfb-a1e3-5637-afff-672ee4add8cc",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 759,
+        "dense_score": 0.655475,
+        "lexical_score": 0.002273,
+        "fused_score": 1.0,
+        "is_hit": false,
+        "content_preview": "HEALTHY COLON\n\nSESSILE SERRATED POLYP\n\nCARCINOMA\n\nMucosa\n\nSubmucosa\n\nMuscularis\n\npropria\n\nGermline (inherited) or somatic (acquired) mutations of mismatch repair genes\n\nAlteration of second allele by LOH, mutation, or\n\npromoter methylation\n\nMLH1, MSH2\n\n(MSH6, PMS1, PMS2)\n\nMicrosatellite instability/"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "c12f0585-a01b-5ed4-8660-7565ea1c93a5",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 298,
+        "dense_score": 0.644072,
+        "lexical_score": 0.000246,
+        "fused_score": 0.962959,
+        "is_hit": false,
+        "content_preview": "marked by an extraordinarily high risk of skin cancers, specifically squamous cell carcinoma and basal cell carcinoma.\n\nHomologous Recombination Repair Factors. Other types of DNA damage, particularly covalent DNA cross-links and double-stranded DNA breaks, are repaired through a complex process cal"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "e1280384-b8c0-54b3-bdb6-574463715365",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 297,
+        "dense_score": 0.644694,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "systemic signs and symptoms such as anemia (Chapter 14), fatigue, and cachexia (described later). However, cancer-induced inflamma- tion is ineffective at stemming the growth and progression of tumors, and studies carried out in animal models suggest that cross-talk be- tween tumor cells, inflammato"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "67a3c30b-7dde-5a0e-8ba6-7dcfc70ca358",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 757,
+        "dense_score": 0.642434,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "TABLE 17.10 Common Patterns of Sporadic and Familial Colorectal Neoplasia\n\n\n| Col 1 | Col 2 | Col 3 | Col 4 | Col 5 | Col 6 |\n| --- | --- | --- | --- | --- | --- |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "30b8ff1f-7fe6-5342-9ec7-5bf9197f8a1d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 758,
+        "dense_score": 0.63768,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "HEALTHY COLON\n\nMUCOSA AT RISK\n\nADENOMAS\n\nCARCINOMA\n\nMucosa\n\nSubmucosa\n\nMuscularis\n\npropria\n\nGermline (inherited) or somatic (acquired) mutations of cancer suppressor genes (\"first hit\")\n\nAPC\n\nMethylation abnormalities Inactivation of normal alleles (\"second hit\")\n\nAPC \u03b2-catenin\n\nProtooncogene mutati"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "02fda91b-61e0-59c5-9b14-1384e0505f40",
+    "case_key": "neop-007",
+    "domain": "neoplasia",
+    "query": "What is the role of VEGF and basic fibroblast growth factor in tumor-induced angiogenesis?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "e3e14466-5a7c-56dd-8c59-1a3b5bf73f1a"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "e3e14466-5a7c-56dd-8c59-1a3b5bf73f1a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 289,
+        "dense_score": 0.698238,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "EXTRINSIC:\n\nACUTE PROMYELOCYTIC\n\nINTRINSIC: CML\n\nBCR-ABL t(9;22)\n\nPML-RARA t(15;17)\n\nStem cell\n\nMutated stem cell\n\nLow proliferative fraction\n\n\u2191\n\nSelf-renewing population\n\nMutated stem cell\n\nAsymmetric cell divisions\n\nLEUKEMIA\n\nMutated Mutated progenitor progenitor\n\nHigh proliferative fraction\n\nBulk"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "c0be27f7-879a-5450-80c6-fbdf6dbbea53",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 35,
+        "dense_score": 0.676525,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "TABLE 1.1 Growth Factors Involved in Regeneration and Repair\n\n\n| Col 1 | Col 2 | Col 3 |\n| --- | --- | --- |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n|  |  |  |\n\n\nECM, Extracellular matrix.\n\nHepatocyte Growth Factor. Hepatocyte growth factor (HGF; also "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "3e33a43f-a420-58da-bb9b-24fea873d3b0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 111,
+        "dense_score": 0.637485,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nFig. 3.25 (A) Granulation tissue showing numerous blood vessels, edema, and a loose extracellular matrix containing occasional inflammatory cells. Collagen is stained blue by the trichrome stain; minimal mature collagen can be seen at this point. (B) Trichrome stain of mature scar, showing den"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "5ddf19e4-f425-5cdd-9c15-e1831b4f7d17",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 112,
+        "dense_score": 0.626909,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Mechanisms of Angiogenesis. The process of angiogenesis involves several signaling pathways, cell-cell interactions, ECM proteins, and tissue enzymes. VEGFs, mainly VEGF-A (Chapter 1), stimulate both migration and proliferation of endothelial cells, thus initiating the process of capillary sprouting"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "88282199-1146-5c65-8cbe-08bedb324174",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 291,
+        "dense_score": 0.623541,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "A LOOSENING OF INTERCELLULAR JUNCTIONS\n\nBO\n\nCadherins Type IV Laminin Fibronectin Laminin Basement membrane\n\nB\n\ncollagen receptor\n\nreceptor\n\nB DEGRADATION OF ECM\n\nType IV collagenase\n\nMatrix metalloproteinase Plasminogen activator\n\nDegradation of ECM\n\nMacrophage Fibroblast\n\nC MIGRATION AND INVASION\n"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "350f172f-6eab-53bc-bf95-2d2a1763d8c2",
+    "case_key": "neop-008",
+    "domain": "neoplasia",
+    "query": "What is histologic grade in malignant neoplasms and how does it relate to degree of differentiation?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "ba2f6964-c24d-557f-8cc8-a7d03a7acfd5"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "b4ea1130-d6fc-5e94-9c90-45a0aea44a68",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 311,
+        "dense_score": 0.659949,
+        "lexical_score": 0.000143,
+        "fused_score": 0.747652,
+        "is_hit": false,
+        "content_preview": "Endocrinopathies are frequently encountered paraneoplastic syn- dromes. By definition, the responsible cancers are not of endocrine ori- gin and the secretory activity of such tumors is referred to as ectopic hormone production. Cushing syndrome is the most common endocri- nopathy. Approximately 50%"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "75b873ca-dfda-5067-86ff-137b00b45e1f",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 256,
+        "dense_score": 0.730115,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "Fig. 7.5 Well-differentiated squamous cell carcinoma of the skin. Note the terminal differentiation of the tumor cells, which are forming keratin pearls. (From Fletcher CD. Diagnostic Histopathology of Tumors. 5th ed. Elsevier; 2021.)\n\nFig. 7.6 Anaplastic tumor showing cellular and nuclear variation"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "74be41a6-f31d-506e-b11b-2e79836811e3",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 312,
+        "dense_score": 0.71802,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "It is increasingly apparent, however, that the molecular features of tumors provide important complementary prognostic informa- tion that is independent of anatomic staging. In recognition of this, the American Joint Committee on Cancer has included molecular characterization as part of the standard"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "92bf070b-1f37-5ea4-97f1-8ce10580ca18",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 255,
+        "dense_score": 0.711334,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "TABLE 7.1\n\nNomenclature of Tumors\n\nTissue of Origin\n\nBenign\n\nMalignant\n\nTumors Composed Predominantly of One Cell Type\n\nTumors of Stromal Cells\n\nConnective tissue\n\nFibroma\n\nand derivatives\n\nLipoma\n\nChondroma\n\nOsteoma\n\nFibrosarcoma\n\nLiposarcoma\n\nChondrosarcoma\n\nOsteogenic sarcoma\n\nTumors of Endotheli"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "8ef0d8f7-65bd-558a-bc82-86f4970676cd",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 254,
+        "dense_score": 0.703742,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "### Malignant Tumors\n\n\nMalignant tumors can invade and destroy adjacent structures and spread to distant sites (metastasize). Malignant tumors are collectively referred to as cancers, derived from the Latin word for crab, because they tend to adhere to any tissue that they seize on in an obstinate m"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "6816a0a6-0612-541d-b803-46cdd238b0b0",
+    "case_key": "neop-009",
+    "domain": "neoplasia",
+    "query": "What is the oncogenic driver mechanism of BCR-ABL fusion kinase resulting from t(9;22)?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "08833ea7-8bc1-5f51-95c0-70ebd30ad80c"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "e94b1bce-f4f4-5348-80ca-403a7b0aeef0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 583,
+        "dense_score": 0.703058,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "### Pathogenesis\n\n\nTyrosine kinases are normally regulated by ligand-mediated dimeriza- tion and autophosphorylation, which creates an activated kinase capable of phosphorylating other protein substrates (Chapters 1 and 7). The BCR moiety of BCR-ABL contains a dimerization domain that self-associate"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "08833ea7-8bc1-5f51-95c0-70ebd30ad80c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 271,
+        "dense_score": 0.702665,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": true,
+        "content_preview": "intrinsic GTPase activity that is accelerated by GTPase-activating pro- teins (GAPs), which bind to active RAS and augment its GTPase activ- ity by more than 1000-fold, thereby terminating signal transduction. Thus, GAPs prevent uncontrolled RAS activity.\n\nSeveral distinct RAS point mutations have b"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "ae1e1b4c-03cb-595a-8583-2f6acd5fcc92",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 272,
+        "dense_score": 0.698139,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "effects of incessant BCR-ABL signaling. BCR-ABL can be seen as the central lodgepole around which an oncogenic signaling \"structure\" is built. If the lodgepole is removed by treatment with BCR-ABL kinase inhibitors, the entire structure collapses.\n\nTreatment of CML cells \"addicted\" to BCR-ABL with s"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "097866c0-f336-535d-a941-ae0bd6083c87",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 299,
+        "dense_score": 0.695007,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "Historically, chromosomal changes in cancer were identified through karyotyping, the morphologic identification of metaphase chromosomes prepared from clinical specimens. Today, however, can- cer cell karyotypes are being reconstructed in research laboratories from deep sequencing of cancer cell gen"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "28db371a-47d8-5306-8c42-6084b1414140",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 559,
+        "dense_score": 0.654212,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "BCR-ABL protein is usually 190 kDa in size and has stronger tyrosine kinase activity than the form of BCR-ABL that is found in chronic myeloid leukemia, in which a BCR-ABL protein of 210 kDa in size is usually seen. Treatment of t(9;22)-positive ALLs with BCR-ABL kinase inhibitors in combination wit"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "b4db13b4-ead4-5cf1-b0fd-c88cbf4bc069",
+    "case_key": "neop-010",
+    "domain": "neoplasia",
+    "query": "Which tumor suppressor proteins do human papillomavirus E6 and E7 oncoproteins target?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "c7b4068a-2082-5dff-9cb4-2c0bc814b31c"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "91843dcc-ce60-5ada-88e8-4810692eff0a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 306,
+        "dense_score": 0.711587,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "every cell within an individual tumor. This indicates that the infection of the neoplastic T cells occurred prior to transformation, placing HTLV-1 at the \"scene of the crime.\"\n\nThe HTLV-1 genome contains the gag, pol, env, and long-terminal- repeat regions typical of all retroviruses, but, in contr"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "97393653-75e8-580e-991d-5f1113a2de5f",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 922,
+        "dense_score": 0.694969,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "genital tract that are susceptible to infection include areas of squamous epithelial trauma and repair, where the virus may access basal cells, and the immature metaplastic squamous cells that are present at the squamo- columnar junction of the cervix (see Fig. 22.12). The cervix, with its relativel"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "6afc2f61-0af4-5f2f-a0d4-8e5c67a5b614",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 278,
+        "dense_score": 0.691084,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "INK4a, cyclin D, CDK4, RB) is dysregulated in most human can- cers. In cells that harbor mutations in any one of these genes or in upstream factors that regulate their expression and function (e.g., re- ceptor tyrosine kinases, RAS), RB may be functionally inactivated even if the RB gene itself is n"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "634fcf49-743a-56ba-942e-a4fd9b4b0ec1",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 280,
+        "dense_score": 0.654132,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "plausible idea is that senescence is the product of epigenetic changes that result in the formation of heterochromatin at key loci, including genes that are required for progression of cells from G_{1} phase to S phase. Like other p53 responses, senescence may be stimulated in response to a variety "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "d1634322-b428-50f7-936e-a1e31c57706c",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 274,
+        "dense_score": 0.652535,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "germline mutations of p16 (CDKN2A) are present in 25% of mela- noma-prone kindreds, and somatically acquired deletion or inacti- vation of p16 is seen in 75% of pancreatic carcinomas, 40% to 70% of glioblastomas, 50% of esophageal cancers, 20% to 70% of acute lymphoblastic leukemias, and 20% of non-"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "c66d17c1-767e-5a7e-ab83-103f13561a36",
+    "case_key": "sys-001",
+    "domain": "systemic_pathology",
+    "query": "What is the histologic morphology of minimal change disease on light versus electron microscopy?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "88081f7d-eeb6-5339-a6c2-1740c3a88c41"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "c5db27a0-a790-50f2-aed4-e08874c7653b",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 845,
+        "dense_score": 0.765003,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "A subclass of IgG, IgG4, which differs from other IgG subclasses in being a poor activator of the classical complement pathway, is the principal immunoglobulin deposited in many cases of MN, PLA2R-associated MN in particular. How IgG4 may be associated with complement activa- tion is not clear.\n\n\n##"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "7d63bd7f-758b-512d-9e15-00d5a8767d45",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 857,
+        "dense_score": 0.737966,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "glomeruli.\n9.  Correct choice: A\nMINIMAL CHANGE NEPHROTIC SYNDROME (MCNS)\u2014This is the\nmost common cause of nephrotic syndrome in children, usually presenting\nbefore 6 years of age. On light microscopy, glomeruli look virtually\nnormal, but EM reveals diffuse effacement (detachment and fusion) of\nepit"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "763ba3a0-7e81-52ba-ae8a-a56df0911e01",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 838,
+        "dense_score": 0.722671,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "D.  Obsolescent glomerulus\nE.  Segmental scarring\n  9.  A 4-year-old child presents with nephrotic syndrome, and a renal\nbiopsy shows no light microscopic changes. Ultrastructural changes\nare shown in this picture. Which of the following immunofluorescence\nfindings would be most likely present?\nQUES"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "ae0e49fc-1234-59fd-a0de-fcd38b2fbc78",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 643,
+        "dense_score": 0.721881,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "microscopy (EM) are shown in these photomicrographs. Which of the\nfollowing is the most likely cause of these findings?"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "0b212bec-0908-5bff-9f22-6abd0c2ebebb",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 846,
+        "dense_score": 0.712593,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "A\n\nEnd\n\nUS\n\nEp\n\nUS\n\nB\n\nCL\n\nB\n\nEpithelium with effaced foot processes\n\nThickened\n\nbasement\n\nmembrane\n\nSubepithelial deposits\n\nC\n\nD\n\nFig. 20.10 Membranous nephropathy. (A) Silver methenamine stain. Note the marked diffuse thickening of the capillary walls without an increase in the number of cells. Th"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "4ce333a9-99bf-565c-bb36-bc631c980cdf",
+    "case_key": "sys-002",
+    "domain": "systemic_pathology",
+    "query": "What are the microscopic features of Barrett esophagus, including intestinal metaplasia with goblet cells?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "e2efe00f-940a-511e-b7e4-2b3c01bb6fd5"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "e2efe00f-940a-511e-b7e4-2b3c01bb6fd5",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 680,
+        "dense_score": 0.725833,
+        "lexical_score": 0.000588,
+        "fused_score": 0.979365,
+        "is_hit": true,
+        "content_preview": "eosinophils may be found in GERD as well. Clinicopathologic correlation\nis required to make the diagnosis of EE or GERD.\n3.  Correct choice: B\nHSV ESOPHAGITIS\u2014The photomicrograph shows squamous cells and\nmultinucleated cells containing Cowdry type A inclusions, characteristic\nof HSV. These are eosin"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "d46a22ec-5506-53b7-ba05-0d23722d1e56",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 707,
+        "dense_score": 0.691398,
+        "lexical_score": 0.000262,
+        "fused_score": 0.936146,
+        "is_hit": false,
+        "content_preview": "liver disease, but can complicate cirrhosis of any cause, including nonal- coholic fatty liver disease. Noncirrhotic causes of portal hypertension include presinusoidal, (e.g., schistosomiasis or polycystic liver disease), sinusoidal, (e.g., amyloidosis or Gaucher disease), or postsinusoidal, (e.g.,"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "d4dfb3f2-4c79-59ca-9a8f-109ab957b2d0",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 693,
+        "dense_score": 0.738044,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "QUESTION 32.21\nA.  Interstitial cells of Cajal\nB.  Myofibroblasts\nC.  Schwann cells\nD.  Smooth muscle cells\nE.  Undifferentiated mesenchymal cells\nAnswers and Explanations\n1.  Correct choice: A\nINTESTINAL METAPLASIA\u2014In areas of intestinal metaplasia (IM), the\ngastric epithelium is replaced by an epi"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "82c8ec43-1d74-5033-bc7d-43e5daade35f",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 708,
+        "dense_score": 0.732894,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nC\n\nFig. 17.8 Esophageal varices. (A) Endoscopically, distended varices form submucosal nodules. (B) Angiogram demonstrating several tortuous esophageal varices. (C) Collapsed varices are present in this postmortem specimen corresponding to the angiogram in (B). The polypoid areas represent pre"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "d86eea9b-2ff9-549b-8373-53239b634935",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 676,
+        "dense_score": 0.709101,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "QUESTION 31.6\nA.  Negative for dysplasia\nB.  Indefinite for dysplasia\nC.  Positive for low-grade dysplasia\nD.  Positive for high-grade dysplasia\nE.  Intramucosal carcinoma\n  7.  The histopathologic changes seen in this esophageal biopsy from a\npatient with Barrett esophagus are most consistent with:"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "d02d050e-f300-5afa-b09d-7e30f71bde80",
+    "case_key": "sys-003",
+    "domain": "systemic_pathology",
+    "query": "What are the three histologic components used to grade invasive ductal carcinoma of the breast using the Nottingham system?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "86d94af2-0a00-5275-944d-8244d456cd93"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "fd81fcab-2b53-5ae0-9af3-bdb9e7acc1cf",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 977,
+        "dense_score": 0.707978,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "HER2 negative\n\nHER2 positive\n\nCEP17\n\nHER2\n\nHER2 copy number\n\nHER2 protein\n\nFig. 23.19 Diagnosis of HER2-positive breast cancer. HER2 protein overexpression is virtually always caused by amplification of the region of chromosome 17q that contains the HER2 gene. The increase in HER2 gene copy number i"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "909a55d0-f31a-56c6-89af-2768362122f4",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 980,
+        "dense_score": 0.703225,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "### Clinical Presentation\n\n\nMost invasive breast carcinomas present as a breast mass, detected either by palpation or mammographic screening. The mode of detection varies according to molecular subtype (Table 23.4). Cancers detected by mam- mographic screening are usually small luminal cancers limit"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "4bad01e9-f1e4-5b6c-90d3-bdc59b95dd20",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 231,
+        "dense_score": 0.690728,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "A.  Grade 1\nB.  Grade 2\nC.  Grade 3\nD.  More information is necessary\n15.  Which of the following is the most significant predictive factor in\nbreast carcinoma?\nA.  Expression of hormone receptors\nB.  Ki-67 labeling index\nC.  Lymphatic invasion\nD.  Lymph node status\nE.  Tumor grade\nF.  Tumor size\nG."
+      },
+      {
+        "rank": 4,
+        "chunk_id": "105acfbf-c1bf-52b6-a550-c236ef4d45e5",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 978,
+        "dense_score": 0.69059,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "A\n\nA\n\nD\n\nB\n\nC\n\nFig. 23.20 Invasive breast carcinoma of no special type. Most invasive carcinomas have a haphazard pattern of stromal invasion that produces masses with irregular margins on imaging (A) and gross examination (B). Microscopically, such tumors are marked by an exuberant desmoplastic str"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "86d94af2-0a00-5275-944d-8244d456cd93",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 252,
+        "dense_score": 0.677877,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": true,
+        "content_preview": "size, and they are cohesive; those of LCIS are smaller and uniform, and\nthey tend to lose their cohesiveness. Lobular architecture is preserved in\nboth, whereas necrosis is more frequent in cancerization. Fibroplasia and\ninflammatory reactions are more intense around ducts involved by\ncancerization "
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "13ef2c7e-67c3-5e39-b8da-82b3a4f31706",
+    "case_key": "sys-004",
+    "domain": "systemic_pathology",
+    "query": "What are the diagnostic pathologic criteria for idiopathic pulmonary fibrosis and usual interstitial pneumonia pattern?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "08fc7c3f-027d-5c09-b9ee-b8d0c67b8067"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "aac6badb-1305-5ee5-a034-a33fc51e71ef",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 644,
+        "dense_score": 0.750287,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": ".....\n\n..... .....\n\nENVIRONMENTAL FACTORS\n\n\u2022 Aging\n\n\u2022 Genetic risk factors:\n\nTelomerase mutations Surfactant mutations MUC5B variant\n\nAt-risk epithelium\n\nInnate and adaptive immune responses\n\n\u2022 Smoking\n\n\u2022 Occupational\n\nexposure\n\n\u2022 Gastroesophageal reflux\n\n\u2022 Other irritants and toxins\n\n\u2022 Viral infect"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "da4d7505-5dfd-5898-8664-e736165d07a6",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 564,
+        "dense_score": 0.722099,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "E.  Has markedly reactive type II pneumocytes\n25.  Tobacco-related lesions of the lung include all the following EXCEPT\nfor:\nA.  Respiratory bronchiolitis\nB.  Respiratory bronchiolitis with interstitial lung disease\nC.  Diffuse alveolar damage\nD.  Desquamative interstitial pneumonia\nE.  Pulmonary La"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "96ebcf61-4970-5b9e-8d34-37f5eb654f22",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 552,
+        "dense_score": 0.714931,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "E.  Usual interstitial pneumonia\n  2.  A 38-year-old woman with a history of heavy smoking presents with\nslowly progressive respiratory insufficiency. Chest x-rays show a\nbilateral ground-glass interstitial infiltrate involving the lung base. An\nopen lung biopsy reveals the following histopathologic"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "11131f2f-aac3-56d3-bbfe-37b0a7964567",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 565,
+        "dense_score": 0.712467,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "alveolar accumulation of macrophages, with hyperplasia of type II\npneumocytes. DIP may progress to end-stage (honeycomb) lung, but\nusually responds to steroid treatment, hence the importance of\ndifferentiating DIP in lung biopsies from other forms of interstitial lung\ndisease. UIP leads to homogeneo"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "0d98eb31-73cf-5cff-bbf4-9ada5663e851",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 645,
+        "dense_score": 0.711233,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "DFOV 33.0cm BONE\n\nR170\n\nR\n\nKV 120\n\nA 230\n\nLa Age\n\n5.0mm/1:1\n\nB\n\nL\n\nA\n\nB\n\nFig. 15.15 Cryptogenic organizing pneumonia. Some alveolar spaces are filled with balls of fibroblasts (Masson bodies, arrows), while the alveolar walls are relatively normal. (A) Low power. (B) High power.\n\nC\n\nFig. 15.14 Usual"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "b514a418-f213-5990-924c-9742dbb67cee",
+    "case_key": "sys-005",
+    "domain": "systemic_pathology",
+    "query": "What are the gross and histologic evolution stages of acute myocardial infarction over 1 to 14 days?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "6e7a234d-d6a1-573e-9a10-5567522450f6"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "5c8c6889-b359-52c3-9d7b-539f9b2b0455",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 513,
+        "dense_score": 0.755033,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "or drugs (cocaine or ephedrine). Elevated levels of catecholamines also increase heart rate and myocardial contractility, exacerbating ischemia caused by the vasospasm. The outcome of such vasospasm can be sudden cardiac death (usually caused by a fatal arrhythmia) or-with recurrent episodes-an isch"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "b55e8199-e98b-5b43-bad0-9f910c8aeb4d",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 514,
+        "dense_score": 0.748841,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "negatively charged nucleic acids. Myocyte vacuolization is a sublethal ischemic change at the margins of infarcts caused by intracellular accumula- tions of salt and water within the sarcoplasmic reticulum; such myocytes are viable but poorly contractile.\n\nNecrotic myocardium elicits acute inflammat"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "80256606-c5a9-5e4f-a1fd-424eedd3e066",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 511,
+        "dense_score": 0.735005,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "In approximately 10% of cases, MI occurs in the absence of the typi- cal coronary atherothrombosis. In such situations, other mechanisms may be responsible for the reduced coronary blood flow:\n\n\u2022\n\nVasospasm with or without coronary atherosclerosis, perhaps in association with platelet aggregation or"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "e963b49b-161a-5777-b7e3-754952fddff6",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 517,
+        "dense_score": 0.727296,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "A\n\nRecommended initial therapies for acute MI are based on the pathophysiologic features discussed earlier and include:\n\n\u2022 Oxygen supplementation to improve blood oxygen saturation for patients with hypoxia or respiratory distress\n\n\u2022\n\nNitrates to induce vasodilation and reverse vasospasm Antiplatele"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "c0b0e410-27a8-59c8-a4e0-296fb300f694",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 515,
+        "dense_score": 0.726174,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "The following discussion considers the changes that result from interventions that can limit infarct size by salvaging myocardium that is not yet necrotic.\n\nInfarct Modification by Reperfusion. The therapeutic goal in acute MI is to salvage the maximal amount of ischemic myocardium; this is accompli"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "7df1f210-e813-5ee3-a93f-65a96d03cae8",
+    "case_key": "sys-006",
+    "domain": "systemic_pathology",
+    "query": "What is the histopathologic distinction between Crohn disease and ulcerative colitis?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "22d00d8d-3b01-5ac9-b28d-5c9f0e3acd16"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "22d00d8d-3b01-5ac9-b28d-5c9f0e3acd16",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 747,
+        "dense_score": 0.790883,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "B\n\nD\n\nFig. 17.38 Microscopic pathology of Crohn disease. (A) Haphazard crypt organization results from repeated injury and regeneration. (B) Noncaseating granuloma. (C) Active Crohn's disease, with ulceration and purulent exudate. (D) Transmural Crohn's disease with submucosal and serosal granulomas"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "70953b19-64c7-5b93-8cb4-18c1e94c8da3",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 746,
+        "dense_score": 0.779033,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "C\n\nB\n\nFig. 17.37 Gross pathology of Crohn disease. (A) Small intestinal stricture. (B) Linear mucosal ulcers, which impart a cobblestone appearance to the mucosa, and thickened intestinal wall. (C) Perforation and associated sero- sitis. (D) Creeping fat (arrows).\n\na crypt are referred to as crypt a"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "eeafb073-69c8-5e40-a587-138d37d15e9e",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 717,
+        "dense_score": 0.755071,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "diffuse active colitis and focal active colitis, both characterized by cryptitis\nand crypt abscesses, irregular luminal border, chronic inflammation of the\nlamina propria, crypt distortion and branching, mucin depletion, and basal\nplasmacytosis. Basal plasmacytosis is present in UC but not infectiou"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "50c2c266-131a-5980-a846-5473bcdaad0e",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 748,
+        "dense_score": 0.752756,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nC\n\nD\n\nFig. 17.39 Gross pathology of ulcerative colitis. (A) Total colectomy with pancolitis showing active disease, with red, granular mucosa in the cecum (left) and smooth, atrophic mucosa distally (right). (B) Sharp demarca- tion between active ulcerative colitis (right) and normal mucosa (l"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "2c3e3741-4498-5167-829a-b35653267a19",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 745,
+        "dense_score": 0.739636,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "IBD risk alleles overlap with those associated with other immune-me- diated diseases, including type I diabetes, ankylosing spondylitis and psoriasis. In most cases, specific polymorphisms have consistent effects across diseases, but some that are associated with increased IBD risk are protective in"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "54914da4-1ae4-5d55-be5a-ebef523577c2",
+    "case_key": "sys-007",
+    "domain": "systemic_pathology",
+    "query": "What are the microscopic hallmarks of papillary thyroid carcinoma including Orphan Annie nuclei and psammoma bodies?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "5c55594f-5701-51a8-8707-156b0b1717c7"
+    ],
+    "revision": 3,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "d51b44f2-4576-5ab2-afcb-9d4139630e54",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1005,
+        "dense_score": 0.702642,
+        "lexical_score": 0.001224,
+        "fused_score": 0.979365,
+        "is_hit": false,
+        "content_preview": "\u2022\n\n\u2022\n\nlies downstream of receptor tyrosine kinases and RAS in growth factor signaling pathways. The presence of BRAF mutation in conventional PTC correlates with reduced expression of thyroid differentiation markers (such as thyroglobulin and thyroid per- oxidase) and may be associated with a higher"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "5c55594f-5701-51a8-8707-156b0b1717c7",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 342,
+        "dense_score": 0.720281,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "asymmetric fibrosis of the thyroid. Fibrotic areas have a stony hard\nconsistency. Fibrosis extends beyond the thyroid parenchyma, resulting in\nfixation of the organ to adjacent tissues and thus mimicking an infiltrative\nneoplasm. Histologically, the thyroid parenchyma is replaced by keloid-\nlike fib"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "80212ea1-b022-59a4-b859-aef2d9567a4a",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1006,
+        "dense_score": 0.713049,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "A\n\nB\n\nFig. 24.19 Papillary carcinoma of the thyroid. (A) The macroscopic appearance of a papillary carcinoma with grossly discernible papillary structures. (B) This particular example contains well-formed papillae. (C) High power shows cells with characteristic enlarged, overlapping, and grooved nuc"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "aa7e70fb-991c-5e32-a60b-5ad2c93a7a0f",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 322,
+        "dense_score": 0.696037,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "QUESTION 13.7\nA.  Diffuse sclerosing\nB.  Follicular\nC.  Microcarcinoma\nD.  Tall cell\nE.  Warthin-like\n  8.  This picture shows a variant of PTC that has been found in 30% of\npatients who developed papillary carcinoma following the Chernobyl\naccident. Which variant is it?"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "1156b5be-be04-5777-8e1a-a9094d0dc905",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 1009,
+        "dense_score": 0.693215,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "Fig. 24.23 Electron micrograph of medullary thyroid carcinoma. These cells contain membrane-bound secretory granules that are the sites of storage of calcitonin and other peptides.\n\n\n### Clinical Features\n\n\nSporadic cases of medullary carcinoma come to medical attention most often as a mass in the n"
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "ce3dbf41-291d-54b5-ba2e-676a51f9f05d",
+    "case_key": "sys-008",
+    "domain": "systemic_pathology",
+    "query": "What is the histologic morphology of crescentic glomerulonephritis and its association with rapidly progressive renal failure?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "f84c079c-0402-580b-89a8-635e0d666f22"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "0ecc2959-aa98-5c6b-ad9a-8c3c6e62bd04",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 842,
+        "dense_score": 0.810421,
+        "lexical_score": 0.000143,
+        "fused_score": 0.994355,
+        "is_hit": false,
+        "content_preview": "by relatively rapid and progressive loss of renal function associated with severe oliguria and signs of nephritic syndrome. The most com- mon histologic picture is the presence of crescents in most of the glomeruli, hence the name crescentic glomerulonephritis. As discussed earlier, crescents are pr"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "b2b4deed-a185-5409-96ef-b15648a0daa4",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 855,
+        "dense_score": 0.699542,
+        "lexical_score": 0.000115,
+        "fused_score": 0.89734,
+        "is_hit": false,
+        "content_preview": "diabetes), the glomerular involvement is a major clinical manifestation. Most of these diseases are discussed elsewhere in this book. Here we briefly recall some of the lesions and discuss only those not considered in other sections.\n\n\n### Lupus Nephritis\n\n\nAs discussed in Chapter 6, SLE gives rise "
+      },
+      {
+        "rank": 3,
+        "chunk_id": "2f66ea80-e423-58e6-9f23-f0e7e1258ef1",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 843,
+        "dense_score": 0.740654,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "B\n\n\n### Clinical Features\n\n\nFig. 20.9 Crescentic glomerulonephritis. (A) Note the compressed glomerular tufts and the crescent-shaped mass of proliferating epithelial cells and leukocytes within the Bowman capsule (periodic acid-Schiff stain). (B) Electron micrograph showing characteristic wrinkling"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "0c2ae32e-b771-59c6-8e4e-ab2ce8c85a38",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 856,
+        "dense_score": 0.723515,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "silver/PAS stains. IF shows continuous staining for C3 and properdin\nalong the capillary membrane and around the GBM deposits.\n7.  Correct choice: E\nCRESCENTIC GN\u2014At least 50% of glomeruli must show crescents for a\ndiagnosis of crescentic GN. Crescents are masses of cells and fibrin\naccumulating int"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "272d9ae2-a96f-50a7-9618-9c8c16f11113",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 837,
+        "dense_score": 0.722813,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "D.  Membranous glomerulopathy\nE.  Minimal change glomerulopathy\n  7.  Which of the following is true about crescentic glomerulonephritis?\nA.  Crescents consist exclusively of parietal cells of the Bowman\ncapsule\nB.  Finding 20% of glomeruli with crescents supports the diagnosis\nC.  Most cases are as"
+      }
+    ],
+    "status": "MISS"
+  },
+  {
+    "case_id": "74193c3e-5846-537e-a2d7-7984ceb61fed",
+    "case_key": "sys-009",
+    "domain": "systemic_pathology",
+    "query": "What histologic findings, including ballooning degeneration and Mallory bodies, favor alcoholic steatohepatitis?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "047e3ec3-50fc-53d7-bf33-56dab47dee48",
+      "8f595ea3-5e09-551c-8fda-cef9af6fc222"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "7ab3d081-4aa3-58f3-8125-a4b3e07caa53",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 783,
+        "dense_score": 0.787175,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": false,
+        "content_preview": "Steatosis\n\nSTEATOSIS\n\nExposure\n\nAbstinence\n\nPerivenular fibrosis\n\nContinued\n\nexposure\n\nAbstinence\n\nHyperplastic nodules\n\nHEALTHY LIVER\n\nAbstinence\n\nPortal tract\n\nHepatocytes\n\nCentral vein\n\nSevere exposure\n\nAbstinence\n\nSevere exposure\n\nCIRRHOSIS\n\nRepeated attacks\n\nAbstinence\n\nFibrosis\n\nSTEATOHEPATITI"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "22817154-c14d-5e9e-afe5-f58b782b1da0",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 784,
+        "dense_score": 0.765781,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "when Mallory hyaline is present. Lobular lymphocytic infiltrates are com- mon, and portal lymphocytic infiltrates also may occur, along with increases in macrophages in both portal tracts and lobular parenchyma. Necrosis or apoptosis is usually spotty, but more prominent hepatocellular injury and co"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "047e3ec3-50fc-53d7-bf33-56dab47dee48",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 792,
+        "dense_score": 0.739429,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": true,
+        "content_preview": "often surrounding degenerating hepatocytes\u2014a change known as\nneutrophilic satellitosis. All these changes are typically more severe in the\ncentrilobular region. Alcoholic steatohepatitis should be favored if there is\nprominence of ballooning degeneration, Mallory bodies, cholestasis, and\ncentral vei"
+      },
+      {
+        "rank": 4,
+        "chunk_id": "ba723736-74b0-5dee-9bdd-e3804e3fc7a5",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 782,
+        "dense_score": 0.732043,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "valproic acid (anticonvulsant), and zidovudine (antiretroviral) can result in microvesicular steatosis. Endothelial injury to sinusoids and central veins can be caused by cytotoxic agents (azathioprine, oxaliplatin), leading to sinu- soidal obstruction syndrome (formerly called veno-occlusive diseas"
+      },
+      {
+        "rank": 5,
+        "chunk_id": "5200881d-da91-50e6-af09-fbfe9fd82351",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 786,
+        "dense_score": 0.723772,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "hepatocytes in MASLD down-regulate lipolysis, an alteration that may further contribute to the accumulation of lipids. Lipolysis occurs through a mechanism called lipophagy, a type of selective autophagy, which you will recall is the process by which cells remove excessive or dysfunctional cellular "
+      }
+    ],
+    "status": "HIT"
+  },
+  {
+    "case_id": "67c444bc-54af-5bd9-9c28-6df18663a343",
+    "case_key": "sys-010",
+    "domain": "systemic_pathology",
+    "query": "What is the histologic architecture and Gleason grading system of prostate adenocarcinoma?",
+    "out_of_corpus": false,
+    "expected_chunk_ids": [
+      "16e2e1d0-829d-5bc5-8f8c-4545181d7f8e"
+    ],
+    "revision": 4,
+    "retrieved": [
+      {
+        "rank": 1,
+        "chunk_id": "16e2e1d0-829d-5bc5-8f8c-4545181d7f8e",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 908,
+        "dense_score": 0.758413,
+        "lexical_score": null,
+        "fused_score": 0.65,
+        "is_hit": true,
+        "content_preview": "B\n\nFig. 21.34 Prostatic adenocarcinoma. (A) Photomicrograph of small focus of adenocarcinoma of the prostate demonstrating small glands crowded in between larger benign glands (arrows). (B) Higher magnification shows several small malignant glands with enlarged nuclei, prominent nucleoli, and dark c"
+      },
+      {
+        "rank": 2,
+        "chunk_id": "14972b8d-e7c0-5ade-b1ac-24e2785e9131",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 909,
+        "dense_score": 0.751084,
+        "lexical_score": null,
+        "fused_score": 0.639516,
+        "is_hit": false,
+        "content_preview": "B\n\nA\n\nFig. 21.36 Gleason grading of prostate cancer. (A) Low-grade prostate adenocarcinoma grade group 1 consisting of back-to-back uniform-sized malignant glands lined by a single layer of epithelial cells. (B) Needle biopsy of the prostate with grade group 1 adenocarcinoma (Gleason score 3+3=6) co"
+      },
+      {
+        "rank": 3,
+        "chunk_id": "85057bf3-1d5b-53c8-9d68-dfb4c9dc6548",
+        "source": "robbins_pathologic_basis_11th",
+        "pdf_page": 907,
+        "dense_score": 0.732763,
+        "lexical_score": null,
+        "fused_score": 0.629365,
+        "is_hit": false,
+        "content_preview": "expression, possibly enhancing the genotoxic effects of environmental carcinogens. Other genes silenced by epigenetic modifications in a sub- set of prostate cancers include genes involved in cell cycle regulation (RB, CDKN2A), maintenance of genomic stability (MLH1, MSH2), and Wnt signaling (APC). "
+      },
+      {
+        "rank": 4,
+        "chunk_id": "266f6cd0-8db3-59b4-9f94-4f576e34e166",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 922,
+        "dense_score": 0.727837,
+        "lexical_score": null,
+        "fused_score": 0.619531,
+        "is_hit": false,
+        "content_preview": "7.  A prostatic carcinoma is detected by needle biopsy. This\nphotomicrograph shows the tumor's dominant pattern (on the lower\nright) and secondary pattern (on the upper left). Which of the\nfollowing is the corresponding Gleason score?\nQUESTION 45.7\nA.  3\nB.  5\nC.  7\nD.  9\nE.  10\n  8.  Gleason score "
+      },
+      {
+        "rank": 5,
+        "chunk_id": "6a4a2660-95e0-5f90-832b-e0233491b59e",
+        "source": "sternberg_review_2nd",
+        "pdf_page": 930,
+        "dense_score": 0.723866,
+        "lexical_score": null,
+        "fused_score": 0.61,
+        "is_hit": false,
+        "content_preview": "are the mainstay of most screening programs. TRUS alone has a low\nsensitivity and low specificity. Methods to increase the sensitivity and\nspecificity of PSA measurement include the following:\nDetermination of the PSA index: PSA/gram of tissue determined by\nTRUS.\nAge-specific reference ranges.\nPerce"
+      }
+    ],
+    "status": "HIT"
+  }
+]
