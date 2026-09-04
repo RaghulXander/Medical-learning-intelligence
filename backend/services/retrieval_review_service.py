@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import uuid
+import hashlib
+import json
 from datetime import datetime, timezone
 from typing import Any, Optional, Sequence
 
@@ -317,7 +319,7 @@ class RetrievalReviewService:
         )
         benchmark = db.query(RetrievalBenchmark).filter_by(id=benchmark_id).one()
         verified = [case for case in cases if case.verification_status == "HUMAN_VERIFIED"]
-        domains = {case.domain for case in verified}
+        domains = {case.domain for case in verified if not case.out_of_corpus}
         has_out_of_corpus = any(case.out_of_corpus for case in verified)
         benchmark.status = (
             "HUMAN_VERIFIED"
@@ -327,6 +329,84 @@ class RetrievalReviewService:
             and has_out_of_corpus
             else "HUMAN_REVIEW"
         )
+
+    @staticmethod
+    def export_verified_dataset(db, slug: str) -> tuple[bytes, dict[str, Any]]:
+        """Build a deterministic evaluator dataset from completed human review."""
+        benchmark = RetrievalReviewService._benchmark(db, slug)
+        cases = (
+            db.query(RetrievalBenchmarkCase)
+            .filter_by(benchmark_id=benchmark.id)
+            .order_by(RetrievalBenchmarkCase.case_key)
+            .all()
+        )
+        if benchmark.status != "HUMAN_VERIFIED":
+            raise ValueError("Benchmark is not HUMAN_VERIFIED")
+        if len(cases) < 50:
+            raise ValueError("Verified benchmark requires at least 50 cases")
+        in_corpus_domains = {case.domain for case in cases if not case.out_of_corpus}
+        if len(in_corpus_domains) < 5:
+            raise ValueError("Verified benchmark requires at least five in-corpus domains")
+        if not any(case.out_of_corpus for case in cases):
+            raise ValueError("Verified benchmark requires an out-of-corpus control")
+
+        rows = []
+        referenced_chunk_ids: set[str] = set()
+        for case in cases:
+            if case.verification_status != "HUMAN_VERIFIED":
+                raise ValueError(f"Case {case.case_key} is not HUMAN_VERIFIED")
+            if not case.reviewer_id or not case.reviewed_at or not case.review_notes:
+                raise ValueError(f"Case {case.case_key} lacks human review metadata")
+            chunk_ids = list(case.expected_chunk_ids or [])
+            if len(chunk_ids) != len(set(chunk_ids)):
+                raise ValueError(f"Case {case.case_key} contains duplicate chunk IDs")
+            RetrievalReviewService._validate_labels(db, case)
+            evidence = RetrievalReviewService._evidence_rows(db, chunk_ids)
+            if len(evidence) != len(chunk_ids):
+                raise ValueError(f"Case {case.case_key} has unresolved evidence")
+            referenced_chunk_ids.update(chunk_ids)
+            rows.append(
+                {
+                    "id": case.case_key,
+                    "domain": case.domain,
+                    "query": case.query,
+                    "expected_chunk_ids": chunk_ids,
+                    "out_of_corpus": case.out_of_corpus,
+                    "reviewer": case.reviewer_id,
+                    "reviewed_at": case.reviewed_at.isoformat(),
+                    "review_notes": case.review_notes,
+                    "verification_status": case.verification_status,
+                    "evidence_receipts": [
+                        {
+                            key: item[key]
+                            for key in (
+                                "id",
+                                "content_hash",
+                                "source_short_name",
+                                "edition",
+                                "pdf_page",
+                                "textbook_page",
+                                "chapter_name",
+                                "section_heading",
+                            )
+                        }
+                        for item in evidence
+                    ],
+                }
+            )
+
+        payload = "".join(
+            json.dumps(row, sort_keys=True, separators=(",", ":")) + "\n"
+            for row in rows
+        ).encode("utf-8")
+        return payload, {
+            "slug": benchmark.slug,
+            "case_count": len(cases),
+            "in_corpus_domain_count": len(in_corpus_domains),
+            "out_of_corpus_count": sum(case.out_of_corpus for case in cases),
+            "referenced_chunk_count": len(referenced_chunk_ids),
+            "dataset_hash": hashlib.sha256(payload).hexdigest(),
+        }
 
     @staticmethod
     def update_case(

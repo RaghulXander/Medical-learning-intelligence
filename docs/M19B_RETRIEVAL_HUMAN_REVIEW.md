@@ -69,3 +69,28 @@ The benchmark is promoted to `HUMAN_VERIFIED` only when:
 Rejected and draft cases keep the benchmark in `HUMAN_REVIEW`. Separately, all
 three M15 book provenance manifests must pass before M19B as a whole is
 complete. Do not run paid embeddings while either gate is pending.
+
+## Export the verified gold set
+
+After the UI reports that every case is human verified, validate the database
+export without writing a file:
+
+```bash
+.venv/bin/python scripts/export_retrieval_review_dataset.py
+```
+
+The exporter refuses to proceed unless every review and dataset-shape gate
+passes. It also resolves every selected chunk against the approved three-book
+corpus and emits source/page/content-hash receipts without exporting textbook
+text. Then create the evaluator input:
+
+```bash
+.venv/bin/python scripts/export_retrieval_review_dataset.py --execute
+.venv/bin/python scripts/evaluate_retrieval.py \
+  --dataset data/evaluation/retrieval/verified/m16a_retrieval_eval_v1.jsonl \
+  --validate-only
+```
+
+Use `--overwrite` only when you intentionally re-export after additional
+audited human review. The output is deterministic while the reviewed database
+state is unchanged.

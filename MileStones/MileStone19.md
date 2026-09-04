@@ -72,6 +72,9 @@ Implementation available for the retrieval-label portion:
 - explicit human attestation before approve/reject;
 - optimistic revision checks and immutable save/decision history;
 - bootstrap import remains `AUTO_BOOTSTRAP_UNVERIFIED` by design.
+- deterministic verified-JSONL export with reviewer metadata and evidence
+  receipts; export remains blocked until every human and dataset-shape gate
+  passes.
 
 See `docs/M19B_RETRIEVAL_HUMAN_REVIEW.md` for setup and reviewer instructions.
 
