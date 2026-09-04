@@ -91,6 +91,13 @@ label is human verified. Until then, embedding execution remains blocked.
 Entry condition: Part 19B passes and the user approves current Vertex AI cost
 and quota.
 
+The executable cross-machine repair, provenance, embedding, and evaluation
+runbook is `MileStones/MileStone19C.md`. Its Phase 0 is mandatory: the
+2026-09-04 audit found ten invalid automatically selected evidence chunks and
+twenty narrowed cases whose automated approval still requires genuine human
+re-attestation. Paid embeddings remain blocked until those defects and all
+three provenance manifests are closed.
+
 1. Run one immutable `gemini-embedding-001` document embedding cohort at 768
    dimensions with automatic truncation disabled.
 2. Record provider/model version, task types, chunking version, configuration
