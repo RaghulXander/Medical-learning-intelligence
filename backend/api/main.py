@@ -23,6 +23,7 @@ from backend.api.routes.evidence import router as evidence_router
 from backend.api.routes.multimodal import router as multimodal_router
 from backend.api.routes.diagnostics import router as diagnostics_router
 from backend.api.routes.retrieval_review import router as retrieval_review_router
+from backend.api.routes.image_review import router as image_review_router
 
 settings = get_settings()
 
@@ -56,6 +57,7 @@ app.include_router(evidence_router)
 app.include_router(multimodal_router)
 app.include_router(diagnostics_router)
 app.include_router(retrieval_review_router)
+app.include_router(image_review_router)
 
 
 @app.get("/api/health", include_in_schema=False)

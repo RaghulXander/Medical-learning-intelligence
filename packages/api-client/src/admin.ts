@@ -12,6 +12,11 @@ import {
   RetrievalReviewCasePage,
   RetrievalReviewSummary,
   UpdateRetrievalReviewCase,
+  ImageReviewAsset,
+  ImageReviewAssetPage,
+  ImageReviewSummary,
+  MultimodalPilotReadiness,
+  SaveImageReview,
 } from '@medical/shared';
 
 export class AdminApi {
@@ -131,6 +136,53 @@ export class AdminApi {
     const qs = new URLSearchParams({ q: query });
     if (source) qs.set('source', source);
     return this.client.request(`/api/admin/retrieval-review/evidence/search?${qs.toString()}`);
+  }
+
+  public async getImageReviewSummary(): Promise<ImageReviewSummary> {
+    return this.client.request('/api/admin/image-review');
+  }
+
+  public async listImageReviewAssets(params?: {
+    curation_status?: string;
+    utility_class?: string;
+    source?: string;
+    pilot_shortlisted?: boolean;
+    page?: number;
+    limit?: number;
+  }): Promise<ImageReviewAssetPage> {
+    const qs = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') qs.set(key, String(value));
+    });
+    return this.client.request(`/api/admin/image-review/assets${qs.size ? `?${qs}` : ''}`);
+  }
+
+  public async getImageReviewAsset(assetId: string): Promise<ImageReviewAsset> {
+    return this.client.request(`/api/admin/image-review/assets/${encodeURIComponent(assetId)}`);
+  }
+
+  public async getImageContent(assetId: string): Promise<Blob> {
+    return this.client.requestBlob(`/api/admin/image-review/assets/${encodeURIComponent(assetId)}/content`);
+  }
+
+  public async saveImageReview(assetId: string, payload: SaveImageReview): Promise<ImageReviewAsset> {
+    return this.client.request(`/api/admin/image-review/assets/${encodeURIComponent(assetId)}`, {
+      method: 'PATCH', body: JSON.stringify(payload),
+    });
+  }
+
+  public async decideImageReview(
+    assetId: string,
+    action: 'approve-study' | 'approve-question' | 'reject-non-educational' | 'reject-quality' | 'provenance-unresolved',
+    payload: SaveImageReview
+  ): Promise<ImageReviewAsset> {
+    return this.client.request(`/api/admin/image-review/assets/${encodeURIComponent(assetId)}/${action}`, {
+      method: 'POST', body: JSON.stringify(payload),
+    });
+  }
+
+  public async getMultimodalPilotReadiness(): Promise<MultimodalPilotReadiness> {
+    return this.client.request('/api/admin/image-review/pilot-readiness');
   }
 }
 

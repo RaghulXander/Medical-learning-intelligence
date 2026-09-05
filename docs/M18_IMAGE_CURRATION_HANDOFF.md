@@ -29,6 +29,12 @@ parts:
 
 Do not generate image MCQs during 18A.
 
+For the separately approved M19E pilot-shortlist stage, use
+`scripts/rank_m19e_images.py` against the local image root and remote catalog.
+The default run is read-only and ranks 72 image occurrences; `--apply-tags` is
+the only mode that writes, and it updates automated metadata rather than human
+approval fields. Review this shortlist before attempting catalog-wide review.
+
 ## Important existing context
 
 - The text corpus contains 1,719 selected chunks from two books:

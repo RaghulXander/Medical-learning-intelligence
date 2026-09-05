@@ -83,6 +83,24 @@ export class MedicalApiClient {
     return this.requestWithAuthRetry<T>(path, options, true);
   }
 
+  public async requestBlob(path: string): Promise<Blob> {
+    const url = `${this.baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
+    const headers: Record<string, string> = { Accept: 'image/*' };
+    const token = this.getToken ? await this.getToken() : null;
+    if (token) headers.Authorization = `Bearer ${token}`;
+    let response = await fetch(url, { headers });
+    if (response.status === 401 && token) {
+      const refreshed = await this.refreshAfterUnauthorized();
+      if (refreshed) response = await fetch(url, { headers: { ...headers, Authorization: `Bearer ${refreshed}` } });
+    }
+    if (!response.ok) {
+      let data: unknown = response.statusText;
+      try { data = await response.json(); } catch { /* non-JSON proxy response */ }
+      throw new ApiError(response.status, response.statusText, data);
+    }
+    return response.blob();
+  }
+
   private async refreshAfterUnauthorized(): Promise<string | null> {
     if (!this.onUnauthorized) return null;
     if (!this.unauthorizedRefresh) {

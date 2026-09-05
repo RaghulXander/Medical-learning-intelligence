@@ -11,6 +11,7 @@ export * from './types/auth';
 export * from './types/student';
 export * from './types/mobileUi';
 export * from './types/retrievalReview';
+export * from './types/imageReview';
 export * from './schemas/questionSchema';
 export * from './schemas/assessmentSchema';
 export * from './features/auth';

@@ -8,8 +8,8 @@
 
 ## 1. Current Objective & Active Milestone
 
-* **Active Milestone**: [MileStone19D.md](MileStones/MileStone19D.md)
-* **Goal**: Controlled 50-question, text-only, evidence-backed NEET-SS calibration pilot.
+* **Active Milestones**: human review of [MileStone19D.md](MileStones/MileStone19D.md) and curation work for [MileStone19E.md](MileStones/MileStone19E.md)
+* **Goal**: Finish text-candidate review while independently curating private images for a gated 30-question multimodal pilot.
 * **Key Tasks**:
   1. M19B Provenance Manifests (Passed 3/3 reference books: 2,845 chunks, 0 missing/duplicate pages).
   2. M19C Paid Vertex AI Embeddings (Run `cba90495-1c99-416d-989d-fdd246212218`, 2,845/2,845 vectors in Neon DB).
@@ -95,3 +95,7 @@ When starting a new conversation:
   - 7 rows failed closed safely due to strict claim-to-evidence validation.
   - Actual estimated cost: **$0.1005 USD** (well below $1.00 budget cap).
   - Full report saved in [docs/M19D_CALIBRATION_PILOT_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19D_CALIBRATION_PILOT_REPORT.md).
+- **Milestone 19E (Image Curation + Multimodal Pilot)**: **ACTIVE; GENERATION GATE CLOSED**
+  - Remote audit: 2,165 assets, 3,053 suggested links, 0 question-approved assets, and 0 human-verified links.
+  - Admin curation API/UI, exact occurrence binding, immutable review history, and 30-slot draft blueprint are implemented.
+  - No Vertex vision calls or multimodal candidate writes are authorized yet.

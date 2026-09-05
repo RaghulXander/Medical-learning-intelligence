@@ -1,0 +1,32 @@
+{
+  "blueprint_id": "m19e-multimodal-pilot-v1",
+  "status": "DRAFT_REQUIRES_HUMAN_APPROVAL",
+  "target_exam": "NEET_SS",
+  "question_type": "SINGLE_BEST_ANSWER",
+  "total_candidates": 30,
+  "cohorts": [
+    {"id": "morphology-recognition", "count": 10, "purpose": "Morphology or entity recognition from a diagnostic-quality image"},
+    {"id": "ihc-special-stain", "count": 8, "purpose": "Interpret an explicitly human-verified IHC or special-stain result"},
+    {"id": "integrated-clinicopathologic", "count": 6, "purpose": "Integrate a concise clinical context with visible and text-supported pathology findings"},
+    {"id": "gross-cytology-hematology-diagram", "count": 6, "purpose": "Gross, cytology, hematology, or educational diagram interpretation according to catalog availability"}
+  ],
+  "eligibility": {
+    "curation_status": "APPROVED_INTERNAL_QUESTION_CANDIDATE",
+    "metadata_verification_status": "HUMAN_VERIFIED",
+    "required_rights": ["RESTRICTED_INTERNAL", "INTERNAL_EDUCATIONAL_USE"],
+    "require_exact_occurrence": true,
+    "required_link_status": "HUMAN_VERIFIED",
+    "require_reviewed_diagnosis": true,
+    "require_reviewed_caption": true,
+    "require_resolvable_object_and_sha256": true,
+    "required_storage_access_status": "PRIVATE_VERIFIED"
+  },
+  "generation_policy": {
+    "one_image_blueprint_per_request": true,
+    "model_may_not_create_citations_or_metadata": true,
+    "server_attaches_provenance": true,
+    "automatic_approval_forbidden": true,
+    "paid_execution_requires_separate_owner_approval": true
+  },
+  "approval": null
+}

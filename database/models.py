@@ -924,6 +924,27 @@ class ImageAsset(Base):
     blank_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     is_exact_duplicate: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     metadata_json: Mapped[Dict[str, Any]] = mapped_column("metadata", JSONType, default=dict)
+    reviewed_utility_class: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    reviewed_diagnosis: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    reviewed_stain: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    reviewed_magnification: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    reviewed_caption: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    automated_rank_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True, index=True)
+    automated_rank_version: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    automated_suggested_utility_class: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    automated_tags: Mapped[Optional[List[str]]] = mapped_column(JSONType, nullable=True)
+    pilot_shortlisted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
+    storage_access_status: Mapped[str] = mapped_column(
+        String(50), default="UNVERIFIED", nullable=False, index=True
+    )
+    metadata_verification_status: Mapped[str] = mapped_column(
+        String(50), default="UNVERIFIED", nullable=False, index=True
+    )
+    review_revision: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    curation_reviewed_by: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    curation_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )
@@ -933,6 +954,9 @@ class ImageAsset(Base):
     )
     evidence_links: Mapped[List["ImageTextEvidenceLink"]] = relationship(
         "ImageTextEvidenceLink", back_populates="image_asset", cascade="all, delete-orphan"
+    )
+    reviews: Mapped[List["ImageReview"]] = relationship(
+        "ImageReview", back_populates="image_asset", cascade="all, delete-orphan"
     )
 
 
@@ -971,6 +995,9 @@ class ImageTextEvidenceLink(Base):
     document_chunk_id: Mapped[str] = mapped_column(
         GUID(), ForeignKey("document_chunks.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    image_occurrence_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("image_occurrences.id", ondelete="CASCADE"), nullable=True, index=True
+    )
     link_type: Mapped[str] = mapped_column(String(50), default="PAGE_CO_OCCURRENCE", nullable=False, index=True)
     confidence: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
     verification_status: Mapped[str] = mapped_column(String(50), default="AI_SUGGESTED", nullable=False, index=True)
@@ -982,6 +1009,57 @@ class ImageTextEvidenceLink(Base):
 
     image_asset: Mapped["ImageAsset"] = relationship("ImageAsset", back_populates="evidence_links")
     chunk: Mapped["DocumentChunk"] = relationship("DocumentChunk", back_populates="image_links")
+    occurrence: Mapped[Optional["ImageOccurrence"]] = relationship("ImageOccurrence")
+
+
+class ImageReview(Base):
+    __tablename__ = "image_reviews"
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    image_asset_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_assets.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    reviewer_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    action: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    notes: Mapped[str] = mapped_column(Text, nullable=False)
+    previous_snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    new_snapshot: Mapped[Dict[str, Any]] = mapped_column(JSONType, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    image_asset: Mapped["ImageAsset"] = relationship("ImageAsset", back_populates="reviews")
+    reviewer: Mapped["User"] = relationship("User")
+
+
+class QuestionImageEvidence(Base):
+    __tablename__ = "question_image_evidence"
+    __table_args__ = (
+        UniqueConstraint(
+            "question_id", "image_occurrence_id", name="uq_question_image_evidence_occurrence"
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    question_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    image_asset_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_assets.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    image_occurrence_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_occurrences.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    image_text_evidence_link_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("image_text_evidence_links.id", ondelete="RESTRICT"), nullable=False
+    )
+    role: Mapped[str] = mapped_column(String(50), default="QUESTION_STEM", nullable=False)
+    display_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
 
 
 # -----------------------------------------------------------------------------

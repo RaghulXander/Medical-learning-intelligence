@@ -39,6 +39,13 @@ export const adminNavigationGroups: AdminNavigationGroup[] = [
         keywords: ['rag', 'evidence', 'benchmark', 'chunks', 'retrieval'],
       },
       {
+        id: 'image-curation',
+        label: 'Image curation',
+        href: '/admin/image-curation',
+        description: 'Review image utility, provenance, and question eligibility',
+        keywords: ['image', 'multimodal', 'microscopy', 'curation', 'provenance'],
+      },
+      {
         id: 'users',
         label: 'User governance',
         href: '/admin?view=users',

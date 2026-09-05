@@ -10,6 +10,7 @@ import {
   ExternalLink,
   FileCheck2,
   ListChecks,
+  Images,
   LayoutDashboard,
   Menu,
   Monitor,
@@ -41,6 +42,7 @@ const navigationIcons = {
   overview: BarChart3,
   questions: FileCheck2,
   'retrieval-review': ListChecks,
+  'image-curation': Images,
   users: Users,
   'landing-content': LayoutDashboard,
   'native-layout': Smartphone,
@@ -67,6 +69,9 @@ function currentPage(pathname: string, activeView: string): { title: string; des
   }
   if (pathname === '/admin/retrieval-review') {
     return { title: 'Retrieval evidence', description: 'Verify benchmark prompts and source chunks' };
+  }
+  if (pathname === '/admin/image-curation') {
+    return { title: 'Image curation', description: 'Verify private images and multimodal evidence' };
   }
   if (pathname === '/admin/content') {
     return { title: 'Landing page', description: 'Manage the public website experience' };
