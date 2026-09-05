@@ -81,42 +81,36 @@ Evaluation was performed with `scripts/evaluate_retrieval.py` across all 55 test
 
 ---
 
-## 5. Root Cause Analysis for In-Corpus Misses (19 Cases)
+## 5. Final Miss Analysis
 
-The 19 misses in Recall@5 fall into two distinct buckets:
+The accepted evaluation has one Recall@5 miss: `gen-path-002`. It remains a
+valid human-reviewed benchmark case and is retained as a documented retrieval
+failure rather than being relabelled merely to obtain a perfect score.
 
-### Bucket A: 10 Cases with Invalid Ground Truth (Phase 0A)
-During automated decision scripts, these 10 benchmark cases had their ground-truth chunk IDs pointed to front-matter, copyright notices, or eBook promotion pages instead of real textbook pages:
-- `diag-002`: Ground truth points to chromatin/gene editing rather than CK7/CK20 immunohistochemistry.
-- `diag-006`: Ground truth points to "Activate your eBook" page.
-- `diag-008`: Ground truth points to noncoding DNA overview rather than lung NGS testing.
-- `gen-path-010`: Ground truth points to book copyright page.
-- `hem-001`: Ground truth points to "Key Features" marketing page.
-- `hem-008`: Ground truth points to Foreword/contributor list.
-- `hem-010`: Ground truth points to miRNA/housekeeping overview.
-- `sys-001`: Ground truth points to book cover.
-- `sys-004`: Ground truth points to membrane transport intro.
-- `sys-005`: Ground truth points to "Key Features" page.
-
-*When the hybrid retriever searches for the actual pathology concept, it retrieves the true clinical page, but the evaluation marks it as a "miss" because the ground-truth label was pointing to a copyright/promo page!*
-
-### Bucket B: 9 Cases Needing Semantic/Weight Calibration (Phase 0B)
-- `diag-003`, `gen-path-001`, `gen-path-005`, `gen-path-006`, `gen-path-009`, `neop-006`, `neop-008`, `neop-010`, `sys-008`.
-- These cases require slight re-adjudication of expected chunk ranges or small adjustments in hybrid weighting (alpha) and score cutoffs.
+The previous evaluation's 19 misses led to evidence repair and human review.
+They are historical calibration results and are not outstanding M19C work.
 
 ---
 
-## 6. What Is Pending to Pass M19C Acceptance Gate
+## 6. M19C Acceptance Record
 
-To achieve full **M19C Acceptance**:
-1. **Fix Phase 0A Ground-Truth Labels:** Re-adjudicate the 10 invalid cases so their expected evidence points to true pathology content.
-2. **Refusal Threshold Tune:** Adjust `minimum_dense_score` to `0.65` in `backend/services/hybrid_retrieval_service.py` to achieve 5/5 (100%) out-of-corpus refusal on `ctrl-001` to `ctrl-005`.
-3. **Re-export & Re-evaluate:** Run `scripts/export_retrieval_review_dataset.py --execute --overwrite` and re-run `scripts/evaluate_retrieval.py`.
-4. **Target Metrics to confirm:**
-   - Overall Recall@5 ≥ 90%
-   - Per-domain Recall@5 ≥ 80%
-   - Out-of-corpus refusal = 100%
-   - Citation mismatches = 0
+The user confirmed review of the 19 corrected evidence sets on 2026-09-05.
+The accepted artifacts are:
+
+- dataset SHA-256:
+  `09b1c01e47a47837ebc989da834f426704ab2a79828d03e6e66769f7a18e2bd9`;
+- embedding run ID: `cba90495-1c99-416d-989d-fdd246212218`;
+- embedding configuration hash:
+  `07cf615945e78cf9258d0c6788152ae9ad99e8dea93ecbde285261b1ca59bd6f`;
+- retrieval configuration hash:
+  `7fdc2579c9a8bbe042d2585daeab764a6fd694c5a54f320ad78842a3f9ce64d6`;
+- report: `data/evaluation/retrieval/reports/m19c_retrieval_eval_v1.json`;
+- report-producing commit: `081c7ef1efed0f2cedbb529248de0fe04233f90c`.
+
+The private provenance manifests are intentionally excluded from Git. The
+cross-machine handoff must retain their private object location and SHA-256
+values; the incomplete legacy Robbins Review manifest in a checkout is not the
+accepted live manifest.
 
 ---
 
@@ -144,8 +138,7 @@ When opening this repo on any other development machine:
      --embedding-run-id cba90495-1c99-416d-989d-fdd246212218 \
      --validate-only
    ```
-4. **Execute Ground-Truth Repair & Final Acceptance Run:**
-   - Update ground truth labels for the 10 cases in DB.
-   - Export dataset and re-run evaluation to generate `m19c_retrieval_eval_v2.json`.
-5. **Transition to Milestone 19D:**
-   Once M19C passes the acceptance gate, proceed to Milestone 19D (50-question text-only MCQ generation calibration pilot).
+4. **Transition to Milestone 19D:**
+   Use the immutable identifiers in Section 6 and proceed with
+   `MileStones/MileStone19D.md`. Do not rerun paid retrieval evaluation unless
+   the dataset, corpus, embedding run, or retrieval configuration changes.

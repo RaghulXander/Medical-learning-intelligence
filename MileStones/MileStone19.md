@@ -1,7 +1,6 @@
 # Milestone 19 — Evidence Acceptance and Multimodal Safety Stabilization
 
-> **Status: PART 19A COMPLETE / PART 19B NOTES COMPLETE, EVIDENCE REMEDIATION PENDING / PARTS 19C–19E DRAFT — no paid
-> embeddings or generation may run before the M15/M16 quality gates pass**
+> **Status: PARTS 19A–19C COMPLETE / PART 19D IN PROGRESS / PART 19E DRAFT**
 
 ## Purpose
 
@@ -24,8 +23,10 @@ model response is not medical verification.
   co-occurrences; none is human verified.
 - Current image rows are rights-restricted internal assets. They are not public
   social-media material.
-- No real embedding run exists.
-- The 55 bootstrapped retrieval cases are not human gold labels.
+- Real Vertex embedding run `cba90495-1c99-416d-989d-fdd246212218` is complete
+  for 2,845/2,845 chunks.
+- The human-adjudicated retrieval benchmark passed at 98% Recall@5, 100%
+  out-of-corpus refusal, and zero citation/hash mismatches.
 - No generated question is approved merely because it was persisted.
 
 ## Part 19A — Image catalog schema and local metadata mirror
@@ -77,11 +78,9 @@ Implementation available for the retrieval-label portion:
   passes.
 
 See `docs/M19B_RETRIEVAL_HUMAN_REVIEW.md` for setup and reviewer instructions.
-The 2026-09-04 remote audit is recorded in
-`docs/M19B_REVIEW_AUDIT_2026-09-04.md`. All cases have reviewer notes, but
-unsupported/partial evidence, extraction artifacts, five misinterpreted
-out-of-corpus rejections, and two inconsistent approvals still require
-adjudication.
+The original 2026-09-04 findings are recorded in
+`docs/M19B_REVIEW_AUDIT_2026-09-04.md`; the subsequent gold adjudication is
+complete and passed the M19C re-evaluation.
 
 **19B acceptance:** all three provenance manifests pass and every benchmark
 label is human verified. Until then, embedding execution remains blocked.
@@ -92,11 +91,8 @@ Entry condition: Part 19B passes and the user approves current Vertex AI cost
 and quota.
 
 The executable cross-machine repair, provenance, embedding, and evaluation
-runbook is `MileStones/MileStone19C.md`. Its Phase 0 is mandatory: the
-2026-09-04 audit found ten invalid automatically selected evidence chunks and
-twenty narrowed cases whose automated approval still requires genuine human
-re-attestation. Paid embeddings remain blocked until those defects and all
-three provenance manifests are closed.
+runbook is `MileStones/MileStone19C.md`. Its repair, embedding, and retrieval
+acceptance phases are complete.
 
 1. Run one immutable `gemini-embedding-001` document embedding cohort at 768
    dimensions with automatic truncation disabled.
@@ -111,6 +107,12 @@ three provenance manifests are closed.
 ## Part 19D — Fifty-question text-only calibration pilot
 
 Entry condition: Part 19C passes.
+
+The complete cross-machine Vertex implementation, execution, review, and
+handoff runbook is `MileStones/MileStone19D.md`. The existing generic generation
+script is not pilot-ready and must not be run with `--count 50`; the standalone
+runbook first binds generation to the accepted hybrid retrieval run and removes
+fixed confidence/citation behavior.
 
 1. Approve a learning-objective blueprint covering five evaluated domains.
 2. Generate exactly one structured candidate per request, up to 50 total.
@@ -168,9 +170,10 @@ Stop without generation when any of the following is true:
 ## Approval checklist
 
 - [x] Complete Part 19A as schema/sync stabilization only.
-- [ ] Complete Part 19B human work before paid embeddings.
-- [ ] Approve Vertex AI cost immediately before Part 19C execution.
-- [ ] Run the 50-question text pilot before any image-question pilot.
+- [x] Complete Part 19B human work before paid embeddings.
+- [x] Approve Vertex AI cost immediately before Part 19C execution.
+- [ ] Run the 50-question text pilot before any image-question pilot (in
+      progress).
 - [ ] Keep current image MCQ persistence disabled until Part 19E entry gates
       pass.
 - [ ] Keep extracted textbook images private and internal-use only.

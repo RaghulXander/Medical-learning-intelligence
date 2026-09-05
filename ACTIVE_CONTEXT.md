@@ -8,13 +8,13 @@
 
 ## 1. Current Objective & Active Milestone
 
-* **Active Milestone**: [MileStone19C.md](file:///r:/Repositories/medical-learning-intelligence/MileStones/MileStone19C.md)
-* **Goal**: Reference Ingestion, Vertex AI Real Embeddings, Hybrid Retrieval Evaluation & Acceptance Gate.
+* **Active Milestone**: [MileStone19D.md](MileStones/MileStone19D.md)
+* **Goal**: Controlled 50-question, text-only, evidence-backed NEET-SS calibration pilot.
 * **Key Tasks**:
   1. M19B Provenance Manifests (Passed 3/3 reference books: 2,845 chunks, 0 missing/duplicate pages).
   2. M19C Paid Vertex AI Embeddings (Run `cba90495-1c99-416d-989d-fdd246212218`, 2,845/2,845 vectors in Neon DB).
   3. M19C Retrieval Evaluation (55 gold-set cases evaluated, 0 citation mismatches).
-  4. Fix 10 invalid Phase 0A ground-truth labels and tune refusal threshold to reach ≥90% Recall@5 acceptance.
+  4. M19D pilot-safe generation integration, approved blueprint, dry run, cost checkpoint, and human review.
 
 ---
 
@@ -26,6 +26,9 @@
   * Provenance Manifests: [backend/ingestion/provenance_manifest.py](file:///r:/Repositories/medical-learning-intelligence/backend/ingestion/provenance_manifest.py)
   * Evaluation Script: `scripts/evaluate_retrieval.py`
   * Evidence Embeddings Script: `scripts/generate_evidence_embeddings.py`
+  * M19D Pilot Service: `backend/services/generation/m19d_pilot.py`
+  * M19D Pilot Runner: `scripts/run_m19d_text_pilot.py`
+  * M19D Blueprint: `data/generation/blueprints/m19d_text_pilot_v1.json`
   * Status Report: [docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md)
 * **Web Frontend (Next.js 14 / React / TypeScript)**:
   * Directory: `apps/web/`
@@ -87,3 +90,6 @@ When starting a new conversation:
   - **Out-of-corpus Refusal**: **100.0%** (5/5 controls refused)
   - **Citation Mismatches**: **0**
 - Complete documentation saved in [docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md).
+- **Milestone 19D**: implementation and no-cost dry run complete; the 50-row
+  blueprint was approved by the project owner on 2026-09-05. Vertex execution
+  remains blocked only on an explicit cost cap.

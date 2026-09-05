@@ -1,5 +1,11 @@
 # Milestone 19C — Gold-Set Repair, Provenance Closure, and Real Retrieval Acceptance
 
+> **Status: COMPLETE (2026-09-05).** The final human-reviewed dataset hash is
+> `09b1c01e47a47837ebc989da834f426704ab2a79828d03e6e66769f7a18e2bd9`.
+> Embedding run `cba90495-1c99-416d-989d-fdd246212218` achieved 98% Recall@5,
+> 100% out-of-corpus refusal, and zero citation/hash mismatches. The sections
+> below are retained as the execution history and reproducibility runbook.
+
 ## Purpose
 
 Run this milestone on the machine that has:
