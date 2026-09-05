@@ -19,3 +19,7 @@ services:
         sync: false
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+      # Exact origin/prefix already stored at the start of image_assets.storage_uri.
+      # This is an SSRF allowlist, not a credential. Configure it in Render.
+      - key: R2_PUBLIC_URL
+        sync: false

@@ -108,7 +108,10 @@ def get_private_image_content(
     ):
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Private image proxy is not configured for this object store",
+            detail=(
+                "Image preview origin is not allowlisted. Configure R2_PUBLIC_URL "
+                "on the backend to the exact prefix stored before /pathology/."
+            ),
         )
     try:
         upstream = requests.get(asset.storage_uri, timeout=(3, 15))

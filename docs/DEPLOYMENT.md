@@ -18,7 +18,26 @@ DATABASE_URL=<Neon PostgreSQL URL with sslmode=require>
 JWT_SECRET_KEY=<generated high-entropy value>
 GOOGLE_CLIENT_IDS=<web,Android,and iOS client IDs separated by commas>
 CORS_ALLOWED_ORIGINS=https://<production-project>.vercel.app
+R2_PUBLIC_URL=https://<exact-R2-development-or-custom-domain-prefix>
 ```
+
+`R2_PUBLIC_URL` is required by the authenticated image-review proxy. It is an
+exact SSRF allowlist prefix, not an R2 access-key secret. Derive the value from
+the stored catalog without exposing object paths by running this in the Neon SQL
+editor:
+
+```sql
+SELECT split_part(storage_uri, '/pathology/', 1) AS r2_public_url,
+       count(*) AS image_count
+FROM image_assets
+WHERE storage_uri IS NOT NULL
+GROUP BY 1;
+```
+
+Copy the single returned prefix into Render → `docedge-api` → Environment as
+`R2_PUBLIC_URL`, save, and redeploy. Do not use the full URL of one image and do
+not add a trailing slash. The proxy deliberately fails closed when the setting
+is absent or does not exactly match the stored object prefix.
 
 The container entrypoint applies `alembic upgrade head` before Uvicorn starts.
 Verify after every release:
