@@ -89,15 +89,36 @@ def get_image_review_asset(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
 
 
+from pathlib import Path
+
 @router.get("/assets/{asset_id}/content", include_in_schema=False)
 def get_private_image_content(
     asset_id: str,
     current_user: User = Depends(reviewer_dependency),
     db: Session = Depends(get_db),
 ):
-    """Proxy a configured R2 object so its persistent URL is never sent to the browser."""
+    """Proxy an image from local disk if available, or from configured R2 storage."""
     asset = db.query(ImageAsset).filter_by(id=asset_id).first()
-    if not asset or not asset.storage_uri:
+    if not asset:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image asset unavailable")
+
+    # 1. First priority: Check local processed image catalog (fastest, zero network egress)
+    if asset.filename:
+        local_candidates = [
+            Path("data/processed/images") / asset.filename,
+            Path("data/processed/images/curated_valid") / asset.filename,
+        ]
+        for candidate in local_candidates:
+            if candidate.is_file():
+                media_type = "image/png" if asset.filename.lower().endswith(".png") else "image/jpeg"
+                return Response(
+                    content=candidate.read_bytes(),
+                    media_type=media_type,
+                    headers={"Cache-Control": "private, max-age=300", "X-Content-Type-Options": "nosniff"},
+                )
+
+    # 2. Second priority: Proxy from storage_uri
+    if not asset.storage_uri:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image object unavailable")
     allowed_prefix = os.getenv("R2_PUBLIC_URL", "").rstrip("/")
     parsed = urlparse(asset.storage_uri)

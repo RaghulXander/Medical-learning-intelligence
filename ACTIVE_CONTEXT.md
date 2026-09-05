@@ -95,7 +95,10 @@ When starting a new conversation:
   - 7 rows failed closed safely due to strict claim-to-evidence validation.
   - Actual estimated cost: **$0.1005 USD** (well below $1.00 budget cap).
   - Full report saved in [docs/M19D_CALIBRATION_PILOT_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19D_CALIBRATION_PILOT_REPORT.md).
-- **Milestone 19E (Image Curation + Multimodal Pilot)**: **ACTIVE; GENERATION GATE CLOSED**
-  - Remote audit: 2,165 assets, 3,053 suggested links, 0 question-approved assets, and 0 human-verified links.
-  - Admin curation API/UI, exact occurrence binding, immutable review history, and 30-slot draft blueprint are implemented.
-  - No Vertex vision calls or multimodal candidate writes are authorized yet.
+- **Milestone 19E (Image Curation + Multimodal Pilot)**: **PART A READY**
+  - 72 candidates shortlisted and tagged in DB with SHA-256 local hash verification.
+  - Local image proxy integrated into backend for zero-latency review in Admin UI.
+  - Manual image review deferred in favor of automated AI vision pre-annotation.
+- **Milestone 25 (AI-Assisted Pathology Vision Review & Pre-Annotation)**: **PLANNED (DEFERRED FOR LATER)**
+  - Planned integration with specialized pathology vision models (**PLIP**, **BiomedCLIP**, **Gemini Multimodal**) to pre-populate stains, organ systems, diagnoses, and captions automatically, cutting human curation time by 90%.
+  - Detailed milestone specification documented in [MileStones/MileStone25.md](MileStones/MileStone25.md).
