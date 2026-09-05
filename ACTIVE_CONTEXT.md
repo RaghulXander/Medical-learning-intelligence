@@ -8,13 +8,13 @@
 
 ## 1. Current Objective & Active Milestone
 
-* **Active Milestones**: human review of [MileStone19D.md](MileStones/MileStone19D.md) and curation work for [MileStone19E.md](MileStones/MileStone19E.md)
-* **Goal**: Finish text-candidate review while independently curating private images for a gated 30-question multimodal pilot.
-* **Key Tasks**:
-  1. M19B Provenance Manifests (Passed 3/3 reference books: 2,845 chunks, 0 missing/duplicate pages).
-  2. M19C Paid Vertex AI Embeddings (Run `cba90495-1c99-416d-989d-fdd246212218`, 2,845/2,845 vectors in Neon DB).
-  3. M19C Retrieval Evaluation (55 gold-set cases evaluated, 0 citation mismatches).
-  4. M19D pilot-safe generation integration, approved blueprint, dry run, cost checkpoint, and human review.
+* **Active Milestones**: [MileStone20.md](MileStones/MileStone20.md) (1,200+ Question Corpus Expansion across 12 Subspecialties)
+* **Goal**: Expand Question Bank to at least 100 questions per subspecialty (1,200+ total) covering General Pathology, CNS, Skin, Endocrine, Histotechniques & Automation, Breast, Hemepath, GI, Lung, Renal/GU, GYN, Bone & Soft Tissue, ranging from MBBS to `VERY_HARD` DM/DrNB Oncopathology consultant level.
+* **Key Streams**:
+  1. Direct Textbook Review Q&A Extraction (*Robbins Review* 4th ed + *Sternberg Review* 2nd ed: ~500+ official questions).
+  2. Subspecialty AI Question Synthesis for under-represented topics (General Path, CNS, Skin, Endocrine, Histotechniques & Automation) to ensure ≥100 Qs each.
+  3. Image-grounded Multimodal Question Pipeline (300 questions).
+  4. Daily Quiz / Google Forms Ingestion.
 
 ---
 
