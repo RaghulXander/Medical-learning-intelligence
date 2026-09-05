@@ -55,6 +55,21 @@ class TestQuestionReviewService(unittest.TestCase):
         with self.assertRaises(InvalidQuestionStatusTransition):
             transition_question_status(self.db, self.question, QuestionStatus.RETIRED, self.reviewer.id)
 
+    def test_rejection_requires_notes(self):
+        self.question.status = QuestionStatus.HUMAN_REVIEW
+        with self.assertRaises(InvalidQuestionStatusTransition):
+            transition_question_status(self.db, self.question, QuestionStatus.REJECTED, self.reviewer.id, notes="")
+
+    def test_approved_question_can_be_rejected_with_notes(self):
+        self.question.status = QuestionStatus.APPROVED
+        review = transition_question_status(
+            self.db, self.question, QuestionStatus.REJECTED, self.reviewer.id, notes="Retracted due to ambiguous distractor"
+        )
+        self.db.commit()
+        self.assertEqual(self.question.status, QuestionStatus.REJECTED)
+        self.assertEqual(review.new_status, "REJECTED")
+        self.assertEqual(review.review_notes, "Retracted due to ambiguous distractor")
+
 
 if __name__ == "__main__":
     unittest.main()

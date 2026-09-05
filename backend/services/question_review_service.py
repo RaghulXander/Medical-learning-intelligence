@@ -36,10 +36,11 @@ ALLOWED_STATUS_TRANSITIONS = {
     QuestionStatus.APPROVED: {
         QuestionStatus.HUMAN_REVIEW,
         QuestionStatus.REPORTED,
+        QuestionStatus.REJECTED,
         QuestionStatus.RETIRED,
     },
     QuestionStatus.REJECTED: {QuestionStatus.HUMAN_REVIEW, QuestionStatus.RETIRED},
-    QuestionStatus.REPORTED: {QuestionStatus.HUMAN_REVIEW, QuestionStatus.RETIRED},
+    QuestionStatus.REPORTED: {QuestionStatus.HUMAN_REVIEW, QuestionStatus.RETIRED, QuestionStatus.REJECTED, QuestionStatus.APPROVED},
     QuestionStatus.RETIRED: {QuestionStatus.HUMAN_REVIEW},
 }
 

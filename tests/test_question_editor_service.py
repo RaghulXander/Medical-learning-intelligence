@@ -101,6 +101,28 @@ class QuestionEditorServiceTests(unittest.TestCase):
                 values=self.values(),
             )
 
+    def test_edit_handles_options_with_id_or_dict_and_enum_values(self):
+        # Set question with options containing 'id' instead of 'key'
+        self.question.options = [{"id": "A", "text": "Choice A"}, {"id": "B", "text": "Choice B"}]
+        self.db.commit()
+
+        new_values = self.values(stem="Updated question with options format")
+        new_values["options"] = [{"key": "A", "text": "Choice A Updated"}, {"key": "B", "text": "Choice B Updated"}]
+        new_values["correct_option"] = "B"
+
+        revision = edit_question(
+            self.db,
+            self.question,
+            editor_id=self.editor.id,
+            expected_updated_at=self.question.updated_at,
+            values=new_values,
+            edit_notes="Updated options format",
+        )
+        self.db.commit()
+        self.assertEqual(revision.revision_number, 1)
+        self.assertEqual(self.question.correct_index, 1)
+        self.assertEqual(self.question.correct_option, "B")
+
 
 if __name__ == "__main__":
     unittest.main()

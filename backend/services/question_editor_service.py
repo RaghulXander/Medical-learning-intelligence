@@ -37,6 +37,12 @@ def _utc(value: datetime) -> datetime:
     return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
 
 
+def _val(enum_or_val: Any) -> Any:
+    if hasattr(enum_or_val, "value"):
+        return enum_or_val.value
+    return enum_or_val
+
+
 def question_snapshot(question: Question) -> dict[str, Any]:
     return {
         "stem": question.stem,
@@ -44,12 +50,12 @@ def question_snapshot(question: Question) -> dict[str, Any]:
         "correct_option": question.correct_option,
         "correct_index": question.correct_index,
         "explanation": question.explanation,
-        "difficulty": question.difficulty.value if question.difficulty else None,
-        "cognitive_level": question.cognitive_level.value if question.cognitive_level else None,
-        "question_type": question.question_type.value,
-        "primary_topic_id": question.primary_topic_id,
+        "difficulty": _val(question.difficulty) if question.difficulty is not None else None,
+        "cognitive_level": _val(question.cognitive_level) if question.cognitive_level is not None else None,
+        "question_type": _val(question.question_type) if question.question_type is not None else "single_best_answer",
+        "primary_topic_id": str(question.primary_topic_id) if question.primary_topic_id is not None else None,
         "learning_objective": question.learning_objective,
-        "status": question.status.value,
+        "status": _val(question.status) if question.status is not None else "IMPORTED",
         "updated_at": question.updated_at.isoformat() if question.updated_at else None,
     }
 
@@ -75,8 +81,8 @@ def edit_question(
     for field in EDITABLE_FIELDS:
         next_value = values[field]
         current_value = getattr(question, field)
-        comparable_current = current_value.value if hasattr(current_value, "value") else current_value
-        comparable_next = next_value.value if hasattr(next_value, "value") else next_value
+        comparable_current = _val(current_value)
+        comparable_next = _val(next_value)
         if comparable_current != comparable_next:
             changed_fields.append(field)
 
@@ -102,9 +108,24 @@ def edit_question(
     for field in EDITABLE_FIELDS:
         setattr(question, field, values[field])
 
-    question.correct_index = next(
-        index for index, option in enumerate(question.options) if option["key"] == question.correct_option
-    )
+    # Find correct_index safely across list of dicts, strings, or dict maps
+    correct_idx = None
+    if isinstance(question.options, list):
+        for idx, option in enumerate(question.options):
+            if isinstance(option, dict):
+                opt_key = option.get("key") or option.get("id") or ""
+            else:
+                opt_key = str(option)
+            if opt_key and str(opt_key).strip().upper() == str(question.correct_option).strip().upper():
+                correct_idx = idx
+                break
+    elif isinstance(question.options, dict):
+        for idx, (k, _) in enumerate(question.options.items()):
+            if str(k).strip().upper() == str(question.correct_option).strip().upper():
+                correct_idx = idx
+                break
+
+    question.correct_index = correct_idx if correct_idx is not None else 0
     hashes = compute_hashes(question.stem, question.options)
     question.content_hash = hashes["content_hash"]
     question.exact_stem_hash = hashes["exact_stem_hash"]

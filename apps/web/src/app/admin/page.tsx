@@ -176,7 +176,24 @@ export default function AdminDashboardPage() {
   const handleUpdateStatus = async (questionId: string, newStatus: string) => {
     try {
       setUpdatingId(questionId);
-      await questionsApi.updateStatus(questionId, newStatus as any);
+      let notes: string | undefined = undefined;
+      if (newStatus === 'REJECTED' || newStatus === 'RETIRED') {
+        const inputNotes = window.prompt(
+          `Please provide review notes / reason for marking this question as ${newStatus}:`
+        );
+        if (inputNotes === null) {
+          // User clicked cancel
+          setUpdatingId(null);
+          return;
+        }
+        if (!inputNotes.trim()) {
+          alert(`Review notes are required when moving a question to ${newStatus}.`);
+          setUpdatingId(null);
+          return;
+        }
+        notes = inputNotes.trim();
+      }
+      await questionsApi.updateStatus(questionId, newStatus as any, notes);
       setQuestions((prev) =>
         prev.map((q) => (q.id === questionId ? { ...q, status: newStatus as any } : q))
       );

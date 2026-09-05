@@ -239,6 +239,17 @@ def list_questions(
     }
 
 
+import uuid
+
+def _clean_uuid(val: str | None) -> str | None:
+    if not val or not str(val).strip():
+        return None
+    try:
+        return str(uuid.UUID(str(val).strip()))
+    except (ValueError, TypeError):
+        return None
+
+
 @router.get("/{question_id}")
 def get_question_detail(
     question_id: str,
@@ -284,9 +295,9 @@ def get_question_detail(
         "difficulty": q.difficulty.value if q.difficulty else "medium",
         "cognitive_level": q.cognitive_level.value if q.cognitive_level else "recall",
         "status": q.status.value if hasattr(q.status, "value") else str(q.status),
-        "question_type": q.question_type.value,
+        "question_type": q.question_type.value if hasattr(q.question_type, "value") else str(q.question_type),
         "primary_topic_id": q.primary_topic_id,
-        "updated_at": q.updated_at.isoformat(),
+        "updated_at": q.updated_at.isoformat() if q.updated_at else datetime.now(timezone.utc).isoformat(),
         "duplicate_cluster_id": cluster_id,
         "citations": citations,
     }
@@ -374,7 +385,7 @@ def update_question_content(
                 "difficulty": req.difficulty,
                 "cognitive_level": req.cognitive_level,
                 "question_type": req.question_type,
-                "primary_topic_id": req.primary_topic_id or None,
+                "primary_topic_id": _clean_uuid(req.primary_topic_id),
                 "learning_objective": req.learning_objective.strip() if req.learning_objective else None,
             },
             edit_notes=req.edit_notes,
