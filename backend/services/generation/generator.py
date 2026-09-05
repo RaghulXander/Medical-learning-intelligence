@@ -80,7 +80,7 @@ class GeminiMCQGenerator(MCQGeneratorInterface):
             "based STRICTLY on the authoritative Robbins & Cotran textbook evidence provided below. "
             "CRITICAL INVARIANTS:\n"
             "1. Ground every medical fact directly in the provided evidence. DO NOT hallucinate textbook facts.\n"
-            "2. Create a realistic clinical or diagnostic scenario in the stem matching the requested cognitive level and difficulty.\n"
+            "2. Create a realistic clinical or diagnostic scenario in the stem matching the requested cognitive level and difficulty. For VERY_HARD difficulty, craft deep consultant-level diagnostic vignettes involving complex differential mimics, multi-parameter IHC panels, or molecular-morphologic integration where standard single-factor recall is insufficient.\n"
             "3. Formulate 4 mutually exclusive options (A, B, C, D). Avoid 'All of the above' or 'None of the above'.\n"
             "4. Provide a detailed educational explanation explaining why the correct option is right and why each distractor is wrong, citing the textbook edition and page number.\n"
             "5. Return ONLY a valid JSON object matching the exact schema."

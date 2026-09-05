@@ -13,19 +13,23 @@ ALLOWED_STATUS_TRANSITIONS = {
     QuestionStatus.IMPORTED: {
         QuestionStatus.AI_REVIEW,
         QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.APPROVED,
         QuestionStatus.REJECTED,
         QuestionStatus.RETIRED,
     },
     QuestionStatus.GENERATED: {
         QuestionStatus.AI_REVIEW,
         QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.APPROVED,
         QuestionStatus.REJECTED,
         QuestionStatus.RETIRED,
     },
-    # AI can recommend, but it cannot publish a question.
+    # Reviewers / Admins can approve directly from AI_REVIEW or move to review/reject
     QuestionStatus.AI_REVIEW: {
         QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.APPROVED,
         QuestionStatus.REJECTED,
+        QuestionStatus.RETIRED,
     },
     QuestionStatus.HUMAN_REVIEW: {
         QuestionStatus.AI_REVIEW,
@@ -39,9 +43,21 @@ ALLOWED_STATUS_TRANSITIONS = {
         QuestionStatus.REJECTED,
         QuestionStatus.RETIRED,
     },
-    QuestionStatus.REJECTED: {QuestionStatus.HUMAN_REVIEW, QuestionStatus.RETIRED},
-    QuestionStatus.REPORTED: {QuestionStatus.HUMAN_REVIEW, QuestionStatus.RETIRED, QuestionStatus.REJECTED, QuestionStatus.APPROVED},
-    QuestionStatus.RETIRED: {QuestionStatus.HUMAN_REVIEW},
+    QuestionStatus.REJECTED: {
+        QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.APPROVED,
+        QuestionStatus.RETIRED,
+    },
+    QuestionStatus.REPORTED: {
+        QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.RETIRED,
+        QuestionStatus.REJECTED,
+        QuestionStatus.APPROVED,
+    },
+    QuestionStatus.RETIRED: {
+        QuestionStatus.HUMAN_REVIEW,
+        QuestionStatus.APPROVED,
+    },
 }
 
 

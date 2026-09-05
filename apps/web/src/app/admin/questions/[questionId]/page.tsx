@@ -14,14 +14,14 @@ import { cloneJson, JsonObject, setJsonPath } from '@/lib/editor/json';
 import { questionEditorFields } from '@/lib/questions/editor-schema';
 
 const allowedNextStatuses: Record<QuestionStatus, QuestionStatus[]> = {
-  IMPORTED: ['AI_REVIEW', 'HUMAN_REVIEW', 'REJECTED', 'RETIRED'],
-  GENERATED: ['AI_REVIEW', 'HUMAN_REVIEW', 'REJECTED', 'RETIRED'],
-  AI_REVIEW: ['HUMAN_REVIEW', 'REJECTED'],
+  IMPORTED: ['AI_REVIEW', 'HUMAN_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
+  GENERATED: ['AI_REVIEW', 'HUMAN_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
+  AI_REVIEW: ['HUMAN_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
   HUMAN_REVIEW: ['AI_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
   APPROVED: ['HUMAN_REVIEW', 'REPORTED', 'REJECTED', 'RETIRED'],
-  REJECTED: ['HUMAN_REVIEW', 'RETIRED'],
+  REJECTED: ['HUMAN_REVIEW', 'APPROVED', 'RETIRED'],
   REPORTED: ['HUMAN_REVIEW', 'APPROVED', 'REJECTED', 'RETIRED'],
-  RETIRED: ['HUMAN_REVIEW'],
+  RETIRED: ['HUMAN_REVIEW', 'APPROVED'],
 };
 
 function normalizeOptions(options: Question['options']): Question['options'] {

@@ -15,7 +15,7 @@ export const questionEditorFields: FieldDefinition[] = [
   { name: 'explanation', label: 'Explanation', type: 'textarea' },
   { name: 'learning_objective', label: 'Learning objective', type: 'textarea' },
   { name: 'primary_topic_id', label: 'Primary ontology/topic ID', type: 'text', description: 'Use a verified curriculum topic identifier; leave blank if unmapped.' },
-  { name: 'difficulty', label: 'Difficulty', type: 'select', options: [{ label: 'Easy', value: 'easy' }, { label: 'Medium', value: 'medium' }, { label: 'Hard', value: 'hard' }] },
+  { name: 'difficulty', label: 'Difficulty', type: 'select', options: [{ label: 'Easy', value: 'easy' }, { label: 'Medium', value: 'medium' }, { label: 'Hard', value: 'hard' }, { label: 'Very Hard (SS / DM)', value: 'very_hard' }] },
   { name: 'cognitive_level', label: 'Cognitive level', type: 'select', options: [{ label: 'Recall', value: 'recall' }, { label: 'Understanding', value: 'understanding' }, { label: 'Application', value: 'application' }, { label: 'Analysis', value: 'analysis' }] },
   { name: 'question_type', label: 'Question type', type: 'select', options: [{ label: 'Single best answer', value: 'single_best_answer' }, { label: 'Multiple choice', value: 'multiple_choice' }, { label: 'Case based', value: 'case_based' }] },
   { name: 'edit_notes', label: 'Editorial change notes', type: 'textarea', description: 'Explain clinically meaningful changes for the revision history.' },

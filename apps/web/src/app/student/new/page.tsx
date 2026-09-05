@@ -294,6 +294,7 @@ function BlueprintGeneratorContent() {
                 <option value="easy">Foundational (Easy)</option>
                 <option value="medium">Standard Clinical (Medium)</option>
                 <option value="hard">Advanced PG/SS Vignettes (Hard)</option>
+                <option value="very_hard">Super-Specialty Consultant / DM (Very Hard)</option>
               </select>
             </div>
           </div>

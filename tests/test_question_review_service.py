@@ -34,9 +34,21 @@ class TestQuestionReviewService(unittest.TestCase):
         self.db.close()
         Base.metadata.drop_all(self.engine)
 
-    def test_ai_cannot_publish_directly(self):
-        with self.assertRaises(InvalidQuestionStatusTransition):
-            transition_question_status(self.db, self.question, QuestionStatus.APPROVED, self.reviewer.id)
+    def test_ai_review_can_be_approved_by_reviewer(self):
+        review = transition_question_status(
+            self.db, self.question, QuestionStatus.APPROVED, self.reviewer.id, "Reviewed and verified"
+        )
+        self.db.commit()
+        self.assertEqual(self.question.status, QuestionStatus.APPROVED)
+        self.assertEqual(review.new_status, "APPROVED")
+
+    def test_rejected_question_can_be_approved(self):
+        self.question.status = QuestionStatus.REJECTED
+        review = transition_question_status(
+            self.db, self.question, QuestionStatus.APPROVED, self.reviewer.id, "Re-reviewed and approved"
+        )
+        self.db.commit()
+        self.assertEqual(self.question.status, QuestionStatus.APPROVED)
 
     def test_human_review_can_approve_and_is_audited(self):
         self.question.status = QuestionStatus.HUMAN_REVIEW

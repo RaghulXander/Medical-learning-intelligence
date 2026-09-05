@@ -129,6 +129,7 @@ class DifficultyLevel(str, enum.Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+    VERY_HARD = "very_hard"
 
 
 class CognitiveLevel(str, enum.Enum):

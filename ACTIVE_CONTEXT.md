@@ -99,6 +99,10 @@ When starting a new conversation:
   - 72 candidates shortlisted and tagged in DB with SHA-256 local hash verification.
   - Local image proxy integrated into backend for zero-latency review in Admin UI.
   - Manual image review deferred in favor of automated AI vision pre-annotation.
+- **Question Bank Status**: **51 APPROVED Questions** (all reviewed and validated), 2 REJECTED, 0 AI_REVIEW.
+- **Milestone 20 (1,200+ Question Corpus Expansion: Direct Textbook Q&As + AI Generation + Image MCQs)**: **ACTIVE / NEXT**
+  - Planned expansion to **1,200+ questions**: 500+ direct textbook review Q&As (*Robbins Review* & *Sternberg Review*), 400+ subspecialty AI-generated questions with `VERY_HARD` tier, and 300+ image-grounded MCQs.
+  - Detailed milestone specification documented in [MileStones/MileStone20.md](MileStones/MileStone20.md).
 - **Milestone 25 (AI-Assisted Pathology Vision Review & Pre-Annotation)**: **PLANNED (DEFERRED FOR LATER)**
   - Planned integration with specialized pathology vision models (**PLIP**, **BiomedCLIP**, **Gemini Multimodal**) to pre-populate stains, organ systems, diagnoses, and captions automatically, cutting human curation time by 90%.
   - Detailed milestone specification documented in [MileStones/MileStone25.md](MileStones/MileStone25.md).

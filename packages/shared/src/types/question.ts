@@ -15,7 +15,7 @@ export type QuestionStatus =
   | 'RETIRED';
 
 export type CognitiveLevel = 'recall' | 'understanding' | 'application' | 'analysis';
-export type DifficultyLevel = 'easy' | 'medium' | 'hard';
+export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'very_hard';
 export type QuestionType = 'single_best_answer' | 'multiple_choice' | 'case_based';
 
 export interface QuestionOption {
