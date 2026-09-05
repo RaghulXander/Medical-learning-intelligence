@@ -85,6 +85,13 @@ export default function LoginScreen() {
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       }
 
+      // Reset any previous cached Google OAuth session so the native account picker dialog is always displayed
+      try {
+        await GoogleSignin.signOut();
+      } catch {
+        // Safe to ignore if no account was previously signed in
+      }
+
       const response = await GoogleSignin.signIn();
       if (!isSuccessResponse(response)) return;
 

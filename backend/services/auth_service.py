@@ -395,10 +395,11 @@ class AuthService:
         if not user or not user.is_active:
             raise ValueError("User account is inactive or not found")
 
-        # Generate new rotated refresh token
+        # Generate new rotated refresh token with sliding expiration window
         new_refresh_token = generate_opaque_token(32)
         session.refresh_token_hash = hash_token(new_refresh_token)
         session.last_used_at = now
+        session.expires_at = now + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
         if ip_address:
             session.ip_address = ip_address
         if user_agent:

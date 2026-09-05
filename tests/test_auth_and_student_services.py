@@ -49,6 +49,7 @@ from backend.core.security import (
     calculate_password_entropy,
     generate_crypto_password,
     hash_password,
+    hash_token,
     verify_password,
     decode_access_token,
     AuthRateLimiter,
@@ -271,6 +272,12 @@ class TestAuthAndStudentServices(unittest.TestCase):
         new_refresh = ref_res["refresh_token"]
         self.assertNotEqual(old_refresh, new_refresh)
         self.assertIsNotNone(ref_res["access_token"])
+
+        # Verify session expires_at is extended (sliding window)
+        token_hash = hash_token(new_refresh)
+        session = self.db.query(UserSession).filter(UserSession.refresh_token_hash == token_hash).first()
+        self.assertIsNotNone(session)
+        self.assertGreater(session.expires_at.replace(tzinfo=timezone.utc), datetime.now(timezone.utc) + timedelta(days=50))
 
         # Attempting to use old refresh token must fail
         with self.assertRaises(ValueError):

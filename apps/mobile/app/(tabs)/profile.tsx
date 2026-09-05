@@ -122,15 +122,19 @@ export default function ProfileScreen() {
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'D'}
               </Text>
             </View>
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={styles.userName}>{user?.name || 'Dr. Medical Resident'}</Text>
+            <View style={styles.userInfoCol}>
+              <View style={styles.userNameBadgeRow}>
+                <Text style={styles.userName} numberOfLines={2}>
+                  {user?.name || 'Dr. Medical Resident'}
+                </Text>
                 {user?.role === 'SUPER_ADMIN' ? (
-                  <Badge label="Super Admin" variant="purple" />
+                  <Badge label="Super Admin" variant="purple" style={styles.roleBadge} />
                 ) : null}
               </View>
-              <Text style={styles.userEmail}>{user?.email}</Text>
-              <Text style={styles.userStage}>
+              <Text style={styles.userEmail} numberOfLines={1} ellipsizeMode="tail">
+                {user?.email}
+              </Text>
+              <Text style={styles.userStage} numberOfLines={1} ellipsizeMode="tail">
                 {user?.residency_stage || 'Resident'} • {user?.medical_college || 'Medical College'}
               </Text>
             </View>
@@ -316,10 +320,24 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#ffffff',
   },
+  userInfoCol: {
+    flex: 1,
+    minWidth: 0,
+  },
+  userNameBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
   userName: {
     fontSize: 17,
     fontWeight: '800',
     color: '#ffffff',
+    flexShrink: 1,
+  },
+  roleBadge: {
+    flexShrink: 0,
   },
   userEmail: {
     fontSize: 12,
