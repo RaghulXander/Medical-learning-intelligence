@@ -1,0 +1,650 @@
+{
+  "accepted_artifacts": {
+    "corpus_manifest_hash": "88424b7e4561348083d43f1947b14f732bc225ff8e08b23071737f852975d787",
+    "dataset_hash": "09b1c01e47a47837ebc989da834f426704ab2a79828d03e6e66769f7a18e2bd9",
+    "embedding_config_hash": "07cf615945e78cf9258d0c6788152ae9ad99e8dea93ecbde285261b1ca59bd6f",
+    "embedding_run_id": "cba90495-1c99-416d-989d-fdd246212218",
+    "retrieval_config_hash": "7fdc2579c9a8bbe042d2585daeab764a6fd694c5a54f320ad78842a3f9ce64d6"
+  },
+  "blueprint_hash": "57a1a365abe423559af8c8c46db1c9ae01e25c5020145d5b2727031a0dceb25f",
+  "blueprint_id": "m19d-text-pilot-v1",
+  "blueprint_rows": 50,
+  "blueprint_status": "APPROVED",
+  "cognitive_distribution": {
+    "ANALYSIS": 19,
+    "APPLICATION": 30,
+    "UNDERSTANDING": 1
+  },
+  "cohort_id": "M19D_TEXT_PILOT_V1",
+  "difficulty_distribution": {
+    "HARD": 43,
+    "MEDIUM": 7
+  },
+  "domain_distribution": {
+    "diagnostic_techniques": 10,
+    "general_pathology": 10,
+    "hematopathology": 10,
+    "neoplasia": 10,
+    "systemic_pathology": 10
+  },
+  "generated_at": "2026-09-05T09:24:57.043353+00:00",
+  "git_commit": "5843c2975886f816ccbc858b4788deccc49497a9",
+  "mode": "execute",
+  "outcomes": [
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 1468,
+        "latency_ms": 5242,
+        "output_tokens": 690,
+        "total_tokens": 2158
+      },
+      "quality_score": 1.0,
+      "question_id": "8b855eb3-b3cc-4124-b3b5-fd9bd01b37a3",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-01"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5378,
+        "latency_ms": 5812,
+        "output_tokens": 768,
+        "total_tokens": 6146
+      },
+      "quality_score": 0.9224,
+      "question_id": "82b7f2e6-640e-4137-845d-7f56724a53d8",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-02"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5119,
+        "latency_ms": 7141,
+        "output_tokens": 1125,
+        "total_tokens": 6244
+      },
+      "quality_score": 1.0,
+      "question_id": "ea76ceae-a85e-4a1b-b886-25ce41b66d14",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-03"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 7049,
+        "latency_ms": 6593,
+        "output_tokens": 1018,
+        "total_tokens": 8067
+      },
+      "quality_score": 1.0,
+      "question_id": "1c2bc2eb-4151-4244-9340-432b40b0eeac",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-04"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 3598,
+        "latency_ms": 5998,
+        "output_tokens": 885,
+        "total_tokens": 4483
+      },
+      "quality_score": 1.0,
+      "question_id": "7a1eec4b-21c1-49d1-97f6-db2013de70f7",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-05"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 2610,
+        "latency_ms": 5487,
+        "output_tokens": 836,
+        "total_tokens": 3446
+      },
+      "quality_score": 1.0,
+      "question_id": "214fcae4-6ecc-470e-830c-044bb450dd45",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-diag-06"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 1974,
+        "latency_ms": 4757,
+        "output_tokens": 725,
+        "total_tokens": 2699
+      },
+      "quality_score": 0.8,
+      "question_id": "93f213e9-6048-4fd4-9b25-360719ab2afe",
+      "question_status": "AI_REVIEW",
+      "row_id": "m19d-diag-07"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-diag-08"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-diag-09"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 2439,
+        "latency_ms": 3748,
+        "output_tokens": 748,
+        "total_tokens": 3187
+      },
+      "quality_score": 0.8,
+      "question_id": "a9bcd59f-84c6-43da-88a9-0322a505d069",
+      "question_status": "AI_REVIEW",
+      "row_id": "m19d-diag-10"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6160,
+        "latency_ms": 5973,
+        "output_tokens": 850,
+        "total_tokens": 7010
+      },
+      "quality_score": 1.0,
+      "question_id": "6c17bb5e-d9d2-46e3-94ec-f25d2e889f30",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-01"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6323,
+        "latency_ms": 6970,
+        "output_tokens": 1146,
+        "total_tokens": 7469
+      },
+      "quality_score": 1.0,
+      "question_id": "a0a9e0fd-4f3d-490e-9097-1410bc48aae6",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-02"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5900,
+        "latency_ms": 6205,
+        "output_tokens": 970,
+        "total_tokens": 6870
+      },
+      "quality_score": 1.0,
+      "question_id": "dcf4de1e-3a4b-4f0e-9d49-d2d19ebe0c5e",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-03"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5888,
+        "latency_ms": 5826,
+        "output_tokens": 892,
+        "total_tokens": 6780
+      },
+      "quality_score": 1.0,
+      "question_id": "85ff16c5-9e4d-4037-8885-adf842fa3a0d",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-04"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6636,
+        "latency_ms": 6112,
+        "output_tokens": 916,
+        "total_tokens": 7552
+      },
+      "quality_score": 1.0,
+      "question_id": "300a4d26-5bab-4f80-8df6-9ac0cecc4a02",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-05"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 7396,
+        "latency_ms": 5934,
+        "output_tokens": 849,
+        "total_tokens": 8245
+      },
+      "quality_score": 0.8,
+      "question_id": "9a3130ea-caf8-4097-b4f2-75721c840ad4",
+      "question_status": "AI_REVIEW",
+      "row_id": "m19d-general-06"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-general-07"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6552,
+        "latency_ms": 6907,
+        "output_tokens": 1020,
+        "total_tokens": 7572
+      },
+      "quality_score": 1.0,
+      "question_id": "f2e66ebc-c31e-4d25-8149-31808df372f6",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-08"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6646,
+        "latency_ms": 6025,
+        "output_tokens": 898,
+        "total_tokens": 7544
+      },
+      "quality_score": 1.0,
+      "question_id": "84782e27-18fe-468e-a4d1-5c1e798a4fb0",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-09"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5857,
+        "latency_ms": 6280,
+        "output_tokens": 1064,
+        "total_tokens": 6921
+      },
+      "quality_score": 0.9758,
+      "question_id": "221dff23-dfa7-4eda-8e09-1df350705d11",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-general-10"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6069,
+        "latency_ms": 7864,
+        "output_tokens": 1042,
+        "total_tokens": 7111
+      },
+      "quality_score": 1.0,
+      "question_id": "6782cf6c-21cd-4437-854b-d724bbe1bebc",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-01"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6761,
+        "latency_ms": 7000,
+        "output_tokens": 979,
+        "total_tokens": 7740
+      },
+      "quality_score": 1.0,
+      "question_id": "f5a15026-42f0-41e6-8b31-49c0e42a35ec",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-02"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6318,
+        "latency_ms": 6160,
+        "output_tokens": 917,
+        "total_tokens": 7235
+      },
+      "quality_score": 1.0,
+      "question_id": "3e8f2bbe-0c7e-4961-bc10-417260c08d09",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-03"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5832,
+        "latency_ms": 6763,
+        "output_tokens": 1049,
+        "total_tokens": 6881
+      },
+      "quality_score": 1.0,
+      "question_id": "ed1e42b4-40db-4765-afdc-1a962e860943",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-04"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6539,
+        "latency_ms": 7017,
+        "output_tokens": 1157,
+        "total_tokens": 7696
+      },
+      "quality_score": 0.8,
+      "question_id": "49e855c3-72a6-4440-83d7-87f3ec9f036a",
+      "question_status": "AI_REVIEW",
+      "row_id": "m19d-heme-05"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6983,
+        "latency_ms": 7565,
+        "output_tokens": 1144,
+        "total_tokens": 8127
+      },
+      "quality_score": 1.0,
+      "question_id": "cf2206d0-ed8c-4ee8-9f75-91a5c8ee1609",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-06"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6485,
+        "latency_ms": 7334,
+        "output_tokens": 1170,
+        "total_tokens": 7655
+      },
+      "quality_score": 1.0,
+      "question_id": "e220d43b-b365-4342-9d07-799b37bd3c55",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-07"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6292,
+        "latency_ms": 7039,
+        "output_tokens": 1079,
+        "total_tokens": 7371
+      },
+      "quality_score": 0.9905,
+      "question_id": "c2cb2d9c-7692-4faf-a614-276c0bd176b0",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-08"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6262,
+        "latency_ms": 6735,
+        "output_tokens": 913,
+        "total_tokens": 7175
+      },
+      "quality_score": 0.8,
+      "question_id": "b6d37616-8dc4-40ed-8d36-6978621d6839",
+      "question_status": "AI_REVIEW",
+      "row_id": "m19d-heme-09"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6314,
+        "latency_ms": 5939,
+        "output_tokens": 898,
+        "total_tokens": 7212
+      },
+      "quality_score": 1.0,
+      "question_id": "ed57d0c1-0d01-49ff-8b72-6930355ce875",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-heme-10"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 7020,
+        "latency_ms": 6302,
+        "output_tokens": 899,
+        "total_tokens": 7919
+      },
+      "quality_score": 1.0,
+      "question_id": "d5428b74-a584-4894-b37c-cee8d611cf03",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-01"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5855,
+        "latency_ms": 5737,
+        "output_tokens": 819,
+        "total_tokens": 6674
+      },
+      "quality_score": 1.0,
+      "question_id": "b3e63696-9580-466e-a712-acb49ac3a288",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-02"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 7116,
+        "latency_ms": 7804,
+        "output_tokens": 1235,
+        "total_tokens": 8351
+      },
+      "quality_score": 1.0,
+      "question_id": "ba4f673a-9f0f-4345-abff-ff167a41cda5",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-03"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5818,
+        "latency_ms": 7472,
+        "output_tokens": 1062,
+        "total_tokens": 6880
+      },
+      "quality_score": 0.8952,
+      "question_id": "ac655117-3174-48c3-8b39-4ca903448701",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-04"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-neop-05"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-neop-06"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5867,
+        "latency_ms": 6689,
+        "output_tokens": 915,
+        "total_tokens": 6782
+      },
+      "quality_score": 1.0,
+      "question_id": "66d75f6b-387a-4e64-bb9b-4ecc27464ecb",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-07"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 7038,
+        "latency_ms": 6533,
+        "output_tokens": 952,
+        "total_tokens": 7990
+      },
+      "quality_score": 1.0,
+      "question_id": "e1713958-7c2e-4da6-ba2b-cdecd1693922",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-08"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6767,
+        "latency_ms": 6571,
+        "output_tokens": 892,
+        "total_tokens": 7659
+      },
+      "quality_score": 1.0,
+      "question_id": "1eb349a0-f683-48db-afd6-b6e58529bc03",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-09"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6026,
+        "latency_ms": 6441,
+        "output_tokens": 871,
+        "total_tokens": 6897
+      },
+      "quality_score": 1.0,
+      "question_id": "07497bf6-9859-4199-8e08-4b5fa7ff4bbc",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-neop-10"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 4287,
+        "latency_ms": 6197,
+        "output_tokens": 968,
+        "total_tokens": 5255
+      },
+      "quality_score": 1.0,
+      "question_id": "37b7ef60-f432-4051-9713-d5c32ebb458a",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-01"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 2998,
+        "latency_ms": 5723,
+        "output_tokens": 802,
+        "total_tokens": 3800
+      },
+      "quality_score": 1.0,
+      "question_id": "21a8e4b3-ae51-41b9-82bd-c24261c20c45",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-02"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-systemic-03"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6840,
+        "latency_ms": 4970,
+        "output_tokens": 680,
+        "total_tokens": 7520
+      },
+      "quality_score": 1.0,
+      "question_id": "0d328872-8de3-47f2-b8a4-605fcfa1afab",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-04"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5053,
+        "latency_ms": 5777,
+        "output_tokens": 845,
+        "total_tokens": 5898
+      },
+      "quality_score": 1.0,
+      "question_id": "ed2144ac-0899-4f7c-bacc-8c628f386081",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-05"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 4600,
+        "latency_ms": 6569,
+        "output_tokens": 933,
+        "total_tokens": 5533
+      },
+      "quality_score": 1.0,
+      "question_id": "e0ce0fea-171c-40d0-8e46-ccc978618f62",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-06"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 6076,
+        "latency_ms": 7417,
+        "output_tokens": 1060,
+        "total_tokens": 7136
+      },
+      "quality_score": 1.0,
+      "question_id": "6e2a1902-7b1e-4676-9d5b-40b3f305869e",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-07"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 2708,
+        "latency_ms": 5736,
+        "output_tokens": 897,
+        "total_tokens": 3605
+      },
+      "quality_score": 1.0,
+      "question_id": "8fe73ffd-cb49-4727-a5a1-9354c2955895",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-08"
+    },
+    {
+      "outcome": "GENERATED",
+      "provider_usage": {
+        "input_tokens": 5370,
+        "latency_ms": 6675,
+        "output_tokens": 1010,
+        "total_tokens": 6380
+      },
+      "quality_score": 1.0,
+      "question_id": "82e70627-969c-4916-9291-3c3da5dcd605",
+      "question_status": "HUMAN_REVIEW",
+      "row_id": "m19d-systemic-09"
+    },
+    {
+      "outcome": "FAILED",
+      "reason": "Candidate claim mapping references absent evidence",
+      "row_id": "m19d-systemic-10"
+    }
+  ],
+  "persisted_cohort_count": 43,
+  "selected_rows": 50,
+  "status": "EXECUTION_COMPLETE",
+  "usage_estimate": {
+    "cost_currency": "USD",
+    "estimated_generation_cost": 0.1005,
+    "estimated_max_input_tokens": 900000,
+    "estimated_max_output_tokens": 110000,
+    "estimated_query_embedding_cost": 1e-06,
+    "estimated_total_cost": 0.1005,
+    "maximum_generation_requests": 50,
+    "maximum_query_embedding_requests": 50,
+    "pricing_note": "Estimate uses caller-supplied generation token rates and query-embedding request rate."
+  },
+  "vertex": {
+    "location": "us-central1",
+    "model": "gemini-2.5-flash",
+    "project": "doc-egde-rag"
+  },
+  "will_call_vertex": true,
+  "will_write_database": true
+}

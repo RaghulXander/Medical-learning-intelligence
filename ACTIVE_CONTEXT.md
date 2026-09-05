@@ -89,7 +89,9 @@ When starting a new conversation:
   - **Domain Recall@5**: Diagnostic (100%), Hematopathology (100%), Neoplasia (100%), Systemic (100%), General (90%) [Target: ≥80%]
   - **Out-of-corpus Refusal**: **100.0%** (5/5 controls refused)
   - **Citation Mismatches**: **0**
-- Complete documentation saved in [docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19C_RETRIEVAL_ACCEPTANCE_REPORT.md).
-- **Milestone 19D**: implementation and no-cost dry run complete; the 50-row
-  blueprint was approved by the project owner on 2026-09-05. Vertex execution
-  remains blocked only on an explicit cost cap.
+- **Milestone 19D (Vertex Text Calibration Pilot)**: **EXECUTION COMPLETE**
+  - 50 blueprint rows attempted against Vertex AI `gemini-2.5-flash` (`us-central1`).
+  - **43 candidates generated and persisted** into PostgreSQL with complete evidence receipts (38 in `HUMAN_REVIEW`, 5 in `AI_REVIEW`, 0 auto-approved).
+  - 7 rows failed closed safely due to strict claim-to-evidence validation.
+  - Actual estimated cost: **$0.1005 USD** (well below $1.00 budget cap).
+  - Full report saved in [docs/M19D_CALIBRATION_PILOT_REPORT.md](file:///r:/Repositories/medical-learning-intelligence/docs/M19D_CALIBRATION_PILOT_REPORT.md).
